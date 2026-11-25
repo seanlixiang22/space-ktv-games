@@ -22,6 +22,7 @@ canvas{display:block;cursor:pointer}
 </head>
 <body>
 <a href="game.html" style="position:fixed;top:12px;left:12px;z-index:10;color:#8899bb;text-decoration:none;font-size:12px;padding:5px 12px;border:1px solid #1a3a6a;border-radius:999px;background:rgba(0,0,15,.7)">← 游戏大厅 Games</a>
+<button id="ssBtn" type="button" style="position:fixed;top:12px;right:12px;z-index:10;color:#cfe0ff;font:12px 'Courier New',monospace;padding:5px 12px;border:1px solid #1a3a6a;border-radius:999px;background:rgba(0,0,15,.7);cursor:pointer"></button>
 <div id="msg">Requesting microphone... | 请求麦克风权限...</div>
 <div id="topBar">
   <span class="lbl">VOL</span><div class="trk"><div id="vf"></div></div>
@@ -30,6 +31,7 @@ canvas{display:block;cursor:pointer}
 <canvas id="c" width="480" height="600"></canvas>
 <div id="ft">高音飞更高 HIGH PITCH=FLY HIGHER | 点击/空格 CLICK/SPACE=BACKUP</div>
 <div id="err"></div>
+<script src="space-save.js"></script>
 <script>
 // Global error display so we can see crashes
 window.onerror = function(msg,src,line){
@@ -89,6 +91,9 @@ function rr(x,y,w,h,r) {
 
 // ── Difficulty ────────────────────────────────────────────────────────────────
 var score=0, best=0, frame=0;
+// 最高分存进 Space 共用存档（和其他游戏同一个账号）
+var savedBest=0;function loadBest(){var o=SpaceSave.get('ktvgame');savedBest=Math.max(savedBest,o&&o.best||0);best=Math.max(best,savedBest)}
+loadBest();SpaceSave.onChange(loadBest);SpaceSave.button(document.getElementById('ssBtn'));
 
 function getDiff() {
   var t1 = Math.min(score/15, 1);
@@ -417,7 +422,7 @@ function loop() {
     for(var i=0;i<pipes.length;i++){
       pipes[i].x-=d.speed;
       if(!pipes[i].passed && pipes[i].x+PW<pl.x){
-        pipes[i].passed=true; score++; best=Math.max(score,best);
+        pipes[i].passed=true; score++; best=Math.max(score,best); if(best>savedBest){savedBest=best;SpaceSave.set('ktvgame',{best:best})}
       }
     }
     var tmp=[];

@@ -187,6 +187,7 @@ body.touch.short #diff{margin:0 12px 8px}body.touch.short #diff button{font-size
   <div class="modes"><button class="btn md" id="startBtn">普通模式</button><button class="btn md gold" id="dailyBtn">每日挑战</button><button class="btn md teal" id="wavesBtn">营业模式</button><button class="btn md violet" id="patrolBtn">打烊巡店</button></div>
   <div id="dailyDesc"></div>
   <div id="boards"></div>
+  <p style="margin-top:14px"><button class="btn sm" id="ssBtn" type="button"></button><br><span style="font-size:12px;color:#999">最高分和排行记录存在 Space 共用账号里，和其他游戏同一个名字</span></p>
   <p id="loadmsg" style="margin-top:18px;font-size:12px;color:#888">建议戴耳机 · 需要联网加载 three.js</p>
 </div>
 <div class="ov" id="pause" style="display:none"><h1 style="font-size:44px">已暂停</h1><h2>点击继续</h2><button class="btn" id="resumeBtn">继续</button></div>
@@ -203,6 +204,8 @@ body.touch.short #diff{margin:0 12px 8px}body.touch.short #diff button{font-size
 <div class="ov" id="end" style="display:none"><h1 id="endT"></h1><h2 id="endS"></h2><div id="rank"></div><p id="endP"></p><div id="sub"><input id="pname" maxlength="12" placeholder="你的名字"><button class="btn sm" id="subBtn">提交成绩</button><span id="subMsg"></span></div><div id="coupon"></div><div id="boards2" style="display:flex;justify-content:center;margin:6px 0 12px"></div><button class="btn" id="againBtn">回到菜单</button></div>
 <div id="err"></div>
 
+<script src="space-save.js"></script>
+<script>addEventListener('DOMContentLoaded',()=>SpaceSave.button(document.getElementById('ssBtn')));SpaceSave.mirror('fps','spacektv-fps-');</script>
 <script>
 window.addEventListener('error',e=>{const d=document.getElementById('err');d.style.display='block';d.textContent+=(e.message||'资源加载失败（three.js 需要联网）')+'\n';});
 </script>
