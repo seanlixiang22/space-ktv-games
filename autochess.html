@@ -528,9 +528,9 @@ body.finale #board{filter:contrast(1.15) saturate(1.3)}
   #top .statRow{gap:3px}
   #top .stat{padding:3px 6px;font-size:11px;border-radius:9px;display:flex;align-items:center;gap:2px}
   #top .stat b{font-size:13px}
-  .stat .lb,#inc,#bPlayer .pn,#bNew .pn,#roundMax{display:none}
+  .stat .lb,#inc,#bPlayer .pn,#bNew .pn,#bSlots .pn,#roundMax{display:none}
   #top .stat #roundMax.show{display:inline}
-  #bPlayer,#bNew{flex:0 0 auto;padding:3px 7px!important;font-size:14px!important}
+  #bPlayer,#bNew,#bSlots{flex:0 0 auto;padding:3px 7px!important;font-size:14px!important}
   .xpbar{width:18px}
   /* 吧台：空的时候只留一行 */
   #itembar .empty{display:none}
@@ -571,7 +571,7 @@ body.finale #board{filter:contrast(1.15) saturate(1.3)}
 }
 @media(min-width:601px) and (max-width:1100px) and (orientation:portrait){
   :root{--cell:max(40px,min(78px,calc((100vw - 60px)/8/1.25),calc((100dvh - 420px)/10.7)))}
-  #top .stat{font-size:14px;padding:5px 10px}#top .stat b{font-size:16px}.stat .lb,#bPlayer .pn,#bNew .pn,#inc{display:inline}
+  #top .stat{font-size:14px;padding:5px 10px}#top .stat b{font-size:16px}.stat .lb,#bPlayer .pn,#bNew .pn,#bSlots .pn,#inc{display:inline}
   #shop,#bench,#itembar,#syn{max-width:min(760px,96vw);margin-left:auto;margin-right:auto}
   .syn{font-size:14px;padding:5px 12px}.card .n{font-size:15px}.card .ti{font-size:14px}
   #controls{max-width:760px;margin:0 auto}#controls .btn{min-height:52px;font-size:17px}
@@ -585,6 +585,24 @@ body.finale #board{filter:contrast(1.15) saturate(1.3)}
   #shop{flex:1 1 auto;margin:0}.card{min-height:0!important}.card img.e{height:min(84px,10dvh)}
   :root{--cell:max(34px,min(66px,calc((100vw - 580px)/8/1.25),calc((100dvh - var(--vfix,380px))/10.2)))}
 }
+/* v7 四星 / 吧台 / 存档 / 加时 */
+.unit.s4 .stars{background:linear-gradient(90deg,#ff6fc8,#ffd36e,#7fe7ff,#ff6fc8);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 4px #ff6fc8)}
+.unit.s4 .shadow{box-shadow:0 0 18px 4px #ff6fc8aa,0 0 30px 8px #ffd36e55}
+.drink.mate{box-shadow:0 0 0 2px #7dffa0,0 0 14px #7dffa0aa;animation:mateP 1s ease-in-out infinite}
+@keyframes mateP{50%{transform:translateY(-3px)}}
+.drink.hl{box-shadow:0 0 0 3px #7dffa0,0 0 18px #7dffa0}
+.drRow{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:4px}.drRow span{flex:1;font-size:12px}
+.btn.mini{padding:2px 7px;font-size:11px;min-height:26px!important;flex:0 0 auto}
+#modal.slotsM{max-width:min(640px,94vw);width:100%;max-height:90dvh;overflow-y:auto}
+.slots{display:flex;flex-direction:column;gap:8px;text-align:left}
+.slotC{border:1px solid #4a3585;border-radius:12px;padding:8px 10px;background:#0006}.slotC.empty{opacity:.75}
+.slotH{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;font-size:13px}.slotH b{font-size:15px;margin-right:4px}
+.slotT{display:flex;gap:3px;margin:6px 0 2px;flex-wrap:wrap}
+.sa{position:relative;width:34px;height:34px;border-radius:8px;overflow:hidden;background:#ffffff12;border:1px solid #ffffff22}.sa img{width:100%;height:100%;object-fit:cover;object-position:top}
+.sa i{position:absolute;right:1px;bottom:0;font-style:normal;font-size:10px;font-weight:900;color:#ffd36e;text-shadow:0 1px 2px #000}.sa.s4{border-color:#ff6fc8;box-shadow:0 0 8px #ff6fc8}
+.slotB{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.slotB .btn{padding:5px 12px;font-size:13px;min-height:36px}
+body.overtime #cells{box-shadow:0 0 0 2px #ff3355,0 0 50px #ff335599!important}
+body.overtime #banner{color:#ff8a9a}
 </style>
 </head>
 <body>
@@ -601,6 +619,7 @@ body.finale #board{filter:contrast(1.15) saturate(1.3)}
   <div class="stat" id="streak">连胜 0</div>
   </div>
   <button class="stat" id="bPlayer" style="cursor:pointer;font:inherit;color:var(--ink,#fff)"></button>
+  <button class="stat" id="bSlots" title="存档" style="cursor:pointer;font:inherit">💾<span class="pn">存档</span></button>
   <button class="stat" id="bNew" title="放弃当前进度，重新开始" style="cursor:pointer;font:inherit;color:var(--mute)">↺<span class="pn">重开</span></button>
 </header>
 <main>
@@ -635,7 +654,7 @@ const TRAITS={
   bar:{n:'酒馆帮',i:'🍸',lv:[2,4,6,8],d:['成员施法时，2格内友军攻速 +10%（3秒，只刷新不叠加）','成员施法时，2格内友军攻速 +20%（3秒）','成员施法时，2格内友军攻速 +35%（3秒）','成员施法时，2格内友军攻速 +55%（3秒）']},
   jbs:{n:'剧本杀帮',i:'🎭',lv:[2,4,6,8],d:['开局随机指定一名敌人为凶手🔪，全队对其伤害 +30%','对凶手伤害 +60%；凶手死后立刻改选攻击最高的敌人','对凶手伤害 +100%；凶手死亡时全体敌人眩晕1秒','对凶手伤害 +150%；凶手死亡时全体敌人眩晕1.5秒']},
   lishi:{n:'李世王朝',i:'👑',lv:[2,3],d:['王朝成员生命与攻击 +12%','王朝成员生命与攻击 +25%，并免疫第一次控制']},
-  ancient:{n:'远古人物',i:'🦴',lv:[2,4,5],d:['远古成员首次阵亡时以 30% 生命复活，并获得 25% 最大生命的护盾','以 60% 生命复活（带护盾），且全队攻击 +15%','以 100% 生命复活（带护盾），且全队攻击 +15%']},
+  ancient:{n:'旧党',i:'🦴',lv:[2,4,5],d:['旧党成员首次阵亡时以 30% 生命复活，并获得 25% 最大生命的护盾','以 60% 生命复活（带护盾），且全队攻击 +15%','以 100% 生命复活（带护盾），且全队攻击 +15%']},
   boss:{n:'老板专座',i:'🪑',lv:[1,2],d:['每回合额外 +1 金币','每回合额外 +3 金币，翔哥与艾辣互相分担一半伤害']},
   gemini:{n:'双子星',i:'♊',lv:[2],d:['一人施法，另一人 +30 法力；一人阵亡，另一人攻击 ×1.3']},
   pills:{n:'三大粒',i:'💊',lv:[2,3],d:['三大粒成员生命 +20%','生命 +20%；每4秒每人向随机敌人发射一粒，200 魔法伤害并攻速 -25%（2秒）']},
@@ -649,23 +668,23 @@ const TRAITS={
 };
 const FACTIONS=['bar','jbs','lishi','ancient','boss','gemini','pills','rising'];
 const U={
-  xiaochen:{n:'小陈',c:1,t:['bar','rising','caster'],hp:450,atk:40,r:3,as:1,ar:5,mp:70,sk:'cocktail',pw:220,sn:'特调一杯',sd:'泼出鸡尾酒造成 {p} 魔法伤害，目标攻速 -30%（3秒）'},
-  luoyu:{n:'洛羽',c:1,t:['bar','support'],hp:430,atk:35,r:3,as:1,ar:5,mp:70,sk:'cheer',pw:40,sn:'加油打气',sd:'为攻击力最高的队友攻速 +{p}%（4秒）'},
-  boluo:{n:'菠萝包',c:1,t:['jbs','rising','guard'],hp:700,atk:42,r:1,as:1,ar:30,mp:80,sk:'bun',pw:180,sn:'热乎菠萝包',sd:'回复 {p} 生命并获得 {p} 护盾'},
-  nova:{n:'NOVA',c:1,t:['ancient','caster'],hp:440,atk:40,r:3,as:1,ar:5,mp:80,sk:'supernova',pw:180,sn:'超新星',sd:'目标周围1格敌人受到 {p} 魔法伤害并致盲2秒'},
-  jiuge:{n:'酒哥',c:1,t:['jbs','guard'],hp:780,atk:46,r:1,as:1,ar:35,mp:90,sk:'taunt',pw:2.5,sn:'千杯不醉',sd:'嘲讽2格内敌人 {p} 秒，期间受到伤害 -50%'},
-  kevin:{n:'Kevin',c:1,t:['ancient','caster'],hp:470,atk:42,r:3,as:1,ar:5,mp:80,sk:'exam',pw:170,sn:'满分答卷',sd:'向最近3个敌人各扔考卷，造成 {p} 魔法伤害'},
-  ya:{n:'芽',c:2,t:['jbs','pills','support','caster'],hp:520,atk:40,r:3,as:1,ar:10,mp:70,sk:'tongue',pw:300,sn:'毒舌',sd:'对目标和它身边 1 格内的敌人下毒，4 秒内共造成 {p} 伤害，无视护甲（重复中毒取较高的那个并刷新时间）'},
-  tiange:{n:'天哥',c:2,t:['jbs','guard'],hp:1050,atk:50,r:1,as:1.05,ar:35,mp:100,sk:'bear',pw:400,sn:'天塌我扛',sd:'获得 {p} 护盾，5秒内替相邻队友承受一半伤害'},
-  john:{n:'John',c:2,t:['bar','rising','fighter'],hp:740,atk:66,r:1,as:.9,ar:20,mp:80,sk:'triple',pw:1.1,sn:'冷面三连',sd:'连打3拳，每拳 {p} 倍攻击，最后一拳眩晕1秒'},
-  panda:{n:'Panda',c:2,t:['bar','ancient','fighter'],hp:780,atk:62,r:1,as:.9,ar:20,mp:80,sk:'roll',pw:1.8,sn:'熊猫翻滚',sd:'滚到目标身边造成 {p} 倍攻击伤害并眩晕1秒'},
+  xiaochen:{n:'小陈',c:1,t:['bar','rising','caster'],hp:490,atk:44,r:3,as:1,ar:5,mp:70,sk:'cocktail',pw:290,sn:'特调一杯',sd:'泼出鸡尾酒造成 {p} 魔法伤害，目标攻速 -30%（3秒）'},
+  luoyu:{n:'洛羽',c:1,t:['bar','support'],hp:430,atk:35,r:3,as:1,ar:5,mp:55,sk:'cheer',pw:40,sn:'加油打气',sd:'为攻击力最高的队友攻速 +{p}%（4秒）'},
+  boluo:{n:'菠萝包',c:1,t:['jbs','rising','guard'],hp:760,atk:46,r:1,as:1,ar:30,mp:80,sk:'bun',pw:220,sn:'热乎菠萝包',sd:'回复 {p} 生命并获得 {p} 护盾'},
+  nova:{n:'NOVA',c:1,t:['ancient','caster'],hp:440,atk:40,r:3,as:1,ar:5,mp:80,sk:'supernova',pw:195,sn:'超新星',sd:'目标周围1格敌人受到 {p} 魔法伤害并致盲2秒'},
+  jiuge:{n:'酒哥',c:1,t:['jbs','guard'],hp:1000,atk:55,r:1,as:1,ar:35,mp:90,sk:'taunt',pw:3,sn:'千杯不醉',sd:'嘲讽2格内敌人 {p} 秒，期间受到伤害 -50%'},
+  kevin:{n:'Kevin',c:1,t:['ancient','caster'],hp:470,atk:42,r:3,as:1,ar:5,mp:80,sk:'exam',pw:185,sn:'满分答卷',sd:'向最近3个敌人各扔考卷，造成 {p} 魔法伤害'},
+  ya:{n:'芽',c:2,t:['jbs','pills','support','caster'],hp:480,atk:40,r:3,as:1,ar:10,mp:80,sk:'tongue',pw:190,sn:'毒舌',sd:'对目标和它身边 1 格内的敌人下毒，4 秒内共造成 {p} 伤害，无视护甲（重复中毒取较高的那个并刷新时间）'},
+  tiange:{n:'天哥',c:2,t:['jbs','guard'],hp:1260,atk:56,r:1,as:1.05,ar:35,mp:100,sk:'bear',pw:480,sn:'天塌我扛',sd:'获得 {p} 护盾，5秒内替相邻队友承受一半伤害'},
+  john:{n:'John',c:2,t:['bar','rising','fighter'],hp:960,atk:80,r:1,as:.85,ar:20,mp:80,sk:'triple',pw:1.3,sn:'冷面三连',sd:'连打3拳，每拳 {p} 倍攻击，最后一拳眩晕1秒'},
+  panda:{n:'Panda',c:2,t:['bar','ancient','fighter'],hp:780,atk:66,r:1,as:.9,ar:20,mp:80,sk:'roll',pw:1.8,sn:'熊猫翻滚',sd:'滚到目标身边造成 {p} 倍攻击伤害并眩晕1秒'},
   ace:{n:'Ace',c:2,t:['ancient','gemini','assassin'],hp:680,atk:85,r:1,as:.8,ar:15,mp:80,sk:'execute',pw:3,sn:'王牌斩杀',sd:'目标生命低于30%直接斩杀，否则造成 {p} 倍攻击伤害'},
-  mojie:{n:'莫姐',c:2,t:['jbs','pills','caster'],hp:620,atk:48,r:3,as:1,ar:15,mp:85,sk:'speak',pw:120,sn:'莫姐发话',sd:'气场全开：全场敌人眩晕1秒并受到 {p} 魔法伤害'},
-  richard:{n:'理查德',c:3,t:['bar','jbs','lishi','gemini','caster'],hp:800,atk:58,r:3,as:.95,ar:20,mp:100,sk:'audit',pw:170,sn:'合规审查',sd:'全体敌人攻击 -30%（4秒），清除其护盾并造成 {p} 魔法伤害'},
-  liyutong:{n:'李宇童',c:3,t:['bar','lishi','ancient','support'],hp:720,atk:52,r:3,as:1,ar:15,mp:110,sk:'light',pw:150,sn:'童心之光',sd:'为全体友军提供 {p} 护盾'},
-  kc:{n:'KC',c:3,t:['bar','jbs','pills','double','assassin'],hp:780,atk:95,r:1,as:.75,ar:15,mp:70,sk:'bowtie',pw:2.5,sn:'领结飞刃',sd:'闪到生命最低的敌人身边，背刺造成 {p} 倍攻击伤害（必暴击）'},
-  xiang:{n:'翔哥',c:3,t:['bar','jbs','lishi','boss','fighter'],hp:1150,atk:92,r:1,as:.85,ar:35,mp:100,sk:'treat',pw:260,sn:'老板请客',sd:'全队回复 {p} 生命、攻速 +30%（4秒）；每次施法 +1 金币（每场最多3）'},
-  aila:{n:'艾辣',c:3,t:['boss','assassin'],hp:950,atk:115,r:1,as:.75,ar:25,mp:80,sk:'rage',pw:1.5,sn:'老板娘发火',sd:'连续闪击4个敌人，每次 {p} 倍攻击伤害并灼烧3秒（每秒 80×星级倍率）'}
+  mojie:{n:'莫姐',c:2,t:['jbs','pills','caster'],hp:620,atk:48,r:3,as:1,ar:15,mp:85,sk:'speak',pw:105,sn:'莫姐发话',sd:'气场全开：全场敌人眩晕1秒并受到 {p} 魔法伤害'},
+  richard:{n:'理查德',c:3,t:['bar','jbs','lishi','gemini','caster'],hp:800,atk:58,r:3,as:.95,ar:20,mp:110,sk:'audit',pw:140,sn:'合规审查',sd:'全体敌人攻击 -30%（4秒），清除其护盾并造成 {p} 魔法伤害'},
+  liyutong:{n:'李宇童',c:3,t:['bar','lishi','ancient','support'],hp:660,atk:52,r:3,as:1,ar:15,mp:110,sk:'light',pw:130,sn:'童心之光',sd:'为全体友军提供 {p} 护盾'},
+  kc:{n:'KC',c:3,t:['bar','jbs','pills','double','assassin'],hp:720,atk:80,r:1,as:.75,ar:15,mp:70,sk:'bowtie',pw:2.1,sn:'领结飞刃',sd:'闪到生命最低的敌人身边，背刺造成 {p} 倍攻击伤害（必暴击）'},
+  xiang:{n:'翔哥',c:3,t:['bar','jbs','lishi','boss','fighter'],hp:1100,atk:80,r:1,as:.85,ar:35,mp:100,sk:'treat',pw:200,sn:'老板请客',sd:'全队回复 {p} 生命、攻速 +30%（4秒）；每次施法 +1 金币（每场最多3）'},
+  aila:{n:'艾辣',c:3,t:['boss','assassin'],hp:950,atk:115,r:1,as:.75,ar:25,mp:80,sk:'rage',pw:1.7,sn:'老板娘发火',sd:'连续闪击4个敌人，每次 {p} 倍攻击伤害并灼烧3秒（每秒 80×星级倍率）'}
 };
 /* ---------- 首领（来自剧本杀情感本）：不进商店 ---------- */
 const BOSS={
@@ -718,7 +737,7 @@ const HEX={
   discount:{t:0,n:'熟客折扣',i:'🏷️',d:'刷新只要 1 金'},tip:{t:0,n:'小费',i:'💵',d:'每次胜利额外 +2 金'},nightowl:{t:0,n:'夜猫子',i:'🦉',d:'第 10 回合后全队攻速 +10%'},
   spare:{t:0,n:'备用酒杯',i:'🥂',d:'每人最多喝 4 杯'},jbsplus:{t:0,n:'剧本杀入门',i:'📜',d:'剧本杀帮人数 +1（已有至少 1 人时）'},barplus:{t:0,n:'酒馆常客',i:'🍺',d:'酒馆帮人数 +1（已有至少 1 人时）'},
   opener:{t:1,n:'开瓶费',i:'🍾',d:'立刻获得 2 杯随机基础酒'},bros:{t:1,n:'兄弟情深',i:'🤝',d:'每激活一个阵营羁绊，全队生命 +5%'},streak:{t:1,n:'连胜之王',i:'🔥',d:'连胜/连败奖励翻倍'},
-  loner:{t:1,n:'散人',i:'🚶',d:'激活的阵营羁绊不超过 1 个时，全队生命和攻击 +30%'},timeback:{t:1,n:'时光倒流',i:'⏳',d:'远古人物复活时生命为 100%'},express:{t:1,n:'升星快车',i:'🚄',d:'立刻获得一个随机的 ★★ 1–2 费角色'},
+  loner:{t:1,n:'散人',i:'🚶',d:'激活的阵营羁绊不超过 1 个时，全队生命和攻击 +30%'},timeback:{t:1,n:'时光倒流',i:'⏳',d:'旧党复活时生命为 100%'},express:{t:1,n:'升星快车',i:'🚄',d:'立刻获得一个随机的 ★★ 1–2 费角色'},
   fullhouse:{t:2,n:'包场',i:'🎤',d:'每回合免费刷新 1 次；利息上限 8'},kingback:{t:2,n:'王者归来',i:'👑',d:'商店 3 费概率 +15%'},bartender:{t:2,n:'金牌调酒师',i:'🍹',d:'首领多掉 1 杯，且必掉特调'},
   allin:{t:2,n:'全员到齐',i:'🙌',d:'上场人数 +1'},mystery:{t:2,n:'神秘剧本',i:'🕵️',d:'我方标记的凶手死亡时，全队回复 30% 生命'},audit:{t:2,n:'合规审查',i:'📋',d:'敌方所有羁绊降一档'}
 };
@@ -733,8 +752,8 @@ const STK={
   xiang:{n:'生意兴隆',d:'每次技能赚到金币 +1 层；每层攻速 +2%'},
   richard:{n:'合规档案',cap:20,d:'每次施法 +1 层（每场最多 2）；每层技能伤害 +5%，减攻效果 -30% 起每层再 -1%（最多 -50%）；满 20 层时审查附带全体沉默 1.5 秒'}
 };
-const TSTK={jbs:{n:'开本数',d:'每击杀一个我方标记的凶手 +1（上限 20）；对凶手伤害每层额外 +3%'},bar:{n:'熟客积分',d:'每赢一场 +1；每满 6 分送 1 杯随机基础酒'},ancient:{n:'岁月',d:'每打完一场 +1；远古成员生命每层 +1%（最多 +40%）'}};
-const STAR_M=[1,1.8,3.24],SKILL_M=[1,1.8,3.2];
+const TSTK={jbs:{n:'开本数',d:'每击杀一个我方标记的凶手 +1（上限 20）；对凶手伤害每层额外 +3%'},bar:{n:'熟客积分',d:'每赢一场 +1；每满 6 分送 1 杯随机基础酒'},ancient:{n:'岁月',d:'每打完一场 +1；旧党成员生命每层 +1%（最多 +40%）'}};
+const STAR_M=[1,1.8,3.24,5.2],SKILL_M=[1,1.8,3.2,5];
 const XP_NEED=[0,2,4,6,10,20,32,48,70,90],MAXLV=10;
 const ODDS={1:[100,0,0],2:[80,20,0],3:[65,30,5],4:[50,38,12],5:[40,40,20],6:[30,40,30],7:[25,38,37],8:[20,37,43],9:[15,40,45],10:[10,35,55]};
 const BY_COST={1:[],2:[],3:[]};for(const k in U)if(U[k].c)BY_COST[U[k].c].push(k);
@@ -797,8 +816,8 @@ function newGame(keep){if(!keep)clearSave();
   G.diff='easy';rollShop();G.enemy=genEnemy(1);$('#overlay').classList.remove('show');render();if(!keep)pickDiff();
 }
 const mk=(key,star=1)=>({id:G.uid++,key,star,items:[],stk:0,rise:0,tr:0});
-const TR_MAX=20,trCost=u=>4+2*(u.tr||0),drinkCost=()=>8+Math.min(8,G.drinkBuys||0);
-function train(loc){const u=getAt(loc);if(!u||G.phase!=='plan'||G.hexOffer||u.star<3)return;if((u.tr||0)>=TR_MAX)return toast('已经练满了');const c=trCost(u);if(G.gold<c)return toast('金币不足');
+const TR_MAX=10,trCost=u=>4+2*(u.tr||0),drinkCost=()=>8+Math.min(8,G.drinkBuys||0);
+function train(loc){const u=getAt(loc);if(!u||G.phase!=='plan'||G.hexOffer||u.star<4)return;if((u.tr||0)>=TR_MAX)return toast('已经练满了');const c=trCost(u);if(G.gold<c)return toast('金币不足');
   G.gold-=c;u.tr=(u.tr||0)+1;toast(`${U[u.key].n} 特训 ${u.tr} 级：生命和攻击 +${u.tr*5}%`);render();if(!B&&loc.type==='board')starPop(loc,3)}
 function buyDrink(){if(G.phase!=='plan'||G.hexOffer)return;const c=drinkCost();if(G.gold<c)return toast('金币不足');if(G.items.length>=12)return toast('吧台满了');
   G.gold-=c;G.drinkBuys=(G.drinkBuys||0)+1;const g=giveItem(1);toast(`买到 ${CK[g[0]].i}${CK[g[0]].n}`);render()}
@@ -832,6 +851,54 @@ function returnItems(u){let lost=0;u.items.forEach(k=>{if(G.items.length<12)G.it
 function itemPop(loc,k){const el=layer.querySelector(`.unit[data-x="${loc.x}"][data-y="${loc.y}"]`)||benchEl.querySelector(`.slot[data-i="${loc.i}"] .unit`);
   if(!el)return;const P=loc.type==='board'?headPt({x:loc.x,y:loc.y},1.6):null;if(P){FX.glyph(P,CK[k].i,'#ffd36e',700,26);FX.burst(P,['#ffd36e','#ff6fc8','#7fe7ff'],12,50,3,600,0,'star')}}
 
+/* ---------- 吧台：卖酒 / 合成 / 拆酒 ---------- */
+const SELL_BASE=4,SELL_SP=10,UNMIX=20;
+const drinkSell=k=>CK[k].sp?SELL_SP:SELL_BASE;
+function sellDrink(i){const k=G.items[i];if(!k||G.phase!=='plan'||G.hexOffer)return;const p=drinkSell(k);G.items.splice(i,1);G.gold+=p;G.selItem=null;toast(`卖掉 ${CK[k].i}${CK[k].n}，+${p} 金`);render()}
+function barMix(a,b){if(G.phase!=='plan'||G.hexOffer||a===b)return false;const ka=G.items[a],kb=G.items[b];if(!ka||!kb)return false;
+  const r=!CK[ka].sp&&!CK[kb].sp&&recipeOf(ka,kb);if(!r){toast('这两杯调不出特调');return false}
+  [a,b].sort((x,y)=>y-x).forEach(i=>G.items.splice(i,1));G.items.push(r);G.selItem=null;toast(`调出了 ${CK[r].i} ${CK[r].n}！`);render();
+  if(!SIM){const el=$('#itembar').querySelector(`.drink[data-ii="${G.items.length-1}"]`);if(el)el.animate([{transform:'scale(1.8) rotate(-12deg)',filter:'brightness(2)'},{transform:'scale(1)',filter:'none'}],{duration:500,easing:'cubic-bezier(.2,1.5,.4,1)'})}
+  return true}
+const mates=i=>{const k=G.items[i];if(!k||CK[k].sp)return[];return G.items.map((o,j)=>j!==i&&!CK[o].sp&&recipeOf(k,o)?j:-1).filter(j=>j>=0)};
+function markMates(i){$('#itembar').querySelectorAll('.drink').forEach(d=>d.classList.toggle('mate',i!=null&&mates(i).includes(+d.dataset.ii)))}
+function unmix(loc,idx){const u=getAt(loc);if(!u||G.phase!=='plan'||G.hexOffer)return;const k=u.items[idx];if(!k)return;
+  if(G.gold<UNMIX)return toast(`需要 ${UNMIX} 金`);const back=CK[k].sp?RECIPE[k]:[k];if(G.items.length+back.length>12)return toast('吧台放不下了');
+  G.gold-=UNMIX;u.items.splice(idx,1);back.forEach(x=>G.items.push(x));toast(CK[k].sp?`把 ${CK[k].n} 拆回了 ${back.map(x=>CK[x].i+CK[x].n).join(' + ')}`:`取下了 ${CK[k].i}${CK[k].n}`);render()}
+
+/* ---------- 加时赛 ---------- */
+const otStart=()=>G&&G.enemy&&G.enemy.boss?35:25;
+const sideHp=s=>{const L=B.f.filter(f=>f.side===s);return L.reduce((a,f)=>a+(f.dead?0:Math.max(0,f.hp)),0)/Math.max(1,L.reduce((a,f)=>a+f.maxhp,0))};
+function judge(){const ap=alive('player').length,ae=alive('enemy').length;if(ap&&!ae)return true;if(!ap)return false;return B.t>45&&sideHp('player')>sideHp('enemy')}
+
+/* ---------- 页面内确认框（不用 confirm） ---------- */
+function askConfirm(msg,onYes,onNo){$('#modal').innerHTML=`<h2 style="font-size:22px">${msg}</h2><div style="display:flex;gap:10px;justify-content:center;margin-top:16px"><button class="btn fight" id="cfYes">确定</button><button class="btn" id="cfNo">取消</button></div>`;
+  $('#overlay').classList.add('show');$('#cfYes').onclick=()=>{$('#overlay').classList.remove('show');onYes()};$('#cfNo').onclick=()=>{$('#overlay').classList.remove('show');onNo?onNo():G.hexOffer&&renderHex()}}
+
+/* ---------- 存档槽 ---------- */
+const SLOTS=3,slotKey=n=>K('s:autochess-slot'+n);
+function snapshot(){return Object.assign(JSON.parse(JSON.stringify(G)),{sel:null,selItem:null,peek:null,peekTrait:null,peekHex:null,landed:null,phase:'plan',sv:1,updated:Date.now()})}
+function slotCard(o,title,btns){if(!o||!validSave(o))return`<div class="slotC empty"><div class="slotH"><b>${title}</b><span class="help">空</span></div><div class="slotB">${btns}</div></div>`;
+  const D=DIFF[o.diff||'easy']||DIFF.easy,team=o.board.filter(Boolean).sort((a,b)=>b.star-a.star||U[b.key].c-U[a.key].c),t=new Date(o.updated||0);
+  return`<div class="slotC"><div class="slotH"><b>${title}</b><span style="color:${D.col}">${D.i} ${D.n}</span><span>第 ${o.round} 回合</span><span>❤️ ${o.hp}</span><span>Lv${o.level}</span>${o.cleared?'<span style="color:var(--gold)">已通关</span>':''}</div>
+    <div class="slotT">${team.slice(0,10).map(u=>`<span class="sa s${u.star}" title="${U[u.key].n} ${'★'.repeat(u.star)}"><img src="${AV[u.key]}" alt=""><i>${u.star}</i></span>`).join('')||'<span class="help">棋盘上还没有人</span>'}</div>
+    <div class="slotM help">${t.getMonth()+1}/${t.getDate()} ${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} 保存</div><div class="slotB">${btns}</div></div>`}
+function openSlots(){if(G.phase==='battle')return toast('战斗中不能打开存档');
+  const cur=store.get(SK());
+  let h=`<h2>💾 存档</h2><p class="help" style="margin:0 0 10px">自动存档就是当前进度，每次操作都会自动保存。手动存档不会被新开局覆盖${PLAYER?'，登录后会同步到云端':''}。</p><div class="slots">`+
+    slotCard(cur,'自动存档（当前进度）','<span class="help">正在玩</span>');
+  for(let n=1;n<=SLOTS;n++){const o=store.get(slotKey(n)),ok=o&&validSave(o);
+    h+=slotCard(o,'存档 '+n,`<button class="btn" data-a="save" data-n="${n}">${ok?'覆盖保存':'保存到这里'}</button>${ok?`<button class="btn fight" data-a="load" data-n="${n}">读取</button><button class="btn" data-a="del" data-n="${n}">删除</button>`:''}`)}
+  h+=`</div><div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px"><button class="btn" id="slNew">🆕 开新局</button><button class="btn" id="slClose">关闭</button></div>`;
+  $('#modal').innerHTML=h;$('#modal').classList.add('slotsM');$('#overlay').classList.add('show');
+  const close=()=>{$('#modal').classList.remove('slotsM');$('#overlay').classList.remove('show');if(G.hexOffer)renderHex()};
+  $('#slClose').onclick=close;
+  $('#slNew').onclick=()=>{$('#modal').classList.remove('slotsM');askConfirm('放弃当前进度、开一局新的？<br><small style="font-size:14px;color:var(--mute)">手动存档不受影响</small>',()=>newGame(),openSlots)};
+  $('#modal').querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{const n=+b.dataset.n,a=b.dataset.a,o=store.get(slotKey(n)),ok=o&&validSave(o);$('#modal').classList.remove('slotsM');
+    if(a==='save'){const go=()=>{store.set(slotKey(n),snapshot());cloudPush();toast(`已保存到存档 ${n}`);openSlots()};ok?askConfirm(`覆盖存档 ${n}？`,go,openSlots):go()}
+    else if(a==='load')askConfirm(`读取存档 ${n}？<br><small style="font-size:14px;color:var(--mute)">当前进度会被替换（想留着就先存到别的槽）</small>`,()=>{resumeGame(JSON.parse(JSON.stringify(o)),`已读取存档 ${n}`)},openSlots);
+    else if(a==='del')askConfirm(`删除存档 ${n}？删了就找不回来了`,()=>{store.set(slotKey(n),{sv:1,over:1,updated:Date.now()});cloudPush();toast(`存档 ${n} 已删除`);openSlots()},openSlots)})}
+
 /* ---------- 合成 / 买卖 ---------- */
 function absorb(keep,o){
   keep.stk=(keep.stk||0)+(o.stk||0);const c=STK[keep.key]&&STK[keep.key].cap;if(c)keep.stk=Math.min(c,keep.stk);
@@ -841,7 +908,7 @@ function absorb(keep,o){
 function tryMerge(){
   let again=true;
   while(again){again=false;const g={};
-    for(const o of allOwned()){if(o.u.star>=3)continue;(g[o.u.key+'_'+o.u.star]??=[]).push(o)}
+    for(const o of allOwned()){if(o.u.star>=4)continue;(g[o.u.key+'_'+o.u.star]??=[]).push(o)}
     for(const k in g){const list=g[k];if(list.length>=3){
       const keep=list.find(o=>o.loc.type==='board')||list[0];
       list.filter(o=>o!==keep).slice(0,2).forEach(o=>{absorb(keep.u,o.u);setAt(o.loc,null)});
@@ -882,7 +949,7 @@ function placeUnits(list,taken){
 const DIFF={
   easy:{n:'简单',i:'🌱',col:'#7dffa0',e0:1,e1:1,b0:.75,b1:.85,s2:4,s3:20,dr:18,extra:99,lossM:1,d:'敌人偏弱，适合熟悉玩法'},
   normal:{n:'一般',i:'⚔️',col:'#ffd36e',e0:1.05,e1:1.18,b0:.9,b1:1.27,k:2,s2:3,s3:18,dr:15,extra:99,lossM:1,d:'敌人更强、更早出星和带酒，要认真凑羁绊和升星'},
-  hell:{n:'地狱',i:'🔥',col:'#ff4f6e',e0:1.05,e1:1.59,b0:.95,b1:1.72,k:2.5,s2:3,s3:18,dr:14,extra:20,lossM:1.1,d:'越往后敌人越强（后期约 1.6 倍），第 20 回合起敌人多 1 个，输了扣血更多；首领更硬，但掉落多 1 杯酒'}
+  hell:{n:'地狱',i:'🔥',col:'#ff4f6e',e0:1.05,e1:1.42,b0:.95,b1:1.53,k:2.5,s2:3,s3:18,dr:14,extra:20,lossM:1.1,d:'越往后敌人越强（后期约 1.4 倍），第 20 回合起敌人多 1 个，输了扣血更多；首领更硬，但掉落多 1 杯酒'}
 };
 const FINAL_R=35;
 const isMob=()=>innerWidth<=600||(innerWidth<=1100&&innerHeight>innerWidth);
@@ -1170,11 +1237,11 @@ function render(){
 }
 function renderItems(){
   const bar=$('#itembar');
-  bar.innerHTML=`<span class="lbl">🍹 吧台 <small>${G.items.length}/12</small></span><button class="btn buyD" id="bBuyD" ${G.phase!=='plan'||G.gold<drinkCost()||G.items.length>=12?'disabled':''} title="随机一杯基础酒，每买一次涨 1 金（最多 16）">🛒 买酒 <span style="color:var(--gold)">${drinkCost()}</span></button>`+(G.items.length?G.items.map((k,i)=>`<div class="drink${CK[k].sp?' sp':''}${G.selItem===i?' sel':''}" data-ii="${i}" title="${CK[k].n}：${CK[k].d}">${CK[k].i}</div>`).join(''):'<span class="empty">打赢首领会掉酒，也可以花钱买。把酒拖到角色身上喝下，两杯能配成特调。</span>');
+  bar.innerHTML=`<span class="lbl">🍹 吧台 <small>${G.items.length}/12</small></span><button class="btn buyD" id="bBuyD" ${G.phase!=='plan'||G.gold<drinkCost()||G.items.length>=12?'disabled':''} title="随机一杯基础酒，每买一次涨 1 金（最多 16）">🛒 买酒 <span style="color:var(--gold)">${drinkCost()}</span></button>`+(G.items.length?G.items.map((k,i)=>`<div class="drink${CK[k].sp?' sp':''}${G.selItem===i?' sel':''}${G.selItem!=null&&mates(G.selItem).includes(i)?' mate':''}" data-drop="drink" data-ii="${i}" title="${CK[k].n}：${CK[k].d}">${CK[k].i}</div>`).join(''):'<span class="empty">打赢首领会掉酒，也可以花钱买。把酒拖到角色身上喝下；在吧台里把一杯拖到另一杯上能配成特调。</span>');
   $('#bBuyD').onclick=buyDrink;
   bar.querySelectorAll('.drink').forEach(d=>{const i=+d.dataset.ii;
     d.addEventListener('pointerdown',e=>startItemDrag(e,i,d));
-    d.addEventListener('mouseenter',()=>renderItemInfo(G.items[i]));d.addEventListener('mouseleave',()=>renderInfo())});
+    d.addEventListener('mouseenter',()=>{renderItemInfo(G.items[i]);markMates(i)});d.addEventListener('mouseleave',()=>{renderInfo();markMates(G.selItem)})});
 }
 function renderSyn(){renderSyn0()}
 function renderHexList(){
@@ -1196,7 +1263,9 @@ function renderItemInfo(k){
   if(C.sp)extra=`<div class="help">配方：${RECIPE[k].map(x=>CK[x].i+' '+CK[x].n).join(' + ')}</div>`;
   else{const rs=SPECIALS.filter(s=>RECIPE[s].includes(k));extra=`<div class="help">和 ${rs.map(s=>{const o=RECIPE[s].find(x=>x!==k);return`${CK[o].i}${CK[o].n} → ${CK[s].i}<b>${CK[s].n}</b>`}).join('；')}</div>`}
   $('#info').innerHTML=`<div class="bigDrink">${C.i}</div><div class="nm">${C.n}${C.sp?' <span class="tag">特调</span>':''}</div><div class="sk" style="margin-top:8px">${C.d}</div>${extra}
-    <div class="help" style="margin-top:6px">拖到角色身上喝下（或先点酒再点角色）。每人最多 ${maxItems()} 杯，两杯基础酒能配成特调时会自动合成，只占 1 个杯位。</div>`;
+    <div class="help" style="margin-top:6px">拖到角色身上喝下（或先点酒再点角色）。每人最多 ${maxItems()} 杯，两杯基础酒能配成特调时会自动合成，只占 1 个杯位。吧台里把一杯拖到另一杯上（或先后点两杯）也能直接合成，能配对的会发绿光。</div>`+
+    (G.phase==='plan'&&G.selItem!=null&&G.items[G.selItem]===k?`<button class="btn" id="bSellD" style="width:100%;margin-top:10px">卖掉 +${drinkSell(k)} 💰</button>`:'');
+  const sd=$('#bSellD');if(sd)sd.onclick=()=>sellDrink(G.selItem);
 }
 function sheetX(){const b=document.createElement('button');b.className='sheetX';b.textContent='✕';b.onclick=()=>{G.sel=null;G.selItem=null;G.peek=null;G.peekTrait=null;G.peekHex=null;render()};$('#info').prepend(b)}
 function renderInfo(key,star,loc,em){try{return renderInfo0(key,star,loc,em)}finally{if($('#info .nm')||$('#info .bigDrink'))sheetX()}}
@@ -1211,7 +1280,7 @@ function renderInfo0(key,star,loc,em){
     <div class="help" style="margin-top:6px">成员：${Object.keys(U).filter(k=>U[k].t.includes(t)).map(k=>U[k].n).join('、')}</div>${TSTK[t]?`<div class="sk stkBox" style="margin-top:6px"><b>${TSTK[t].n} · ${G.tstk[t]||0}</b>：${TSTK[t].d}</div>`:''}`;return}
   if(!key&&G.peekHex){const H=HEX[G.peekHex];box.innerHTML=`<div class="bigDrink">${H.i}</div><div class="nm">${H.n} <span class="tag">${TIER_NAME[H.t]}海克斯</span></div><div class="sk" style="margin-top:8px">${H.d}</div>`;return}
   if(!key){box.innerHTML=reportHtml()+`<h3>玩法</h3><div class="help">
-    · 点击商店卡牌购买角色<br>· 拖拽或点选，放到棋盘下半区<br>· 3 个相同角色合成 ★★，再 3 个 ★★ 合成 ★★★<br>· 凑齐同一圈子激活羁绊<br>· 每 10 金币 +1 利息（最多 ${interestCap()}）<br>· 拖到商店上即可出售<br>· 每 5 回合有首领战，赢了掉鸡尾酒<br>· 第 3、8、13 回合选海克斯<br>· ★★★ 角色可以花钱特训，吧台可以买酒<br><br>
+    · 点击商店卡牌购买角色<br>· 拖拽或点选，放到棋盘下半区<br>· 3 个相同角色合成 ★★，以此类推，最高 ★★★★<br>· 凑齐同一圈子激活羁绊<br>· 每 10 金币 +1 利息（最多 ${interestCap()}）<br>· 拖到商店上即可出售<br>· 每 5 回合有首领战，赢了掉鸡尾酒<br>· 第 3、8、13 回合选海克斯<br>· ★★★★ 角色可以花钱特训（最多 10 级）<br>· 吧台可以买酒、卖酒、把两杯配成特调<br><br>
     快捷键：<kbd>D</kbd> 刷新 <kbd>F</kbd> 经验 <kbd>E</kbd> 出售 <kbd>空格</kbd> 开战<br><br>最佳纪录：第 ${best} 回合</div>`;return}
   const T=U[key];
   if(T.boss||T.minion){const m=em||1;
@@ -1225,11 +1294,11 @@ function renderInfo0(key,star,loc,em){
   <div class="sk"><b>${T.sn}</b>：${T.sd.replaceAll('{p}',T.pw<10?T.pw:Math.round(T.pw*SKILL_M[star-1]))}</div>`+
   (S?`<div class="sk stkBox"><b>🔺 ${S.n}${u?' · '+(u.stk||0)+' 层':''}</b>：${S.d}</div>`:'')+
   (u&&u.rise?`<div class="sk stkBox"><b>🌟 出道 · ${u.rise} 层</b>：开局攻击 +${u.rise*2}%</div>`:'')+
-  (u&&u.items.length?`<div class="sk"><b>🍹 喝了</b>：${u.items.map(k=>`${CK[k].i}${CK[k].n}（${CK[k].d}）`).join('<br>')}</div>`:'')+
+  (u&&u.items.length?`<div class="sk"><b>🍹 喝了</b>${u.items.map((k,j)=>`<div class="drRow"><span>${CK[k].i}${CK[k].n}（${CK[k].d}）</span>${loc&&G.phase==='plan'?`<button class="btn mini" data-um="${j}" title="花 ${UNMIX} 金">${CK[k].sp?'拆开':'取下'} ${UNMIX}💰</button>`:''}</div>`).join('')}</div>`:'')+
   (u&&u.tr?`<div class="sk stkBox"><b>💪 特训 · ${u.tr} 级</b>：生命和攻击 +${u.tr*5}%</div>`:'')+
-  (loc&&G.phase==='plan'&&u&&u.star>=3?((u.tr||0)<TR_MAX?`<button class="btn" id="bTrain" style="width:100%;margin-top:10px">💪 特训 +5% 生命/攻击（${trCost(u)} 金）</button>`:`<div class="help" style="margin-top:8px">💪 特训已满 ${TR_MAX} 级</div>`):loc&&G.phase==='plan'?`<div class="help" style="margin-top:8px">升到 ★★★ 后可以花金币特训。</div>`:'')+
+  (loc&&G.phase==='plan'&&u&&u.star>=4?((u.tr||0)<TR_MAX?`<button class="btn" id="bTrain" style="width:100%;margin-top:10px">💪 特训 +5% 生命/攻击（${trCost(u)} 金）</button>`:`<div class="help" style="margin-top:8px">💪 特训已满 ${TR_MAX} 级</div>`):loc&&G.phase==='plan'?`<div class="help" style="margin-top:8px">${u&&u.star===3?'再凑两个 ★★★ 合成 ★★★★，之后可以花金币特训。':'三个 ★★★ 合成 ★★★★ 后可以花金币特训。'}</div>`:'')+
   (loc&&G.phase==='plan'?`<button class="btn" id="bSell" style="width:100%;margin-top:10px">出售 +${sellPrice(getAt(loc))} 💰</button>`:'');
-  const b=$('#bSell');if(b)b.onclick=()=>sell(loc);const bt=$('#bTrain');if(bt){bt.disabled=G.gold<trCost(u);bt.onclick=()=>train(loc)}
+  const b=$('#bSell');if(b)b.onclick=()=>sell(loc);box.querySelectorAll('[data-um]').forEach(x=>x.onclick=()=>unmix(loc,+x.dataset.um));const bt=$('#bTrain');if(bt){bt.disabled=G.gold<trCost(u);bt.onclick=()=>train(loc)}
 }
 
 /* ---------- drag / click ---------- */
@@ -1264,8 +1333,11 @@ function onUp(e){
   window.removeEventListener('pointermove',onMove);window.removeEventListener('pointercancel',onCancel);
   const d=drag;drag=null;document.body.classList.remove('dragging','drinking');if(!d)return;shopEl.classList.remove('sellzone');d.hl&&d.hl.classList.remove('hl');const P=dropPt(e,d);
   if(d.item!=null){
-    if(d.moved){d.ghost.remove();const t=document.elementFromPoint(P.x,P.y)?.closest('[data-drop]');const l=t&&locOf(t);
-      if(l&&getAt(l))equip(d.item,l);else{G.selItem=null;render()}}
+    if(d.moved){d.ghost.remove();const t=document.elementFromPoint(P.x,P.y)?.closest('[data-drop]');
+      if(t&&t.dataset.drop==='drink'){if(!barMix(d.item,+t.dataset.ii))render();return}
+      if(t&&t.dataset.drop==='sell'){sellDrink(d.item);return}
+      const l=t&&locOf(t);if(l&&getAt(l))equip(d.item,l);else{G.selItem=null;render()}}
+    else if(G.selItem!=null&&G.selItem!==d.item&&mates(G.selItem).includes(d.item))barMix(G.selItem,d.item);
     else{G.selItem=G.selItem===d.item?null:d.item;G.sel=null;G.peek=null;render()}
     return}
   if(d.moved){
@@ -1364,7 +1436,7 @@ function shoot(a,b,cls=''){
 function stunF(t,d){if(t.dead)return;if(t.cci>0){t.cci=0;floatT(t,'免疫','miss');return}t.stun=Math.max(t.stun,d)}
 function dmg(src,t,amt,magic,cls='',opt={}){
   if(!t||t.dead)return 0;
-  let d=amt;
+  let d=amt;{const o=otStart();if(B.t>o)d*=1+.4*(B.t-o)}
   if(src&&B.murder[src.side]===t)d*=1+B.murderAmp[src.side];
   if(!magic){const a=t.armor;d*=a>=0?100/(100+a):2-100/(100-a)}
   if(opt.basic&&t.key==='zhu'&&src&&src.range<=1)d*=.5;
@@ -1407,7 +1479,7 @@ function die(t){
     if(tj>=2){const nx=alive(s).reduce((a,o)=>!a||atkOf(o)>atkOf(a)?o:a,null);if(nx){B.murder[ms]=nx;B.banner(`🔪 新凶手：${U[nx.key].n}`);FX.glyph(headPt(nx,2.1),'🔪','#ff3355',800,30)}}
   }
 }
-function heal(f,a,quiet){if(f.dead)return;f.hp=Math.min(f.maxhp,f.hp+a);if(!quiet&&a>=1){floatT(f,'+'+fmt(a),'heal');if(f.el)FX.burst(feet(f),['#7dffa0','#d8ffe0'],8,30,3,700,-1,'dot')}}
+function heal(f,a,quiet){if(f.dead)return;if(B){const o=otStart();if(B.t>o)a*=Math.max(0,1-.08*(B.t-o))}f.hp=Math.min(f.maxhp,f.hp+a);if(!quiet&&a>=1){floatT(f,'+'+fmt(a),'heal');if(f.el)FX.burst(feet(f),['#7dffa0','#d8ffe0'],8,30,3,700,-1,'dot')}}
 function jumpNear(f,t){
   for(const[dx,dy]of[[0,1],[0,-1],[1,0],[-1,0],[1,1],[-1,1],[1,-1],[-1,-1]]){const nx=t.x+dx,ny=t.y+dy;
     if(nx>=0&&nx<8&&ny>=0&&ny<8&&!occupied(nx,ny)){f.x=nx;f.y=ny;return true}}
@@ -1557,6 +1629,7 @@ function tick(dt){
       }
     }else if(f.movecd<=0&&f.root<=0){step(f,t);f.movecd=.45}
   }
+  if(!B.ot&&B.t>otStart()){B.ot=1;if(!SIM){B.banner('⏱️ 加时赛！伤害越来越高，治疗越来越弱');document.body.classList.add('overtime')}}
   return alive('player').length&&alive('enemy').length&&B.t<=45;
 }
 function draw(){
@@ -1585,7 +1658,7 @@ function camera(force){return;/* 用户要求：战斗时始终看到整个棋�
 function camReset(){const w=$('#boardWrap');['--cz','--cx','--cy'].forEach(v=>w.style.removeProperty(v));document.body.classList.remove('finale')}
 function finale(){const t=B.lastDead;if(!t||SIM||!t.el)return 0;const w=$('#boardWrap'),p=proj(t.x+.5,t.y+.3),C=proj(4,4),mob=isMob(),z=mob?1.16:1.32,lim=VIEW.c*(mob?1:2.4);
   document.body.classList.add('finale');
-  const bd=$('#board'),kx=p.x+'px',ky=p.y+'px',win=t.side==='enemy';
+  const bd=$('#board'),kx=p.x+'px',ky=p.y+'px',win=judge();
   const fl=document.createElement('div');fl.className='koFlash';fl.style.setProperty('--kx',kx);fl.style.setProperty('--ky',ky);bd.appendChild(fl);setTimeout(()=>fl.remove(),700);
   const tx=document.createElement('div');tx.className='koTxt'+(win?'':' lose');tx.textContent=win?'K.O.!':'惜败…';tx.style.setProperty('--kx',kx);tx.style.setProperty('--ky',ky);bd.appendChild(tx);setTimeout(()=>tx.remove(),1000);
   const P=chest(t);FX.burst(P,win?['#ffd36e','#ff4fb8','#fff']:['#5a7dff','#bfe0ff'],40,140,5,1100,0,'star');FX.ring(feet(t),win?'#ffd36e':'#5a7dff',8,140*P.s,800,7);FX.ring(feet(t),'#fff',4,90*P.s,500,4);
@@ -1646,7 +1719,7 @@ function bossIntro(){
 }
 function endBattle(){
   clearInterval(B.timer);clearTimeout(B.bh);document.body.classList.remove('battling');camReset();showMvp();
-  const surv=alive('enemy'),win=alive('player').length>0&&!surv.length,bn=$('#banner'),T=B.tiers.player,msgs=[];
+  document.body.classList.remove('overtime');const surv=alive('enemy'),win=judge(),bn=$('#banner'),T=B.tiers.player,msgs=[];
   if(win){G.streak=Math.max(1,G.streak+1);bn.textContent='🏆 胜利！';G.gold+=1+(hasHex('tip')?2:0);splash('胜利','#ffc85a');alive('player').forEach((f,i)=>{f.el.classList.remove('flip');setTimeout(()=>f.el.classList.add('cheer'),i*80)});alive('player').forEach(f=>FX.burst(chest(f),['#ffd36e','#ff6fc8','#7fe7ff'],16,90,4,1100,1,'rect'))}
   else{G.streak=Math.min(-1,G.streak-1);const d=lossDmg(G.round,surv,G.enemy.boss);
     G.hp=Math.max(0,G.hp-d);bn.textContent=`💥 失败，-${d} 生命`;splash('失败','#5a7dff')}
@@ -1725,8 +1798,8 @@ let _rz=0;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout
 function fitPhone(){const r=document.documentElement;r.style.removeProperty('--cardImg');if(!isMob())return;requestAnimationFrame(()=>{const f=document.querySelector('footer'),m=document.querySelector('#itembar');const gap=f.getBoundingClientRect().top-m.getBoundingClientRect().bottom-parseFloat(getComputedStyle(m).marginBottom||0);const base=Math.min(74,innerHeight*.1),over=document.documentElement.scrollHeight-innerHeight;if(over>0)r.style.setProperty('--cardImg',Math.round(Math.max(46,base-over-2))+'px');else if(gap>6)r.style.setProperty('--cardImg',Math.round(Math.min(118,base+gap-6))+'px')})}
 addEventListener('resize',()=>{clearTimeout(fitPhone.t);fitPhone.t=setTimeout(fitPhone,150)});
 layoutBoard();{const sv=loadSave();if(sv)resumeGame(sv);else{newGame(true);pickDiff()}}renderPlayerBtn();cloudPull();setTimeout(fitPhone,60);$('#bPlayer').onclick=openPlayer;
-$('#bNew').onclick=()=>{if(G.phase==='battle')return toast('战斗中不能重开');if(confirm('放弃当前进度，重新开始？'))newGame()};
-if(/[?&]debug/.test(location.search))window.__AC={set SIM(v){SIM=v},get SIM(){return SIM},DIFF,lossDmg,BOSS,U,CK,BASES,SPECIALS,RECIPE,HEX,STK,traitCounts,tier,get G(){return G},get B(){return B},startBattle,tick,alive,genEnemy,offerHex,pickHex,equip,giveItem,addItem,tryMerge,render,mk,endBattle};
+$('#bNew').onclick=()=>{if(G.phase==='battle')return toast('战斗中不能重开');askConfirm('放弃当前进度，重新开始？<br><small style="font-size:14px;color:var(--mute)">手动存档不受影响</small>',()=>newGame())};$('#bSlots').onclick=openSlots;
+if(/[?&]debug/.test(location.search))window.__AC={set SIM(v){SIM=v},get SIM(){return SIM},DIFF,lossDmg,judge,barMix,sellDrink,unmix,openSlots,snapshot,BOSS,U,CK,BASES,SPECIALS,RECIPE,HEX,STK,traitCounts,tier,get G(){return G},get B(){return B},startBattle,tick,alive,genEnemy,offerHex,pickHex,equip,giveItem,addItem,tryMerge,render,mk,endBattle};
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{layoutBoard();if(!B)render()});
 
 }

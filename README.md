@@ -7,9 +7,10 @@ Space Karaoke Bar & Cafe（德州 Plano）网站上的网页小游戏。全部�
 | 游戏 | 文件 | 简介 |
 |---|---|---|
 | 游戏大厅 | `game.html` | 所有游戏的入口和人物图鉴 |
-| 兄弟自走棋 | `autochess.html` | 2.5D 自走棋：鸡尾酒道具、海克斯、7 个首领、三档难度 |
+| 兄弟自走棋 | `autochess.html` | 2.5D 自走棋：鸡尾酒道具、海克斯、7 个首领、三档难度、四星、存档槽 |
 | Space 谜案 | `whodunit.html` | 推理数独，按线索排出谁是凶手 |
 | Space 夜调 | `bartender.html` | 视觉小说 + 酒桌卡牌对决 |
+| 剧本杀·集卡闯关 | `jbs-game.html` | 收集剧本杀角色卡、3×3 布阵闯关（需要邀请码） |
 | SPACE 保卫战 | `fps.html` | 第一人称射击，守住店面 |
 | Space Mic Flapper | `ktvgame.html` | 点按飞行小游戏 |
 
