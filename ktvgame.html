@@ -1,0 +1,463 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>Space Mic Flapper</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#00000f;display:flex;flex-direction:column;align-items:center;
+     justify-content:center;min-height:100vh;font-family:'Courier New',monospace;
+     color:#fff;user-select:none;overflow:hidden}
+#topBar{width:480px;display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.lbl{font-size:11px;color:#8899bb;white-space:nowrap}
+.trk{flex:1;height:8px;background:#001133;border:1px solid #1a3a6a;border-radius:4px;overflow:hidden}
+#vf{height:100%;width:0%;background:linear-gradient(to right,#00ff88,#ffee00,#ff3300);border-radius:4px}
+.pt{width:70px;height:8px;background:#001133;border:1px solid #3a1a6a;border-radius:4px;overflow:hidden}
+#pf{height:100%;width:0%;background:linear-gradient(to right,#4466ff,#ff44ff);border-radius:4px}
+#msg{font-size:10px;color:#556;text-align:center;margin-bottom:3px}
+canvas{display:block;cursor:pointer}
+#ft{font-size:10px;color:#334;margin-top:4px;letter-spacing:1px}
+#err{font-size:11px;color:#f44;text-align:center;margin-top:3px;min-height:14px}
+</style>
+</head>
+<body>
+<a href="game.html" style="position:fixed;top:12px;left:12px;z-index:10;color:#8899bb;text-decoration:none;font-size:12px;padding:5px 12px;border:1px solid #1a3a6a;border-radius:999px;background:rgba(0,0,15,.7)">← 游戏大厅 Games</a>
+<div id="msg">Requesting microphone... | 请求麦克风权限...</div>
+<div id="topBar">
+  <span class="lbl">VOL</span><div class="trk"><div id="vf"></div></div>
+  <span class="lbl">PITCH</span><div class="pt"><div id="pf"></div></div>
+</div>
+<canvas id="c" width="480" height="600"></canvas>
+<div id="ft">高音飞更高 HIGH PITCH=FLY HIGHER | 点击/空格 CLICK/SPACE=BACKUP</div>
+<div id="err"></div>
+<script>
+// Global error display so we can see crashes
+window.onerror = function(msg,src,line){
+  document.getElementById('err').textContent = 'JS ERR L'+line+': '+msg;
+};
+
+var canvas = document.getElementById('c');
+var ctx    = canvas.getContext('2d');
+var W = 480, H = 600;
+
+// ── Mic ──────────────────────────────────────────────────────────────────────
+var analyser = null;
+var micVol = 0, micPitch = 0;
+
+function initMic() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    document.getElementById('msg').textContent = 'No mic API — click/space to play';
+    return;
+  }
+  navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(function(stream){
+    var ac = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = ac.createAnalyser();
+    analyser.fftSize = 512;
+    analyser.smoothingTimeConstant = 0.65;
+    ac.createMediaStreamSource(stream).connect(analyser);
+    document.getElementById('msg').textContent = '🎤 说话/唱歌控制飞行 — 高音飞更高';
+    document.getElementById('msg').style.color = '#0f9';
+  }).catch(function(e){
+    document.getElementById('msg').textContent = '❌ 无麦克风 — 点击屏幕代替';
+    document.getElementById('msg').style.color = '#f55';
+  });
+}
+
+var fbuf = null;
+function readMic() {
+  if (!analyser) { micVol = 0; micPitch = 0; return; }
+  if (!fbuf) fbuf = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(fbuf);
+  var tot=0, ws=0, wt=0;
+  for (var i=0;i<fbuf.length;i++) { tot+=fbuf[i]; ws+=i*fbuf[i]; wt+=fbuf[i]; }
+  micVol   = Math.min(tot/fbuf.length/45, 1);
+  micPitch = wt>0 ? Math.min(ws/wt/60, 1) : 0;
+  document.getElementById('vf').style.width = (micVol*100).toFixed(1)+'%';
+  document.getElementById('pf').style.width = (micPitch*100).toFixed(1)+'%';
+}
+
+// ── Rounded rect helper (no roundRect API needed) ─────────────────────────────
+function rr(x,y,w,h,r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);   ctx.arcTo(x+w, y,   x+w, y+r,   r);
+  ctx.lineTo(x+w, y+h-r); ctx.arcTo(x+w, y+h, x+w-r, y+h, r);
+  ctx.lineTo(x+r, y+h);   ctx.arcTo(x,   y+h, x,   y+h-r, r);
+  ctx.lineTo(x,   y+r);   ctx.arcTo(x,   y,   x+r, y,      r);
+  ctx.closePath();
+}
+
+// ── Difficulty ────────────────────────────────────────────────────────────────
+var score=0, best=0, frame=0;
+
+function getDiff() {
+  var t1 = Math.min(score/15, 1);
+  var t2 = Math.min(Math.max((score-20)/10, 0), 1);
+  return {
+    gravity:  0.16 + t1*0.18 + t2*0.20,
+    gap:      Math.max(Math.round(270 - t1*150 - t2*80), 55),
+    speed:    2.8  + t1*4.7  + t2*6.0,
+    interval: Math.max(Math.round(140 - t1*65  - t2*45), 40)
+  };
+}
+
+function diffLabel() {
+  if (score<=4)  return {text:'NORMAL',    color:'#88ff00'};
+  if (score<=9)  return {text:'HARD',      color:'#ffdd00'};
+  if (score<=14) return {text:'VERY HARD', color:'#ff8800'};
+  if (score<=20) return {text:'EXTREME',   color:'#ff3300'};
+  if (score<=25) return {text:'INSANE',    color:'#ff0055'};
+  return               {text:'GODLIKE',   color:'#cc00ff'};
+}
+
+// ── State ─────────────────────────────────────────────────────────────────────
+var PW = 65;
+var state='start', pipes=[], clickBounce=false, deadCool=0, noiseTick=0;
+var pl = {x:95, y:H/2, vy:0, rot:0};
+
+function resetGame() {
+  pl={x:95,y:H/2,vy:0,rot:0};
+  pipes=[]; score=0; frame=0; noiseTick=0; state='play';
+}
+
+function spawnPipe() {
+  var d=getDiff(), m=95;
+  var topH = m + Math.random()*(H - m*2 - d.gap);
+  pipes.push({x:W+12, topH:topH, gap:d.gap, passed:false});
+}
+
+// ── Stars ─────────────────────────────────────────────────────────────────────
+var stars = [];
+for (var i=0;i<200;i++) {
+  stars.push({
+    x:Math.random()*W, y:Math.random()*H,
+    r:Math.random()*1.6+0.2,
+    spd:Math.random()*0.5+0.08,
+    ph:Math.random()*6.28,
+    tr:Math.random()*0.06+0.02
+  });
+}
+
+function drawBG() {
+  ctx.fillStyle='#00000f';
+  ctx.fillRect(0,0,W,H);
+  // Simple nebula blobs
+  var nbs=[{x:80,y:150,r:120,a:'rgba(0,20,80,0.18)'},{x:380,y:420,r:100,a:'rgba(50,0,70,0.18)'}];
+  for (var n=0;n<nbs.length;n++) {
+    var nb=nbs[n];
+    var g=ctx.createRadialGradient(nb.x,nb.y,0,nb.x,nb.y,nb.r);
+    g.addColorStop(0,nb.a); g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g;
+    ctx.beginPath(); ctx.arc(nb.x,nb.y,nb.r,0,Math.PI*2); ctx.fill();
+  }
+  // Stars
+  for (var s=0;s<stars.length;s++) {
+    var st=stars[s];
+    var tw=0.5+0.5*Math.sin(frame*st.tr+st.ph);
+    ctx.globalAlpha=tw*0.9+0.1;
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(st.x,st.y,st.r,0,Math.PI*2); ctx.fill();
+    st.x-=st.spd; if(st.x<0){st.x=W;st.y=Math.random()*H;}
+  }
+  ctx.globalAlpha=1;
+}
+
+// ── Pipes ─────────────────────────────────────────────────────────────────────
+function drawBarrier(x,y,w,h,isTop) {
+  if(h<=0) return;
+  ctx.fillStyle='#0d0d35';
+  ctx.fillRect(x,y,w,h);
+  // Glow strips
+  for(var i=0;i<3;i++){
+    var lx=x+14+i*16;
+    var sg=ctx.createLinearGradient(0,y,0,y+h);
+    sg.addColorStop(0,'rgba(40,40,200,0)');
+    sg.addColorStop(0.5,'rgba(60,60,220,0.3)');
+    sg.addColorStop(1,'rgba(40,40,200,0)');
+    ctx.fillStyle=sg; ctx.fillRect(lx,y,3,h);
+  }
+  // Danger edge
+  var ey=isTop?y+h:y;
+  ctx.save(); ctx.shadowColor='#00eeff'; ctx.shadowBlur=16;
+  ctx.fillStyle='#00ddff'; ctx.fillRect(x-2,ey-2,w+4,4);
+  ctx.restore();
+  ctx.strokeStyle='#1a1a55'; ctx.lineWidth=1.5; ctx.strokeRect(x,y,w,h);
+}
+
+function drawAllPipes() {
+  for(var i=0;i<pipes.length;i++){
+    var p=pipes[i];
+    drawBarrier(p.x,0,PW,p.topH,true);
+    drawBarrier(p.x,p.topH+p.gap,PW,H-p.topH-p.gap,false);
+  }
+}
+
+// ── Astronaut ─────────────────────────────────────────────────────────────────
+function drawAstronaut(px,py,rot,vol,pitch,dead) {
+  ctx.save();
+  ctx.translate(px,py);
+  ctx.rotate(rot);
+
+  // Jetpack flame
+  if(vol>0.08 && !dead){
+    var thr=(vol-0.08)/0.92*(0.4+pitch*0.6);
+    ctx.save(); ctx.shadowColor='#ff7700'; ctx.shadowBlur=24;
+    for(var fi=-1;fi<=1;fi++){
+      var fh=10+thr*32+Math.random()*8;
+      var fg=ctx.createLinearGradient(0,22,0,22+fh);
+      fg.addColorStop(0,'rgba(255,200,0,0.9)');
+      fg.addColorStop(0.5,'rgba(255,80,0,0.7)');
+      fg.addColorStop(1,'rgba(255,0,0,0)');
+      ctx.fillStyle=fg;
+      ctx.beginPath(); ctx.ellipse(fi*7-12,24,4,fh/2,0,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  // Jetpack unit
+  ctx.fillStyle='#556677'; ctx.fillRect(-22,-14,10,24);
+  ctx.fillStyle='#778899'; ctx.fillRect(-21,-12,8,10);
+  ctx.fillStyle='#334'; ctx.fillRect(-21,9,4,4); ctx.fillRect(-14,9,4,4);
+
+  // Suit body
+  var sg=ctx.createRadialGradient(-1,3,2,1,3,16);
+  sg.addColorStop(0,'#efefff'); sg.addColorStop(1,'#aaaabb');
+  ctx.fillStyle=sg;
+  ctx.beginPath(); ctx.ellipse(1,6,13,17,0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#8888aa'; ctx.lineWidth=1; ctx.stroke();
+
+  // Chest detail
+  ctx.fillStyle='#6070a0'; ctx.fillRect(-5,0,10,8);
+  ctx.fillStyle=dead?'#ff2200':'#00ff88';
+  ctx.beginPath(); ctx.arc(-2,4,2,0,Math.PI*2); ctx.fill();
+
+  // Helmet
+  var hg=ctx.createRadialGradient(-4,-21,1,0,-19,14);
+  hg.addColorStop(0,'#fff'); hg.addColorStop(0.5,'#ddeeff'); hg.addColorStop(1,'#8898bb');
+  ctx.fillStyle=hg; ctx.beginPath(); ctx.arc(0,-19,14,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#7788aa'; ctx.lineWidth=1; ctx.stroke();
+
+  // Visor
+  ctx.fillStyle=dead?'#330000':'#001166';
+  ctx.beginPath(); ctx.ellipse(0,-19,9,8,0,0,Math.PI*2); ctx.fill();
+  // Visor shine
+  ctx.fillStyle=dead?'rgba(200,0,0,0.2)':'rgba(80,130,255,0.35)';
+  ctx.beginPath(); ctx.ellipse(-2,-23,5,3,-0.3,0,Math.PI*2); ctx.fill();
+
+  // Left arm
+  ctx.lineCap='round'; ctx.lineWidth=7; ctx.strokeStyle='#ccccee';
+  ctx.beginPath(); ctx.moveTo(-11,0); ctx.lineTo(-16,12); ctx.stroke();
+
+  // Right arm holding mic
+  ctx.beginPath(); ctx.moveTo(11,0); ctx.lineTo(19,6); ctx.stroke();
+
+  // Mic handle
+  ctx.lineWidth=4; ctx.strokeStyle='#777788';
+  ctx.beginPath(); ctx.moveTo(19,6); ctx.lineTo(27,16); ctx.stroke();
+
+  // Mic capsule body
+  ctx.save();
+  ctx.translate(31,22); ctx.rotate(0.5);
+  // Outer shell
+  ctx.fillStyle='#d0d0d8';
+  rr(-5,-14,10,28,5); ctx.fill();
+  ctx.strokeStyle='#888898'; ctx.lineWidth=1; rr(-5,-14,10,28,5); ctx.stroke();
+  // Mesh head (top dark section)
+  ctx.fillStyle='#222233';
+  rr(-4,-13,8,16,4); ctx.fill();
+  // Mesh horizontal lines
+  ctx.strokeStyle='#44445588'; ctx.lineWidth=0.8;
+  for(var my=-11;my<3;my+=3){
+    ctx.beginPath(); ctx.moveTo(-4,my); ctx.lineTo(4,my); ctx.stroke();
+  }
+  // Mesh vertical line
+  ctx.beginPath(); ctx.moveTo(0,-13); ctx.lineTo(0,3); ctx.stroke();
+  // Red brand stripe
+  ctx.fillStyle='#ee2244'; ctx.fillRect(-4,4,8,3);
+  // Grip ridges
+  ctx.strokeStyle='#aaaaaa'; ctx.lineWidth=1;
+  for(var gy=9;gy<14;gy+=2.5){
+    ctx.beginPath(); ctx.moveTo(-4,gy); ctx.lineTo(4,gy); ctx.stroke();
+  }
+  ctx.restore();
+
+  // Sound waves from mic
+  if(vol>0.12 && !dead){
+    var wa=Math.min((vol-0.12)*2.5,0.9);
+    ctx.save(); ctx.shadowColor='#00ffcc'; ctx.shadowBlur=8;
+    for(var wi=1;wi<=3;wi++){
+      ctx.strokeStyle='rgba(0,255,200,'+(wa/wi)+')'; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.arc(33,18,10+wi*9,-1.1,0.3); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  // Legs
+  ctx.strokeStyle='#b0b0cc'; ctx.lineWidth=7;
+  ctx.beginPath(); ctx.moveTo(-4,21); ctx.lineTo(-7,33); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(4,21);  ctx.lineTo(7,33);  ctx.stroke();
+  // Boots
+  ctx.fillStyle='#3a4a5a';
+  ctx.beginPath(); ctx.ellipse(-7,35,8,4,0.1,0,Math.PI*2);  ctx.fill();
+  ctx.beginPath(); ctx.ellipse(7,35, 8,4,-0.1,0,Math.PI*2); ctx.fill();
+
+  ctx.restore();
+}
+
+// ── HUD ───────────────────────────────────────────────────────────────────────
+function drawHUD() {
+  ctx.save(); ctx.textAlign='center';
+  ctx.shadowColor='#00ffff'; ctx.shadowBlur=12;
+  ctx.fillStyle='#fff'; ctx.font='bold 40px "Courier New"';
+  ctx.fillText(score, W/2, 52);
+  ctx.font='12px "Courier New"'; ctx.fillStyle='#6677cc'; ctx.shadowBlur=4;
+  ctx.fillText('BEST '+best, W/2, 68);
+  var dl=diffLabel();
+  ctx.shadowColor=dl.color; ctx.shadowBlur=8;
+  ctx.fillStyle=dl.color; ctx.font='bold 11px "Courier New"';
+  ctx.fillText(dl.text, W/2, 84);
+  ctx.shadowBlur=0; ctx.restore();
+}
+
+function drawDiffBar() {
+  var t=Math.min(score/32,1);
+  var bw=W-20;
+  ctx.fillStyle='#0a0a22'; ctx.fillRect(10,H-13,bw,5);
+  var g=ctx.createLinearGradient(10,0,10+bw,0);
+  g.addColorStop(0,'#00ff88'); g.addColorStop(0.4,'#ffdd00');
+  g.addColorStop(0.7,'#ff6600'); g.addColorStop(1,'#ff0055');
+  ctx.fillStyle=g; ctx.fillRect(10,H-13,bw*t,5);
+  ctx.strokeStyle='#1a1a33'; ctx.lineWidth=1; ctx.strokeRect(10,H-13,bw,5);
+}
+
+// ── Start / Dead screens ──────────────────────────────────────────────────────
+function drawStart() {
+  ctx.fillStyle='rgba(0,0,12,0.72)'; ctx.fillRect(0,0,W,H);
+  ctx.save(); ctx.textAlign='center';
+  ctx.shadowColor='#00aaff'; ctx.shadowBlur=25;
+  ctx.fillStyle='#00ccff'; ctx.font='bold 25px "Courier New"';
+  ctx.fillText('SPACE  MIC  FLAPPER', W/2, H/2-105);
+  ctx.shadowBlur=5; ctx.fillStyle='#bbd8ff'; ctx.font='14px "Courier New"';
+  ctx.fillText('说话 / 唱歌 来控制宇航员飞行', W/2, H/2-58);
+  ctx.fillText('高音 = 飞更高   低音 = 飞更低', W/2, H/2-32);
+  ctx.fillText('Speak or sing — pitch controls height', W/2, H/2-6);
+  if(Math.floor(frame/28)%2===0){
+    ctx.shadowColor='#ffff00'; ctx.shadowBlur=16;
+    ctx.fillStyle='#ffff00'; ctx.font='bold 15px "Courier New"';
+    ctx.fillText('[ MAKE NOISE  OR  CLICK  TO  START ]', W/2, H/2+48);
+  }
+  ctx.restore();
+}
+
+function drawDead() {
+  ctx.fillStyle='rgba(0,0,12,0.75)'; ctx.fillRect(0,0,W,H);
+  ctx.save(); ctx.textAlign='center';
+  ctx.shadowColor='#ff2200'; ctx.shadowBlur=30;
+  ctx.fillStyle='#ff4444'; ctx.font='bold 30px "Courier New"';
+  ctx.fillText('MISSION  FAILED', W/2, H/2-75);
+  ctx.shadowBlur=5; ctx.fillStyle='#fff';
+  ctx.font='22px "Courier New"'; ctx.fillText('Score : '+score, W/2, H/2-22);
+  ctx.fillStyle='#8899ff'; ctx.font='15px "Courier New"';
+  ctx.fillText('Best  : '+best, W/2, H/2+4);
+  var msg='';
+  if(score>=26)      msg='GODLIKE — BEYOND HUMAN';
+  else if(score>=21) msg='INSANE CLEARED! Incredible!';
+  else if(score>=15) msg='EXTREME zone! Legendary!';
+  else if(score>=10) msg='Past 10 — impressive!';
+  if(msg){
+    ctx.shadowColor='#ffff00'; ctx.shadowBlur=14;
+    ctx.fillStyle='#ffdd44'; ctx.font='13px "Courier New"';
+    ctx.fillText(msg, W/2, H/2+32);
+  }
+  ctx.shadowBlur=0;
+  if(deadCool<=0 && Math.floor(frame/28)%2===0){
+    ctx.fillStyle='#556688'; ctx.font='13px "Courier New"';
+    ctx.fillText('Make noise or click to retry', W/2, H/2+72);
+  }
+  ctx.restore();
+}
+
+// ── Collision ─────────────────────────────────────────────────────────────────
+function collides() {
+  var pr=13;
+  if(pl.y-pr<0 || pl.y+pr>H) return true;
+  for(var i=0;i<pipes.length;i++){
+    var p=pipes[i];
+    if(pl.x+pr>p.x+4 && pl.x-pr<p.x+PW-4)
+      if(pl.y-pr<p.topH || pl.y+pr>p.topH+p.gap) return true;
+  }
+  return false;
+}
+
+// ── Main loop ─────────────────────────────────────────────────────────────────
+function loop() {
+  frame++;
+  readMic();
+  drawBG();
+
+  if(state==='start'){
+    pl.y = H/2 + Math.sin(frame*0.03)*22;
+    drawAstronaut(pl.x, pl.y, Math.sin(frame*0.018)*0.08, micVol, micPitch, false);
+    drawStart();
+    if(micVol>0.14){noiseTick++;if(noiseTick>=4)resetGame();}else noiseTick=0;
+
+  }else if(state==='play'){
+    var d=getDiff();
+    pl.vy*=0.92;
+    pl.vy+=d.gravity;
+    if(micVol>0.04){
+      var pm=0.45+micPitch*1.1;
+      pl.vy-=(micVol-0.04)*pm*0.80;
+    }
+    if(clickBounce){pl.vy=-7.5;clickBounce=false;}
+    if(pl.vy<-10)pl.vy=-10; if(pl.vy>11)pl.vy=11;
+    pl.y+=pl.vy;
+    pl.rot=pl.vy*0.07; if(pl.rot<-0.45)pl.rot=-0.45; if(pl.rot>0.72)pl.rot=0.72;
+    if(frame%d.interval===0) spawnPipe();
+    for(var i=0;i<pipes.length;i++){
+      pipes[i].x-=d.speed;
+      if(!pipes[i].passed && pipes[i].x+PW<pl.x){
+        pipes[i].passed=true; score++; best=Math.max(score,best);
+      }
+    }
+    var tmp=[];
+    for(var i=0;i<pipes.length;i++) if(pipes[i].x>-PW-20) tmp.push(pipes[i]);
+    pipes=tmp;
+    drawAllPipes();
+    drawAstronaut(pl.x,pl.y,pl.rot,micVol,micPitch,false);
+    drawHUD(); drawDiffBar();
+    if(collides()){state='dead';deadCool=72;}
+
+  }else{
+    drawAllPipes();
+    drawAstronaut(pl.x,pl.y,Math.PI*0.4,0,0,true);
+    drawHUD(); drawDiffBar(); drawDead();
+    if(deadCool>0){deadCool--;}
+    else{
+      if(micVol>0.14){noiseTick++;if(noiseTick>=4)resetGame();}else noiseTick=0;
+    }
+  }
+  requestAnimationFrame(loop);
+}
+
+// ── Input ─────────────────────────────────────────────────────────────────────
+canvas.addEventListener('click',function(){
+  if(state==='start')resetGame();
+  else if(state==='play')clickBounce=true;
+  else if(state==='dead'&&deadCool<=0)resetGame();
+});
+document.addEventListener('keydown',function(e){
+  if(e.code==='Space'||e.code==='ArrowUp'){
+    e.preventDefault();
+    if(state==='start')resetGame();
+    else if(state==='play')clickBounce=true;
+    else if(state==='dead'&&deadCool<=0)resetGame();
+  }
+});
+
+initMic();
+loop();
+</script>
+</body>
+</html>
+

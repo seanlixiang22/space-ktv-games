@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1a0d2e"/><stop offset=".6" stop-color="#2a1240"/><stop offset="1" stop-color="#12081f"/>
+    </linearGradient>
+    <radialGradient id="amber" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffcf7a" stop-opacity=".55"/><stop offset="1" stop-color="#ffcf7a" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pinkglow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ff4fb8" stop-opacity=".45"/><stop offset="1" stop-color="#ff4fb8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="cyanglow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#3ee0ff" stop-opacity=".35"/><stop offset="1" stop-color="#3ee0ff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="counter" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6b3a20"/><stop offset=".08" stop-color="#3a1d10"/><stop offset="1" stop-color="#1a0c06"/>
+    </linearGradient>
+    <linearGradient id="shelfglow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffb35c" stop-opacity=".0"/><stop offset="1" stop-color="#ffb35c" stop-opacity=".35"/>
+    </linearGradient>
+    <filter id="blur"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="neon"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <g id="bottle"><rect x="-9" y="-70" width="18" height="70" rx="5"/><rect x="-4" y="-92" width="8" height="24" rx="2"/></g>
+    <g id="bottleT"><rect x="-12" y="-56" width="24" height="56" rx="6"/><rect x="-4" y="-74" width="8" height="20" rx="2"/></g>
+  </defs>
+
+  <rect width="1600" height="900" fill="url(#wall)"/>
+  <!-- brick-ish texture -->
+  <g opacity=".06" stroke="#fff" stroke-width="1">
+    <path d="M0 120H1600M0 200H1600M0 280H1600M0 360H1600M0 440H1600M0 520H1600"/>
+  </g>
+  <!-- corridor to private rooms -->
+  <rect x="690" y="150" width="220" height="420" fill="#0c0618"/>
+  <rect x="740" y="210" width="120" height="300" fill="#2b0f3d" opacity=".9"/>
+  <rect x="790" y="250" width="22" height="22" rx="3" fill="#3ee0ff" opacity=".7" filter="url(#neon)"/>
+  <ellipse cx="800" cy="360" rx="230" ry="200" fill="url(#pinkglow)"/>
+
+  <!-- neon sign -->
+  <g filter="url(#neon)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <text x="800" y="118" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="78" font-weight="900" fill="none" stroke="#ff4fb8" stroke-width="4" letter-spacing="10">SPACE</text>
+    <path d="M610 140 Q800 168 990 140" stroke="#3ee0ff" stroke-width="4"/>
+    <g transform="translate(470 210)" stroke="#ffd166" stroke-width="4"><path d="M-30 -30 L30 -30 L0 10 Z"/><path d="M0 10 V40 M-16 40 H16"/><circle cx="16" cy="-38" r="6"/></g>
+    <g transform="translate(1130 210)" stroke="#a78bfa" stroke-width="4"><path d="M-18 -30 Q-18 10 0 14 Q18 10 18 -30 Z"/><path d="M0 14 V40 M-14 40 H14"/><path d="M-10 -40 L4 -24" /></g>
+  </g>
+
+  <!-- left back bar -->
+  <g>
+    <rect x="40" y="270" width="560" height="330" rx="8" fill="#140a22" stroke="#3b2560" stroke-width="3"/>
+    <rect x="40" y="385" width="560" height="10" fill="#5a3418"/><rect x="40" y="500" width="560" height="10" fill="#5a3418"/>
+    <rect x="40" y="300" width="560" height="85" fill="url(#shelfglow)"/><rect x="40" y="415" width="560" height="85" fill="url(#shelfglow)"/>
+    <g transform="translate(0 385)">
+      <use href="#bottle" x="80" fill="#7a3e16"/><use href="#bottleT" x="125" fill="#3ee0ff" opacity=".8"/><use href="#bottle" x="170" fill="#e3efff" opacity=".7"/>
+      <use href="#bottle" x="215" fill="#c8102e"/><use href="#bottleT" x="262" fill="#ffd166"/><use href="#bottle" x="310" fill="#4a2a16"/>
+      <use href="#bottle" x="355" fill="#ff6a13"/><use href="#bottleT" x="402" fill="#a78bfa"/><use href="#bottle" x="450" fill="#5cb85c"/>
+      <use href="#bottle" x="495" fill="#c8762c"/><use href="#bottleT" x="545" fill="#f472b6"/>
+    </g>
+    <g transform="translate(0 500)">
+      <use href="#bottleT" x="85" fill="#1e90ff"/><use href="#bottle" x="132" fill="#ffe7a0"/><use href="#bottle" x="178" fill="#8b2b1a"/>
+      <use href="#bottleT" x="226" fill="#f2c14e"/><use href="#bottle" x="275" fill="#2b1608"/><use href="#bottle" x="320" fill="#fff6e0" opacity=".7"/>
+      <use href="#bottleT" x="368" fill="#ffcba4"/><use href="#bottle" x="415" fill="#b5651d"/><use href="#bottle" x="460" fill="#c9a227"/>
+      <use href="#bottleT" x="508" fill="#ff4fb8"/><use href="#bottle" x="555" fill="#f3f6ff" opacity=".6"/>
+    </g>
+  </g>
+  <!-- right back bar -->
+  <g>
+    <rect x="1000" y="270" width="560" height="330" rx="8" fill="#140a22" stroke="#3b2560" stroke-width="3"/>
+    <rect x="1000" y="385" width="560" height="10" fill="#5a3418"/><rect x="1000" y="500" width="560" height="10" fill="#5a3418"/>
+    <rect x="1000" y="300" width="560" height="85" fill="url(#shelfglow)"/><rect x="1000" y="415" width="560" height="85" fill="url(#shelfglow)"/>
+    <g transform="translate(960 385)">
+      <use href="#bottleT" x="80" fill="#a78bfa"/><use href="#bottle" x="128" fill="#c8762c"/><use href="#bottle" x="174" fill="#3ee0ff" opacity=".8"/>
+      <use href="#bottleT" x="222" fill="#ffd166"/><use href="#bottle" x="270" fill="#e3efff" opacity=".7"/><use href="#bottle" x="316" fill="#d81b60"/>
+      <use href="#bottleT" x="364" fill="#5cb85c"/><use href="#bottle" x="412" fill="#7a3e16"/><use href="#bottle" x="458" fill="#ff6a13"/>
+      <use href="#bottleT" x="506" fill="#f472b6"/><use href="#bottle" x="554" fill="#4a2a16"/>
+    </g>
+    <g transform="translate(960 500)">
+      <use href="#bottle" x="82" fill="#f2c14e"/><use href="#bottleT" x="130" fill="#1e90ff"/><use href="#bottle" x="178" fill="#b5651d"/>
+      <use href="#bottle" x="224" fill="#ffcba4"/><use href="#bottleT" x="272" fill="#c8102e"/><use href="#bottle" x="320" fill="#fff6e0" opacity=".7"/>
+      <use href="#bottle" x="366" fill="#2b1608"/><use href="#bottleT" x="414" fill="#c9a227"/><use href="#bottle" x="462" fill="#8b2b1a"/>
+      <use href="#bottleT" x="510" fill="#3ee0ff"/><use href="#bottle" x="556" fill="#ffe7a0"/>
+    </g>
+  </g>
+
+  <!-- pendant lights -->
+  <g>
+    <path d="M420 0V150M800 0V120M1180 0V150" stroke="#2a1a3a" stroke-width="3"/>
+    <g fill="#ffcf7a"><path d="M395 150h50l-12 26h-26z"/><path d="M775 120h50l-12 26h-26z"/><path d="M1155 150h50l-12 26h-26z"/></g>
+    <ellipse cx="420" cy="200" rx="160" ry="110" fill="url(#amber)"/><ellipse cx="800" cy="170" rx="160" ry="100" fill="url(#amber)"/><ellipse cx="1180" cy="200" rx="160" ry="110" fill="url(#amber)"/>
+  </g>
+  <ellipse cx="200" cy="420" rx="260" ry="220" fill="url(#cyanglow)"/>
+  <ellipse cx="1420" cy="420" rx="260" ry="220" fill="url(#pinkglow)"/>
+
+  <!-- bar counter -->
+  <rect x="0" y="640" width="1600" height="260" fill="url(#counter)"/>
+  <rect x="0" y="632" width="1600" height="14" fill="#8a5230"/>
+  <rect x="0" y="646" width="1600" height="3" fill="#ffcf7a" opacity=".5"/>
+  <g opacity=".25" fill="#ffcf7a" filter="url(#blur)">
+    <ellipse cx="420" cy="660" rx="120" ry="8"/><ellipse cx="800" cy="660" rx="120" ry="8"/><ellipse cx="1180" cy="660" rx="120" ry="8"/>
+  </g>
+  <!-- bokeh -->
+  <g fill="#fff" opacity=".08">
+    <circle cx="140" cy="120" r="18"/><circle cx="300" cy="80" r="10"/><circle cx="1320" cy="90" r="16"/><circle cx="1480" cy="160" r="9"/><circle cx="620" cy="60" r="8"/><circle cx="980" cy="70" r="12"/>
+  </g>
+</svg>

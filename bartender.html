@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Space 夜调 · 调酒师</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#06040d;--surface:rgba(20,14,40,.85);--card:#1c1535;--purple:#8b5cf6;--pink:#ec4899;--cyan:#22d3ee;--gold:#fbbf24;--text:#ece6fa;--muted:#9a8cc0;--border:rgba(139,92,246,.28);--red:#f43f5e;--green:#10b981}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,'PingFang SC','Microsoft YaHei',sans-serif;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+[data-lang="en"]{display:none!important}
+body.en [data-lang="zh"]{display:none!important}
+body.en [data-lang="en"]{display:revert!important}
+.glow1,.glow2{position:fixed;width:60vmax;height:60vmax;border-radius:50%;filter:blur(90px);opacity:.2;z-index:0;pointer-events:none}
+.glow1{background:#f59e0b;top:-28vmax;left:-20vmax}
+.glow2{background:#ec4899;bottom:-30vmax;right:-20vmax}
+section{position:relative;z-index:1;display:none;max-width:1100px;margin:0 auto;padding:16px}
+section.show{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}}
+button{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px 14px;cursor:pointer;font-size:.88rem;transition:transform .12s,border-color .2s,background .2s}
+button:hover{border-color:var(--purple)}
+button:active{transform:scale(.95)}
+button.primary{background:linear-gradient(90deg,#f59e0b,var(--pink));border:none;color:#fff;font-weight:700;box-shadow:0 4px 20px rgba(245,158,11,.35)}
+button:disabled{opacity:.35;cursor:not-allowed}
+.ghost{background:transparent;color:var(--muted);border-radius:999px;font-size:.82rem;padding:6px 14px}
+.top{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.top .title{font-family:'ZCOOL QingKe HuangYou',sans-serif;font-size:1.35rem}
+.sndbtn{padding:6px 10px}
+.langsw{display:flex;gap:2px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:3px;margin-left:auto}
+.langsw button{border:none;background:none;border-radius:999px;padding:4px 11px;font-size:.78rem;color:var(--muted)}
+.langsw button.on{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff}
+.money{font-family:Orbitron,monospace;color:var(--gold);font-size:.95rem}
+.playerbtn{border-radius:999px;font-size:.82rem;padding:6px 14px;margin-left:auto;background:linear-gradient(135deg,rgba(245,158,11,.22),rgba(236,72,153,.2));border-color:rgba(236,72,153,.45);max-width:46vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* home */
+.hero{text-align:center;padding:30px 0 18px}
+.logo{font-family:'ZCOOL QingKe HuangYou',sans-serif;font-size:clamp(2.6rem,10vw,4.4rem);line-height:1.1;background:linear-gradient(90deg,#fbbf24,#f472b6,#a78bfa,#fbbf24);background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite;filter:drop-shadow(0 0 22px rgba(251,191,36,.35))}
+@keyframes shine{to{background-position:300%}}
+.logo-en{font-family:Orbitron,sans-serif;letter-spacing:6px;color:var(--muted);font-size:.78rem;margin-top:6px}
+.tag{margin-top:12px;color:var(--muted);font-size:.95rem;line-height:1.6}
+.menu{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.mcard{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:18px;cursor:pointer;transition:transform .2s,box-shadow .2s}
+.mcard:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(245,158,11,.22)}
+.mcard .ic{font-size:2rem}
+.mcard h3{margin:6px 0 4px;font-size:1.1rem}
+.mcard p{color:var(--muted);font-size:.85rem;line-height:1.6}
+.mcard .meta{margin-top:8px;font-size:.78rem;color:var(--gold)}
+.homefoot{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.nights{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:10px;margin-top:10px}
+.nights button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:12px 6px;border-radius:14px}
+.nights button b{font-family:Orbitron,sans-serif;font-size:1.1rem}
+.nights button small{color:var(--gold);letter-spacing:1px}
+
+/* mixing station */
+.gwrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:16px;align-items:start}
+@media(max-width:880px){.gwrap{grid-template-columns:1fr;gap:10px}}
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:14px}
+.customer{display:flex;gap:12px;align-items:flex-start}
+.face{width:72px;height:72px;border-radius:50%;flex:none;border:3px solid var(--pc);box-shadow:0 0 20px var(--pc);overflow:hidden;background:var(--pc);position:relative}
+.face img{width:100%;height:100%;object-fit:cover}
+.who{font-weight:800;font-size:1.02rem;color:var(--pc)}
+.who small{color:var(--muted);font-weight:400;font-size:.75rem;margin-left:6px}
+.bubble{position:relative;margin-top:6px;background:#fff;color:#1a1033;border-radius:14px;padding:9px 12px;font-size:.93rem;line-height:1.55}
+.bubble::before{content:'';position:absolute;left:-7px;top:12px;border:7px solid transparent;border-right-color:#fff;border-left:0}
+.recap{font-size:.82rem;color:#5b4b80;margin-top:4px;line-height:1.5;border-left:3px solid var(--gold);padding-left:8px}
+.patience{height:6px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden;margin-top:10px}
+.patience i{display:block;height:100%;background:linear-gradient(90deg,var(--green),#facc15,var(--red));background-size:300% 100%;transition:width .3s linear}
+.queue{display:flex;gap:5px;margin-top:8px;align-items:center;font-size:.74rem;color:var(--muted)}
+.queue span{width:24px;height:24px;border-radius:50%;overflow:hidden;border:2px solid rgba(255,255,255,.2)}
+.queue span img{width:100%;height:100%;object-fit:cover}
+.queue span.done{opacity:.25;filter:grayscale(1)}
+.bench{position:relative;margin-top:12px;border-radius:16px;padding:34px 10px 10px;overflow:hidden;background:linear-gradient(180deg,rgba(8,4,18,.35),rgba(8,4,18,.7)),url(bartender/bg.webp) center 38%/cover,#120a20;border:1px solid rgba(255,255,255,.08)}
+.bench::after{content:'';position:absolute;left:0;right:0;bottom:0;height:20%;background:linear-gradient(180deg,#16101f,#040208);border-top:2px solid #ff4fb8;box-shadow:0 -3px 18px rgba(255,79,184,.7);z-index:0}
+.stage{position:relative;z-index:1}
+.stage{display:flex;gap:12px;align-items:flex-end}
+.glassbox{width:190px;height:240px;flex:none;position:relative}
+.glassbox svg{width:100%;height:100%;overflow:visible}
+.glassbox.shake{animation:shaker .45s ease-in-out infinite}
+@keyframes shaker{25%{transform:translateY(-8px) rotate(-7deg)}75%{transform:translateY(-8px) rotate(7deg)}}
+.pourhud{position:absolute;right:8px;top:8px;background:rgba(6,4,13,.85);border:1px solid var(--gold);border-radius:12px;padding:6px 10px;font-size:.8rem;pointer-events:none;opacity:0;transition:opacity .25s;z-index:3;min-width:120px}
+.pourhud.on{opacity:1}
+.pourhud b{display:block;font-family:Orbitron,monospace;font-size:1.5rem;color:var(--gold)}
+.jigger{position:relative;height:8px;border-radius:4px;background:rgba(255,255,255,.1);margin-top:4px;overflow:hidden}
+.jigger i{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#f59e0b,#ec4899)}
+.jigger s{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.55)}
+.taste{flex:1;min-width:0;font-size:.78rem;background:rgba(6,4,13,.72);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px 10px;margin-bottom:6px;backdrop-filter:blur(4px)}
+.taste .abv{font-family:Orbitron,monospace;font-size:1rem;color:var(--gold)}
+.taste .bar{display:grid;grid-template-columns:3em 1fr;gap:6px;align-items:center;margin:3px 0}
+.taste .bar i{display:block;height:7px;border-radius:4px;background:var(--c);min-width:2px}
+.taste .tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
+.taste .tags span{background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);border-radius:999px;padding:0 7px;font-size:.72rem}
+.taste .known{margin-top:6px;color:var(--green);font-weight:700}
+.build{font-size:.82rem;line-height:1.65;margin-top:8px}
+.build .row{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed rgba(255,255,255,.08)}
+.build .row span{color:var(--gold);white-space:nowrap}
+.build .none{color:var(--muted)}
+/* category tabs: every tab always visible (wraps into rows; icon grid on phones) */
+.tabs{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:6px;margin-bottom:12px}
+.tabs button{position:relative;display:flex;align-items:center;justify-content:center;gap:5px;border-radius:10px;padding:8px 6px;font-size:.84rem;min-height:40px;white-space:nowrap}
+.tabs .ti{font-size:1.05rem;line-height:1}
+.tabs .tdot{position:absolute;top:-6px;right:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:var(--gold);color:#111;font-style:normal;font-size:.66rem;font-weight:800;line-height:17px}
+.tabs button.on{background:linear-gradient(90deg,#f59e0b,var(--pink));border-color:transparent;color:#fff}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:16px 8px;padding-bottom:8px;min-height:120px}
+.item{display:flex;align-items:center;gap:8px;text-align:left;padding:9px 10px;border-radius:12px;font-size:.83rem;line-height:1.25;position:relative;touch-action:none;user-select:none;-webkit-user-select:none}
+.item .ico{width:26px;height:38px;flex:none;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+.item .ico svg{width:100%;height:100%}
+.item .ico.img{width:42px;height:58px;display:flex;align-items:center;justify-content:center}
+.item .ico.img img{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none}
+.item.pouring .ico{transform:rotate(-35deg);transition:transform .15s}
+.pin{position:relative;margin-top:14px;background:linear-gradient(160deg,#fff8e7,#efdcb4);color:#3a2a14;border-radius:10px;padding:10px 12px 8px;font-size:.82rem;line-height:1.55;transform:rotate(-.5deg);box-shadow:0 8px 22px rgba(0,0,0,.45)}
+.pin::before{content:'📌';position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:1.1rem}
+.pin h5{font-size:1rem;margin-bottom:4px;font-family:'ZCOOL QingKe HuangYou',sans-serif;font-weight:400}
+.pin .r{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed rgba(58,42,20,.2)}
+.pin .r b::before{content:'○ '}
+.pin .r.ok{color:#15803d}.pin .r.ok b::before{content:'✓ '}
+.pin .r.near{color:#b45309}
+.pin .x{position:absolute;top:4px;right:6px;background:none;border:none;color:#7c5a2a;padding:2px 6px;font-size:.85rem}
+.bchips{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-bottom:8px}
+.bchips[hidden]{display:none}
+.bchips button{padding:3px 10px;font-size:.76rem;border-radius:999px}
+.bchips button.on{background:rgba(251,191,36,.25);border-color:var(--gold)}
+.recipe.peeked{border:1px dashed rgba(251,191,36,.6)}
+.holdbtn svg{width:64px;height:100px;pointer-events:none}
+.holdbtn.on svg{animation:shakeit .22s ease-in-out infinite}
+@keyframes shakeit{0%,100%{transform:translate(0,0) rotate(-12deg)}50%{transform:translate(0,-10px) rotate(12deg)}}
+@keyframes bub{from{transform:translateY(0);opacity:.9}to{transform:translateY(calc(-1px * var(--h)));opacity:0}}
+.item .em{font-size:1.25rem;flex:none}
+.item.on{border-color:var(--gold);background:rgba(251,191,36,.12)}
+.item.pouring{background:rgba(236,72,153,.25);border-color:var(--pink);transform:scale(.97)}
+.item .cnt{position:absolute;top:-7px;right:16px;background:var(--gold);color:#111;font-weight:800;font-size:.68rem;border-radius:9px;padding:0 6px}
+.item .fillb{position:absolute;left:-6px;bottom:-9px;z-index:2;padding:0 8px;height:22px;line-height:20px;border-radius:999px;background:linear-gradient(90deg,#0ea5e9,#6366f1);border:1px solid rgba(255,255,255,.4);font-size:.72rem;font-weight:800;cursor:pointer;user-select:none}
+.item .fillb:hover{filter:brightness(1.2)}
+.item .adj{position:absolute;right:-6px;bottom:-9px;display:flex;gap:4px;z-index:2}
+.item .adj i{width:24px;height:24px;border-radius:50%;background:#3b2a5a;border:1px solid rgba(255,255,255,.35);font-style:normal;font-weight:800;line-height:22px;text-align:center;font-size:.95rem;cursor:pointer;user-select:none}
+.item .adj i:hover{background:var(--pink)}
+.item .x{position:absolute;top:-8px;right:-6px;width:20px;height:20px;border-radius:50%;padding:0;font-size:.7rem;line-height:18px;text-align:center;background:#3b2a5a;border:1px solid rgba(255,255,255,.3)}
+.item small{color:var(--muted)}
+.actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.actions .primary{flex:1;padding:11px;font-size:1rem;min-width:140px}
+.tip{font-size:.78rem;color:var(--muted);margin-top:8px;line-height:1.5}
+
+/* visual-novel scenes */
+#vn.show{display:flex;flex-direction:column;position:fixed;inset:0;max-width:none;padding:0;z-index:5;background:url(bartender/bg.webp) center/cover no-repeat,url(bartender/bg.svg) center/cover no-repeat,#120a20;user-select:none;cursor:pointer}
+#vn::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,4,13,.35) 0%,rgba(6,4,13,.05) 35%,rgba(6,4,13,.55) 70%,rgba(6,4,13,.92) 100%);pointer-events:none}
+.vtop{position:relative;display:flex;align-items:center;gap:8px;padding:10px 12px;z-index:2}
+.vtop .title{font-family:'ZCOOL QingKe HuangYou',sans-serif;font-size:1.15rem;text-shadow:0 2px 8px #000}
+.vtop .hearts{margin-left:auto;font-size:.9rem;background:rgba(6,4,13,.6);border-radius:999px;padding:4px 12px;border:1px solid rgba(255,255,255,.15)}
+.vstage{position:relative;flex:1;display:flex;align-items:flex-end;justify-content:center;min-height:0;z-index:1}
+.vchar{position:relative;width:min(70vw,44vh,380px);aspect-ratio:1;margin-bottom:-14px;border-radius:28px;overflow:hidden;border:3px solid var(--pc);box-shadow:0 0 50px var(--pc),0 20px 60px rgba(0,0,0,.6);transition:filter .3s,transform .3s,opacity .3s;animation:bob 4s ease-in-out infinite}
+.vchar img{width:100%;height:100%;object-fit:cover;display:block}
+.vchar.dim{filter:brightness(.55) saturate(.7);transform:scale(.97);animation:none}
+.vchar.hidden{opacity:0}
+@keyframes bob{50%{transform:translateY(-6px)}}
+.vbox{position:relative;z-index:3;margin:0 auto 14px;width:min(94vw,820px);min-height:150px;background:rgba(14,9,30,.9);border:1.5px solid rgba(255,255,255,.18);border-radius:18px;padding:26px 20px 18px;box-shadow:0 10px 40px rgba(0,0,0,.6);backdrop-filter:blur(6px)}
+.vname{position:absolute;top:-16px;left:18px;background:var(--pc,#8b5cf6);color:#160d24;font-weight:900;padding:4px 16px;border-radius:999px;font-size:.95rem;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.vname.me{background:linear-gradient(90deg,#f59e0b,#ec4899)!important;color:#fff}
+.vtext{font-size:clamp(1rem,2.6vw,1.12rem);line-height:1.75;min-height:3.5em}
+.vtext.narr{font-style:italic;color:#cbbbe8}
+.vchoices{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.vchoices[hidden]{display:none}
+.vchoices button{background:rgba(40,26,70,.95);border:1.5px solid rgba(251,191,36,.6);border-radius:12px;padding:11px 14px;font-size:.98rem;text-align:left;animation:fadeUp .25s ease both}
+.vchoices button::before{content:'▸ ';color:var(--gold)}
+.vchoices button:hover{background:rgba(245,158,11,.25)}
+.vnext{position:absolute;right:16px;bottom:10px;color:var(--gold);animation:blink 1s infinite;font-size:.9rem}
+@keyframes blink{50%{opacity:.2}}
+.affpop{position:absolute;left:50%;top:30%;transform:translateX(-50%);font-size:1.4rem;font-weight:900;z-index:6;pointer-events:none;animation:affup 1.4s ease forwards;text-shadow:0 2px 10px #000}
+@keyframes affup{0%{opacity:0;transform:translate(-50%,10px)}20%{opacity:1}100%{opacity:0;transform:translate(-50%,-40px)}}
+
+/* AVG extras */
+.vtools{display:flex;gap:4px}
+.vtools button{background:rgba(6,4,13,.6);border-radius:999px;padding:4px 10px;font-size:.78rem}
+.vtools button.on{background:linear-gradient(90deg,#f59e0b,var(--pink));border-color:transparent;color:#fff}
+.vfx{position:absolute;inset:0;pointer-events:none;z-index:2;transition:background .6s}
+.vfx.dark{background:rgba(0,0,0,.55)}
+.vfx.flash{animation:vflash .5s ease}
+@keyframes vflash{0%{background:rgba(255,255,255,.85)}100%{background:transparent}}
+.vfx.rain::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(105deg,transparent 0 9px,rgba(180,200,255,.18) 9px 10px);background-size:120px 120px;animation:rain .35s linear infinite;opacity:.8}
+@keyframes rain{to{background-position:-30px 120px}}
+#vn.vshake{animation:vshake .45s ease}
+@keyframes vshake{20%{transform:translate(-8px,3px)}40%{transform:translate(7px,-4px)}60%{transform:translate(-5px,2px)}80%{transform:translate(4px,-1px)}}
+.vcard{position:absolute;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;background:rgba(3,2,8,.92);font-family:'ZCOOL QingKe HuangYou',sans-serif;font-size:clamp(1.6rem,6vw,2.6rem);letter-spacing:4px;color:#fde68a;opacity:0;pointer-events:none;transition:opacity .5s;text-align:center;padding:20px;text-shadow:0 0 24px rgba(251,191,36,.5)}
+.vcard.on{opacity:1;pointer-events:auto}
+.vchar.swap{animation:swapin .35s ease,bob 4s ease-in-out .35s infinite}
+@keyframes swapin{from{opacity:0;transform:translateX(24px)}}
+.vemo{position:absolute;top:6%;right:6%;font-size:clamp(2rem,7vw,3rem);animation:emo 1.3s ease forwards;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6));z-index:3}
+@keyframes emo{0%{transform:scale(0) translateY(10px);opacity:0}20%{transform:scale(1.25);opacity:1}35%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-12px)}}
+.vtext .clue{color:#fbbf24;font-weight:700;border-bottom:2px dotted #fbbf24}
+.cluepop{position:absolute;right:14px;top:56px;z-index:6;background:rgba(20,14,40,.95);border:1px solid var(--gold);color:#fde68a;border-radius:999px;padding:6px 14px;font-size:.85rem;animation:affup 2.2s ease forwards;pointer-events:none}
+.vchoices button.key{border-color:#22d3ee;background:rgba(14,60,80,.92)}
+.ctimer{height:6px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+.ctimer i{display:block;height:100%;background:linear-gradient(90deg,#f43f5e,#fbbf24);animation:ctime linear forwards;transform-origin:left}
+@keyframes ctime{from{transform:scaleX(1)}to{transform:scaleX(0)}}
+.vlog{text-align:left;font-size:.9rem;line-height:1.7;max-height:60vh;overflow:auto}
+.vlog div{border-bottom:1px dashed rgba(255,255,255,.08);padding:4px 0}
+.vlog b{color:var(--gold);margin-right:6px}
+.vlog i{color:#cbbbe8}
+.clues{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.clues span{background:rgba(251,191,36,.18);border:1px solid rgba(251,191,36,.6);color:#78350f;border-radius:999px;padding:1px 10px;font-size:.82rem;font-weight:700}
+.preview{background:rgba(236,72,153,.12);border:1px dashed rgba(236,72,153,.6);border-radius:12px;padding:10px 14px;margin:10px 0;text-align:left;font-size:.88rem;line-height:1.7}
+/* cast gallery */
+.castbox{max-width:760px}
+.castgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;text-align:left}
+.castc{background:var(--card);border:1px solid var(--pc);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:6px;cursor:pointer}
+.castc img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:2px solid var(--pc)}
+.castc b{color:var(--pc);font-size:1rem}.castc small{color:var(--muted);font-size:.78rem;line-height:1.45}
+.castc .hearts{font-size:.8rem;color:#f472b6;letter-spacing:1px}
+.castbig{text-align:center}.castbig img{width:min(320px,80vw);border-radius:16px;border:3px solid var(--pc);box-shadow:0 0 30px var(--pc)}
+/* duel */
+.dwrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.dside{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:10px 14px}
+.dside.op{border-color:rgba(244,114,182,.45)}.dside.me{border-color:rgba(34,211,238,.45)}
+.dside .face{width:64px;height:64px}
+.dinfo{flex:1;min-width:0}
+.dname{font-weight:800;display:flex;align-items:center;gap:8px;flex-wrap:wrap}.dname small{color:var(--muted);font-weight:400}
+.dblock{background:#1e3a8a;border-radius:999px;padding:0 8px;font-size:.78rem;font-weight:700}
+.dhp{position:relative;height:20px;border-radius:10px;background:rgba(255,255,255,.1);overflow:hidden;margin:5px 0}
+.dhp i{position:absolute;left:0;top:0;bottom:0;transition:width .35s}
+.dhp b{position:relative;display:block;text-align:center;font-size:.76rem;line-height:20px;text-shadow:0 1px 3px #000}
+.den{font-size:.86rem;color:#7dd3fc;letter-spacing:2px}.dpas{font-size:.76rem;color:#f9a8d4}
+.dbar{display:flex;align-items:center;gap:4px;min-height:34px;margin-top:3px;flex-wrap:wrap}
+.dchip{display:inline-flex;width:24px;height:32px;align-items:center;justify-content:center}.dchip .ico{width:22px;height:32px;display:flex;align-items:center;justify-content:center}.dchip img{max-width:100%;max-height:100%}.dchip svg{width:18px;height:28px}
+.dmid{min-height:92px;background:rgba(6,4,13,.55);border-radius:14px;padding:8px 12px;position:relative}
+.dlog{font-size:.82rem;line-height:1.65;color:#d8ccf5}.dlog div:last-child{color:#fff;font-weight:700}
+.dhint{margin-top:6px;font-size:.84rem;color:#fde68a}
+.dbanner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:linear-gradient(90deg,rgba(245,158,11,.92),rgba(236,72,153,.92));border-radius:14px;z-index:2;animation:wowin .5s ease;text-align:center;padding:6px 12px}
+.dbanner b{font-size:1.25rem}.dbanner span{font-size:.8rem}
+.dhand{grid-template-columns:repeat(auto-fill,minmax(98px,1fr))}
+.pcard.dc{min-height:140px}.pcard.dc.off{opacity:.42;filter:grayscale(.5)}
+.pcard .cost{position:absolute;left:-5px;top:-7px;width:24px;height:24px;border-radius:50%;background:#0ea5e9;border:1px solid rgba(255,255,255,.5);font-weight:800;font-size:.82rem;line-height:22px;color:#fff}
+.pcard.t-wine{--cc:#fbbf24}.pcard.t-mix{--cc:#86efac}.pcard.t-tea{--cc:#7dd3fc}.pcard.t-cure{--cc:#f9a8d4}.pcard.t-trick{--cc:#c4b5fd}
+.pcard.spark{box-shadow:0 0 0 2px #fde68a,0 0 18px rgba(253,230,138,.7)}
+#duel .actions{position:static;margin:0;padding:0;background:none}
+.dintent{font-size:.8rem;color:#fde68a;margin-top:2px}
+.dnear{margin-top:6px;font-size:.8rem;color:#d8ccf5;line-height:1.6}
+.dnear span{margin-left:6px;white-space:nowrap}.dnear .ok{color:#86efac}.dnear .inhand{color:#fde68a;font-weight:700}.dnear .no{color:#94a3b8}
+.dside{position:relative}
+.dside.hit{animation:vshake .35s ease}
+.dfloat{position:absolute;right:18px;top:6px;font-size:1.5rem;font-weight:900;color:#f87171;text-shadow:0 2px 6px #000;animation:affup 0.9s ease forwards;pointer-events:none;z-index:3}
+.dfloat.blk{color:#7dd3fc;font-size:1rem}
+#dEnd.pulse{animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 0 0 6px rgba(236,72,153,.35);transform:scale(1.02)}}
+.rules{max-width:620px;text-align:left}.rules h2{text-align:center}
+.rules ol,.rules ul{margin:4px 0 4px 20px;line-height:1.75}
+.rtab{width:100%;border-collapse:collapse;margin:4px 0}.rtab td{padding:5px 6px;border-bottom:1px dashed rgba(255,255,255,.1);vertical-align:top;line-height:1.55}
+.rtab td:first-child{white-space:nowrap;font-weight:700;width:5.5em}.rtab i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px}
+.rex{display:block;margin:6px 0;padding:8px 10px;border-radius:10px;background:rgba(251,191,36,.1);border:1px dashed rgba(251,191,36,.5)}
+#duel .clues span{color:#fde68a;background:rgba(251,191,36,.14)}
+@media(max-width:600px){.dhand{grid-template-columns:repeat(4,minmax(0,1fr))}.pcard.dc{min-height:118px}.dside .face{width:48px;height:48px}.dmid{min-height:84px}}
+/* card mixing */
+.cards{display:block;min-height:120px}
+.cgbar{display:flex;align-items:center;gap:12px;font-size:.84rem;color:var(--muted);margin-bottom:10px}
+.cgbar button{margin-left:auto;padding:8px 16px;border-radius:999px;background:linear-gradient(90deg,#0ea5e9,#6366f1);border-color:transparent;color:#fff;font-weight:700}
+.cgbar button:disabled{opacity:.35;background:var(--card)}
+.hand{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:12px 8px}
+.pcard{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:20px 6px 8px;border-radius:14px;min-height:150px;text-align:center;font-size:.8rem;line-height:1.2;
+  background:linear-gradient(170deg,rgba(60,42,100,.95),rgba(24,16,46,.98));border:1.5px solid var(--cc,#8b7fc0);box-shadow:0 6px 16px rgba(0,0,0,.45);transition:transform .12s,box-shadow .12s;animation:fadeUp .25s ease both}
+.pcard:hover{transform:translateY(-6px);box-shadow:0 12px 22px rgba(0,0,0,.55),0 0 14px var(--cc)}
+.pcard:active{transform:translateY(-2px) scale(.97)}
+.pcard.t-glass{--cc:#7dd3fc}.pcard.t-ice{--cc:#a5f3fc}.pcard.t-ing{--cc:#fbbf24}.pcard.t-method{--cc:#c4b5fd}.pcard.t-garn{--cc:#f472b6}
+.pcard .ctype{position:absolute;left:8px;top:5px;font-size:.62rem;letter-spacing:1px;color:var(--cc)}
+.pcard .ico{width:58px;height:66px;flex:none;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6))}
+.pcard .ico img{max-width:100%;max-height:100%;object-fit:contain;pointer-events:none}.pcard .ico svg{width:44px;height:62px}
+.pcard .em{font-size:2.2rem;line-height:66px}
+.pcard b{font-size:.84rem}.pcard small{color:var(--muted);font-size:.72rem}
+.pcard .ctags{display:flex;gap:3px;flex-wrap:wrap;justify-content:center;margin-top:2px}
+.pcard .ctags em{font-style:normal;font-size:.62rem;padding:0 5px;border-radius:999px;background:rgba(255,255,255,.1);color:#e9d5ff}
+.pcard .cx{position:absolute;right:-5px;top:-7px;width:22px;height:22px;border-radius:50%;background:#3b2a5a;border:1px solid rgba(255,255,255,.35);font-style:normal;font-size:.7rem;line-height:20px;color:#fff}
+.pcard .cx:hover{background:var(--red)}
+@media(max-width:600px){.hand{grid-template-columns:repeat(4,minmax(0,1fr));gap:12px 6px}.pcard{min-height:124px;padding:18px 3px 6px;font-size:.7rem}.pcard .ico{width:42px;height:50px}.pcard .em{font-size:1.7rem;line-height:50px}.pcard b{font-size:.72rem}.pcard small{font-size:.64rem}.pcard .ctags em{font-size:.56rem;padding:0 3px}}
+/* freestyle / endings */
+.wow{margin:6px auto;padding:8px 14px;border-radius:14px;background:linear-gradient(90deg,rgba(245,158,11,.25),rgba(236,72,153,.25));border:1px solid #fbbf24;color:#fde68a;font-weight:800;font-size:1.1rem;animation:wowin .6s ease}
+.wow small{display:block;font-weight:400;font-size:.82rem;color:#fce7f3}
+@keyframes wowin{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.face .react{position:absolute;right:-6px;bottom:-6px;font-size:1.5rem;filter:drop-shadow(0 2px 3px rgba(0,0,0,.7))}
+.face{overflow:visible}.face img{border-radius:50%}
+.react.pop{animation:emo .5s ease}
+.endrow{padding:8px 10px;border-radius:10px;background:var(--card);margin:6px 0}
+.endrow.got{border:1px solid var(--gold)}
+.endrow small{color:var(--muted);margin-left:6px}
+.lovechip{border:1px solid var(--pc);border-radius:999px;padding:2px 10px;font-size:.8rem}
+.vcard>div{line-height:1.5}
+/* modals */
+.modal{position:fixed;inset:0;background:rgba(3,2,8,.78);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:60;padding:14px}
+.modal.show{display:flex}
+.box{background:linear-gradient(160deg,#21163f,#120c26);border:1px solid var(--border);border-radius:20px;padding:20px;max-width:540px;width:100%;max-height:92vh;overflow:auto;text-align:center;box-shadow:0 20px 80px rgba(0,0,0,.5);animation:fadeUp .25s ease}
+.box h2{font-family:'ZCOOL QingKe HuangYou',sans-serif;font-weight:400;font-size:1.7rem;margin-bottom:8px}
+.box p{color:var(--muted);font-size:.9rem;line-height:1.65;margin-bottom:12px}
+.btnrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.score{font-family:Orbitron,sans-serif;font-size:3rem;font-weight:800;background:linear-gradient(90deg,#fbbf24,#f472b6);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stars{font-size:1.8rem;letter-spacing:6px;margin:2px 0 8px}
+.breakdown{display:grid;grid-template-columns:1fr auto;gap:4px 14px;text-align:left;font-size:.86rem;background:var(--card);border-radius:12px;padding:10px 14px;margin:8px 0}
+.breakdown .ok{color:var(--green)}.breakdown .bad{color:var(--red)}.breakdown .mid{color:var(--gold)}
+.reply{display:flex;gap:10px;align-items:center;text-align:left;margin:8px 0}
+.reply .face{width:52px;height:52px;border-width:2px}
+.reply .bubble{margin:0;flex:1}
+.discover{background:linear-gradient(90deg,rgba(16,185,129,.2),rgba(34,211,238,.15));border:1px solid rgba(16,185,129,.6);border-radius:12px;padding:8px 12px;margin:8px 0;font-weight:700;color:#a7f3d0}
+.btabs{display:flex;gap:6px;justify-content:center;margin-bottom:10px}
+.btabs button.on{background:linear-gradient(90deg,#f59e0b,var(--pink));color:#fff;border-color:transparent}
+.recipes{display:flex;flex-direction:column;gap:8px;text-align:left}
+.recipe{background:var(--card);border-radius:12px;padding:10px 12px;font-size:.84rem;line-height:1.6}
+.recipe b{font-size:.98rem}
+.recipe.locked{opacity:.75;border:1px dashed rgba(255,255,255,.2)}
+.recipe .tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+.recipe .tags i{font-style:normal;font-size:.72rem;padding:1px 8px;border-radius:999px;background:rgba(139,92,246,.18);border:1px solid var(--border)}
+.recipe .na{color:var(--green);font-size:.75rem;margin-left:6px}
+.recipe .ops{display:flex;gap:6px;margin-top:6px}
+.recipe .ops button{padding:4px 10px;font-size:.78rem}
+.help{text-align:left;font-size:.9rem;line-height:1.75}
+.help h4{color:var(--gold);margin:10px 0 2px}
+.meter{position:relative;height:26px;border-radius:13px;background:rgba(255,255,255,.08);overflow:hidden;margin:14px 0}
+.meter .zone{position:absolute;top:0;bottom:0;background:rgba(16,185,129,.35);border-left:2px solid var(--green);border-right:2px solid var(--green)}
+.meter .fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#22d3ee,#a78bfa,#ec4899)}
+.holdbtn{width:150px;height:150px;border-radius:50%;font-size:3rem;padding:0;margin:4px auto;display:flex;align-items:center;justify-content:center;touch-action:none;user-select:none;-webkit-user-select:none;background:radial-gradient(circle at 35% 30%,#3b2a5a,#1c1535);border:3px solid var(--gold)}
+.holdbtn.on{animation:shaker .3s ease-in-out infinite;border-color:var(--pink)}
+.namein{width:100%;font:inherit;font-size:1.05rem;color:var(--text);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin:6px 0}
+.cardimg{width:100%;max-width:360px;border-radius:14px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(30px);background:rgba(20,14,40,.95);border:1px solid var(--border);padding:10px 18px;border-radius:999px;font-size:.9rem;opacity:0;transition:all .25s;z-index:80;pointer-events:none;max-width:92vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+/* tablet */
+@media(max-width:1024px) and (min-width:601px){
+  .items{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .tabs{grid-template-columns:repeat(5,1fr)}
+}
+@media(max-width:880px){
+  .gwrap>.panel:last-child{position:relative}
+  .actions{position:sticky;bottom:0;z-index:6;background:linear-gradient(180deg,rgba(20,14,40,0),rgba(20,14,40,.96) 30%);margin:12px -14px -14px;padding:14px 14px 12px;border-radius:0 0 18px 18px}
+  .tabs{position:sticky;top:0;z-index:6;background:rgba(20,14,40,.97);margin:-14px -14px 12px;padding:10px 10px 8px;border-radius:18px 18px 0 0}
+}
+/* phone */
+@media(max-width:600px){
+  section{padding:10px}
+  .tabs{grid-template-columns:repeat(5,1fr);gap:4px}
+  .tabs button{flex-direction:column;gap:2px;padding:6px 2px;font-size:.66rem;min-height:50px;white-space:normal;line-height:1.15}
+  .tabs .ti{font-size:1.2rem}
+  .items{grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 8px}
+  .item .ico.img{width:34px;height:48px}
+  .actions button{padding:10px 8px;font-size:.88rem}
+  .actions .primary{min-width:0}
+  .bchips button{padding:6px 12px;font-size:.82rem}
+  .vchoices button{padding:13px 14px}
+  .nights{grid-template-columns:repeat(2,1fr)}
+  .face{width:58px;height:58px}
+  .glassbox{width:132px;height:170px}
+  .bubble{font-size:.88rem}
+  .item{padding:8px;font-size:.79rem}
+}
+@media(max-width:360px){.tabs button .tl{font-size:.6rem}.items{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="glow1"></div><div class="glow2"></div>
+
+<!-- HOME -->
+<section id="home">
+  <div class="top">
+    <a href="game.html" style="text-decoration:none"><button class="ghost"><span data-lang="zh">← 游戏大厅</span><span data-lang="en">← Game Center</span></button></a>
+    <button class="playerbtn" data-player></button>
+    <button class="ghost sndbtn" data-snd></button>
+    <div class="langsw" style="margin-left:0"><button data-setlang="zh">中文</button><button data-setlang="en">EN</button></div>
+  </div>
+  <div class="hero">
+    <div class="logo"><span data-lang="zh">Space 夜调</span><span data-lang="en">Last Call at Space</span></div>
+    <div class="logo-en">BARTENDER · SPACE KTV</div>
+    <div class="tag"><span data-lang="zh">你是今晚的调酒师。听懂客人想要什么，调出那一杯——或者，调出一杯从没人喝过的。</span><span data-lang="en">You're behind the bar tonight. Figure out what each guest wants and mix it, or invent something nobody has tasted before.</span></div>
+  </div>
+  <div class="menu" id="menu"></div>
+  <div class="homefoot">
+    <button class="ghost" id="bBookHome"><span data-lang="zh">📖 酒谱</span><span data-lang="en">📖 Recipe book</span></button>
+    <button class="ghost" id="bHelpHome"><span data-lang="zh">❓ 怎么玩</span><span data-lang="en">❓ How to play</span></button>
+  </div>
+</section>
+
+<!-- STORY NIGHTS -->
+<section id="story">
+  <div class="top">
+    <button class="ghost" data-go="home"><span data-lang="zh">← 返回</span><span data-lang="en">← Back</span></button>
+    <span class="title"><span data-lang="zh">🌙 故事模式 · 第一章</span><span data-lang="en">🌙 Story · Chapter 1</span></span>
+  </div>
+  <p class="tag" style="text-align:left;margin:0 0 8px"><span data-lang="zh">每晚几位客人，聊天、调酒、听他们的故事。平均 1 星以上解锁下一晚。</span><span data-lang="en">A few guests each night: talk, mix, hear their stories. Average 1 star or more to unlock the next night.</span></p>
+  <div class="nights" id="nights"></div>
+  <div class="btnrow" style="margin-top:12px"><button id="bEndings"></button></div>
+</section>
+<div class="modal" id="mEnd"><div class="box"><h2><span data-lang="zh">🏁 结局收集</span><span data-lang="en">🏁 Endings</span></h2><div id="endBody" style="text-align:left"></div><div class="btnrow"><button id="endClose"><span data-lang="zh">关闭</span><span data-lang="en">Close</span></button></div></div></div>
+
+<!-- STORY SCENE (visual novel) -->
+<section id="vn">
+  <div class="vtop">
+    <button class="ghost" id="vQuit" style="background:rgba(6,4,13,.6)"><span data-lang="zh">← 离开</span><span data-lang="en">← Leave</span></button>
+    <span class="title" id="vTitle"></span>
+    <span class="hearts" id="vHearts"></span>
+    <div class="vtools"><button data-snd></button><button id="vLog" title="Log">📜</button><button id="vClue" title="Clues">📓</button><button id="vAuto">AUTO</button><button id="vSkip">⏩</button></div>
+  </div>
+  <div class="vfx" id="vfx"></div><div class="vcard" id="vCard"></div>
+  <div class="vstage"><div class="vchar hidden" id="vChar"><img id="vImg" alt=""></div></div>
+  <div class="vbox"><span class="vname" id="vName" hidden></span><div class="vtext" id="vText"></div><div class="vchoices" id="vChoices" hidden></div><span class="vnext" id="vNext">▼</span></div>
+</section>
+
+<!-- MIXING STATION -->
+<section id="duel">
+  <div class="top">
+    <button class="ghost" id="dQuit"><span data-lang="zh">← 离开</span><span data-lang="en">← Leave</span></button>
+    <span class="title" id="dTitle"></span>
+    <button class="ghost sndbtn" data-snd></button>
+  </div>
+  <div class="dwrap">
+    <div class="dside op" id="dOp"></div>
+    <div class="dmid" id="dMid"></div>
+    <div class="dside me" id="dMe"></div>
+    <div class="hand dhand" id="dHand"></div>
+    <div class="actions"><button id="dRules"><span data-lang="zh">📕 规则</span><span data-lang="en">📕 Rules</span></button><button id="dBook"><span data-lang="zh">📖 酒谱</span><span data-lang="en">📖 Recipes</span></button><button class="primary" id="dEnd"></button></div>
+    <div class="tip" id="dTip"></div>
+  </div>
+</section>
+<section id="game">
+  <div class="top">
+    <button class="ghost" id="bQuit"><span data-lang="zh">← 离开</span><span data-lang="en">← Leave</span></button>
+    <span class="title" id="gTitle"></span>
+    <span class="money" id="gMoney"></span>
+    <button class="ghost sndbtn" data-snd style="margin-left:6px"></button>
+  </div>
+  <div class="gwrap">
+    <div class="panel">
+      <div class="customer" id="cust"></div>
+      <div class="patience" id="patWrap"><i id="patience"></i></div>
+      <div class="queue" id="queue"></div>
+      <div class="bench">
+        <div class="pourhud" id="hud"></div>
+        <div class="stage">
+          <div class="glassbox" id="glass"></div>
+          <div class="taste" id="taste"></div>
+        </div>
+      </div>
+      <div class="build" id="build"></div>
+      <div id="pin"></div>
+    </div>
+    <div class="panel">
+      <div class="tabs" id="tabs"></div>
+      <div class="items" id="items"></div>
+      <div class="actions" id="actions"></div>
+      <div class="tip" id="tip"></div>
+    </div>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="mLog"><div class="box"><h2><span data-lang="zh">📜 对话记录</span><span data-lang="en">📜 Log</span></h2><div class="vlog" id="logBody"></div><div class="btnrow"><button id="logClose"><span data-lang="zh">关闭</span><span data-lang="en">Close</span></button></div></div></div>
+<div class="modal" id="mClue"><div class="box"><h2><span data-lang="zh">📓 线索本</span><span data-lang="en">📓 Clue notebook</span></h2><p><span data-lang="zh">对话里带下划线的词会自动记下来，调酒时会提示你。</span><span data-lang="en">Highlighted words in conversation are noted here and shown when you mix.</span></p><div id="clueBody" style="text-align:left"></div><div class="btnrow"><button id="clueClose"><span data-lang="zh">关闭</span><span data-lang="en">Close</span></button></div></div></div>
+<div class="modal" id="mCast"><div class="box castbox"><h2><span data-lang="zh">👥 人物图鉴</span><span data-lang="en">👥 Cast</span></h2><div id="castBody"></div><div class="btnrow"><button id="castClose"><span data-lang="zh">关闭</span><span data-lang="en">Close</span></button></div></div></div>
+<div class="modal" id="mRules"><div class="box rules">
+  <h2><span data-lang="zh">📕 酒桌对决 · 规则书</span><span data-lang="en">📕 Bar Duel · Rulebook</span></h2>
+  <div class="help" data-lang="zh">
+    <h4>🎯 目标</h4>
+    你和一位同事打牌拼酒。双方都有<b>清醒值</b>，<b>把对方的清醒值灌到 0，你就赢</b>。
+    <h4>🔁 一回合怎么打（三步）</h4>
+    <ol>
+      <li><b>摸牌</b>：回合开始自动摸 3 张，手牌最多 8 张，没打出去的牌会留着。</li>
+      <li><b>出牌</b>：你有 <b>3 点手速</b>。牌左上角的数字是出它要花的手速，点一下牌就打出去。</li>
+      <li><b>结束回合</b>：手速用完，或者不想出了，点「结束回合」，轮到对方。</li>
+    </ol>
+    <h4>🃏 五种牌</h4>
+    <table class="rtab">
+      <tr><td><i style="background:#fbbf24"></i>酒牌</td><td>让对方喝，扣对方清醒值。烈酒扣得多，但要 2 点手速。</td></tr>
+      <tr><td><i style="background:#86efac"></i>配料牌</td><td><b>不花手速</b>。让你下一张酒牌多灌 2。</td></tr>
+      <tr><td><i style="background:#7dd3fc"></i>茶牌</td><td>以茶代酒：挡掉对方接下来灌你的 6 点（到你下回合开始为止）。</td></tr>
+      <tr><td><i style="background:#f9a8d4"></i>解酒牌</td><td>蜂蜜、牛奶这些：回 4 点清醒值。</td></tr>
+      <tr><td><i style="background:#c4b5fd"></i>花招牌</td><td>切歌（摸 2 张）、起哄（对方下回合少 1 点手速）、摇骰子（随机灌 2–9）、干杯（双方各喝 4）、果盘（回 3 挡 3）。</td></tr>
+    </table>
+    <h4>🍸 凑成一杯（最重要的一招）</h4>
+    你打出去的酒、配料、茶，都会留在你的<b>吧台</b>上。吧台上一旦凑齐了酒谱里某一杯酒的全部材料，就会自动<b>「凑成一杯」</b>：<br>
+    <b>额外灌对方：材料数 × 4</b>，这些材料从吧台上用掉。<br>
+    <span class="rex">例子：先出<b>金酒</b>（灌 6），再出<b>汤力水</b>（灌不了人，但金酒 + 汤力水 = <b>金汤力</b>）→ 额外再灌 2 × 4 = <b>8</b>。</span>
+    游戏会帮你看：牌<b>发金光</b> = 出了它马上能凑成一杯；中间那行「🍸 快凑成…」会告诉你还差哪样。想不起配方就点「📖 酒谱」。
+    <h4>⭐ 怎么拿高分</h4>
+    <ul>
+      <li><b>猜中 TA 想喝的那杯</b>：对战前的聊天里有线索（就是屏幕中间那些 📓）。凑出 TA 最想喝的那杯，额外<b>再多灌 6</b>，而且评价最高。</li>
+      <li><b>对味</b>：没猜中，但凑出的酒口味对路，多灌 3。TA 讨厌的口味只有一半效果。</li>
+      <li><b>歪打正着</b>：每个人都有两种<b>偷偷喜欢</b>的口味。凑出的酒碰巧带这个味，多灌 5，还会触发特别剧情。</li>
+      <li>赢的时候自己剩的清醒值越多，分数越高。输了也能继续剧情，只是评价是最低一档。</li>
+    </ul>
+    <h4>👀 看懂对手</h4>
+    对手头像旁写着两行字：<b>特长</b>（这个人独有的本事，比如酒哥每回合回 1 点清醒）和<b>下回合打算</b>（比如「敬你约 9」）。看到对方要猛灌你，就先出茶牌挡一下。
+    <h4>💡 三个小技巧</h4>
+    <ul>
+      <li>配料牌不花手速，有就先出，既加伤害又能占吧台凑酒。</li>
+      <li>吧台最多放 6 样，放满了最早的那样会被挤掉，别乱放。</li>
+      <li>清醒值不多时，留 1 点手速出茶或蜂蜜，比硬拼划算。</li>
+    </ul>
+  </div>
+  <div class="help" data-lang="en">
+    <h4>🎯 Goal</h4>Both players have <b>sobriety</b>. Pour your opponent's sobriety down to 0 and you win.
+    <h4>🔁 A turn in three steps</h4>
+    <ol><li><b>Draw</b>: 3 cards at the start of your turn (hand limit 8; unplayed cards stay).</li><li><b>Play</b>: you have <b>3 energy</b>. The number in a card's corner is its cost. Tap to play.</li><li><b>End turn</b> when you are out of energy or done.</li></ol>
+    <h4>🃏 Five kinds of card</h4>
+    <table class="rtab"><tr><td><i style="background:#fbbf24"></i>Drink</td><td>Makes the opponent drink. Spirits hit harder but cost 2.</td></tr><tr><td><i style="background:#86efac"></i>Mixer</td><td><b>Free</b>. Your next drink card hits 2 harder.</td></tr><tr><td><i style="background:#7dd3fc"></i>Tea</td><td>Blocks the next 6 poured at you (until your next turn).</td></tr><tr><td><i style="background:#f9a8d4"></i>Cure</td><td>Honey, milk: heal 4.</td></tr><tr><td><i style="background:#c4b5fd"></i>Trick</td><td>Skip song (draw 2), Heckle (foe -1 energy), Dice (2–9), Cheers (both drink 4), Fruit plate (heal 3, block 3).</td></tr></table>
+    <h4>🍸 Complete a drink</h4>Drinks, mixers and teas you play stay on your <b>bar</b>. When the bar holds every ingredient of a recipe, the drink completes: <b>extra hit = ingredients × 4</b>. Example: Gin, then Tonic = Gin &amp; Tonic, 8 extra. Glowing cards complete a drink right now.
+    <h4>⭐ Scoring high</h4>Make the drink they want most (clues from the chat): 6 more and the best rating. A drink that fits their taste: 3 more. A flavour they secretly love: 5 more and a special scene.
+    <h4>👀 Read the opponent</h4>Their panel shows a personal <b>skill</b> and what they plan to do <b>next turn</b>. If a big pour is coming, play tea first.
+  </div>
+  <div class="btnrow"><button class="primary" id="rulesClose"><span data-lang="zh">明白了，开打</span><span data-lang="en">Got it</span></button></div>
+</div></div>
+<div class="modal" id="mResult"><div class="box" id="resultBox"></div></div>
+<div class="modal" id="mNight"><div class="box" id="nightBox"></div></div>
+
+<div class="modal" id="mShake"><div class="box">
+  <h2 id="shakeTitle"></h2>
+  <p id="shakeTip"></p>
+  <div class="meter"><div class="zone" id="shakeZone"></div><div class="fill" id="shakeFill"></div></div>
+  <button class="holdbtn" id="shakeBtn">🥤</button>
+  <div class="btnrow"><button id="shakeCancel"><span data-lang="zh">取消</span><span data-lang="en">Cancel</span></button></div>
+</div></div>
+
+<div class="modal" id="mSave"><div class="box">
+  <h2><span data-lang="zh">💾 存为我的特调</span><span data-lang="en">💾 Save as my creation</span></h2>
+  <p><span data-lang="zh">给这杯酒起个名字，它会存进你的酒谱，可以随时生成酒卡分享。</span><span data-lang="en">Name this drink. It goes into your recipe book and you can make a shareable card any time.</span></p>
+  <input id="saveName" class="namein" maxlength="20">
+  <div class="btnrow">
+    <button class="primary" id="saveOk"><span data-lang="zh">保存</span><span data-lang="en">Save</span></button>
+    <button id="saveCancel"><span data-lang="zh">取消</span><span data-lang="en">Cancel</span></button>
+  </div>
+</div></div>
+
+<div class="modal" id="mCard"><div class="box">
+  <h2><span data-lang="zh">🖼 酒卡</span><span data-lang="en">🖼 Drink card</span></h2>
+  <img id="cardImg" class="cardimg" alt="">
+  <div class="btnrow">
+    <a id="cardDl" download="space-drink.png"><button class="primary"><span data-lang="zh">⬇ 保存图片</span><span data-lang="en">⬇ Save image</span></button></a>
+    <button id="cardShare"><span data-lang="zh">📤 分享</span><span data-lang="en">📤 Share</span></button>
+    <button id="cardClose"><span data-lang="zh">关闭</span><span data-lang="en">Close</span></button>
+  </div>
+</div></div>
+
+<div class="modal" id="mPlayer"><div class="box">
+  <h2><span data-lang="zh">👤 玩家存档</span><span data-lang="en">👤 Player save</span></h2>
+  <p><span data-lang="zh">和 Space 谜案共用同一个名字和存档。输入名字就行，不用密码，换设备输入同一个名字就能接着玩。</span><span data-lang="en">Shared with Space Whodunit: same name, same save. Just type a name, no password; use the same name on any device to carry on.</span></p>
+  <form id="playerForm" style="display:flex;gap:8px">
+    <input id="pName" class="namein" maxlength="20" autocomplete="nickname" required style="margin:0;flex:1;min-width:0">
+    <button class="primary" type="submit"><span data-lang="zh">开始</span><span data-lang="en">Go</span></button>
+  </form>
+  <div class="btnrow" id="pList"></div>
+  <div class="btnrow">
+    <button id="bPlayerOut"><span data-lang="zh">用游客身份玩</span><span data-lang="en">Play as guest</span></button>
+    <button id="bPlayerClose"><span data-lang="zh">关闭</span><span data-lang="en">Close</span></button>
+  </div>
+</div></div>
+
+<div class="modal" id="mBook"><div class="box">
+  <h2><span data-lang="zh">📖 酒谱</span><span data-lang="en">📖 Recipe book</span></h2>
+  <div class="btabs">
+    <button data-bt="classic"><span data-lang="zh">经典配方</span><span data-lang="en">Classics</span></button>
+    <button data-bt="mine"><span data-lang="zh">我的特调</span><span data-lang="en">My creations</span></button>
+  </div>
+  <p id="bookSub"></p>
+  <div class="bchips" id="bchips"></div>
+  <div class="recipes" id="recipes"></div>
+  <div class="btnrow"><button id="bBookClose"><span data-lang="zh">关闭</span><span data-lang="en">Close</span></button></div>
+</div></div>
+
+<div class="modal" id="mHelp"><div class="box">
+  <h2><span data-lang="zh">怎么玩</span><span data-lang="en">How to play</span></h2>
+  <div class="help" data-lang="zh">
+    <h4>🌙 故事模式</h4>
+    点屏幕推进对话，遇到三个选项选一个回答，会改变客人的<b>好感度 ♥</b>。客人不会直接说酒名，要从对话里判断。调得好不好会改变后面的故事。<br>
+    <b>📓 线索</b>：对话里金色带下划线的词会自动记进线索本，调酒时会列出来。<br>
+    <b>🔑 选项</b>：只有你知道某件事（比如前几晚听过的秘密）才会出现。<br>
+    <b>⏱ 限时选项</b>：倒计时结束还没选，就当你沉默了。<br>
+    右上角：📜 回看对话、AUTO 自动播放、⏩ 快进。你的选择和每杯酒的结果会被记住，影响之后几晚的剧情。
+    <h4>⚔️ 酒桌对决（故事模式 / 今日特调 / 自由营业）</h4>
+    轮到「调酒」的时候，改成和这位同事<b>打牌拼酒</b>：双方都有<b>清醒值</b>，先被灌到 0 的输。每回合 3 点<b>手速</b>，牌左上角是要花的手速。<br>
+    <b>酒牌</b>灌对方；<b>配料牌</b>不花手速，让下一杯多灌 2；<b>茶</b>挡酒；蜂蜜、牛奶<b>回清醒</b>；还有切歌、起哄、摇骰子这些<b>花招牌</b>。<br>
+    打出去的酒和配料会留在你的<b>吧台</b>上。吧台上凑齐一杯酒的全部材料，就会<b>「凑成一杯」</b>，额外灌一大口（牌发金光表示出了它就能凑成）。<br>
+    从对话线索里猜出 TA 最想喝的那杯并凑出来，效果最好、分数最高；凑到 TA <b>偷偷偏爱</b>的口味会触发「歪打正着」。每位同事还有自己的<b>特长</b>。<br>
+    下面这段「打牌调酒」是另一种玩法，目前没有启用。
+    <h4>🃏 打牌调酒（未启用）</h4>
+    故事里轮到调酒时，手上会有 7 张牌：<b>杯子、冰、酒水、手法、装饰</b>。点一张就打出去，先后顺序随意（杯子可以后选），酒水牌上写着分量和主要味道。<br>
+    不想要的牌点右上角 ✕ 弃掉，再点<b>摸牌补满</b>（一共能摸 5 次）。牌堆里有正确答案，也有客人讨厌的<b>陷阱牌</b>。<br>
+    汽水、茶这些<b>「加满」的牌要最后出</b>，不然后面再倒会溢出。摇匀、搅拌牌打出后还有按住的小游戏。<br>
+    牌不凑巧也没关系：<b>口味对上就能高分</b>。实在不行可以「倒掉重来」一次，换一副新洗的牌。创作台和自由营业还是按住倒酒。
+    <h4>🍸 调酒</h4>
+    选杯子和冰 → <b>按住</b>酒瓶倒酒（松手停，旁边会显示毫升数）→ 选手法 → 加装饰 → 出酒。<br>
+    选<b>摇匀/搅拌</b>会出现小游戏：按住摇，进度到<b>绿色区域</b>时松手。<br>
+    左边会实时显示这杯酒的<b>风味和酒精度</b>。
+    <h4>✨ 自由调酒 · 歪打正着</h4>
+    不用死守配方：<b>只要风味对上客人想要的、又没碰 TA 讨厌的味道，自己发明的酒一样能拿满分</b>。碰巧调出经典配方，会解锁到酒谱里。<br>
+    调酒时客人头像旁会有<b>实时表情</b>：😐 没感觉 · 🤔 有点意思 · 😋 对味了 · 😖 踩雷了 · 😍 戳中隐藏口味。<br>
+    🎯 <b>歪打正着</b>：每位客人都有两种<b>隐藏偏爱</b>的味道。调出来的酒碰巧戳中，会触发特别剧情、好感大涨，这个秘密也会记进线索本。故事页可以看结局收集和已发现的隐藏口味。<br>
+    🧊 冰块可以点多次加量（右上角 − 减少），碎冰分少量/半杯/满杯，大方冰和冰球会刚好卡进杯子。<br>
+    在<b>🧪 创作台</b>里随便调，满意了可以存为"我的特调"，还能生成酒卡分享。
+    <h4>⚠️ 注意</h4>
+    洛羽和芽未成年，只能给无酒精饮品。
+  </div>
+  <div class="help" data-lang="en">
+    <h4>🌙 Story mode</h4>
+    Tap to advance. When three replies appear, pick one; it changes the guest's <b>affection ♥</b>. Guests rarely name a drink, so read the conversation. How well you mix changes what happens next.<br>
+    <b>📓 Clues</b>: gold underlined words go into your clue notebook and are listed when you mix.<br>
+    <b>🔑 Options</b> only appear if you know something (say, a secret from an earlier night).<br>
+    <b>⏱ Timed choices</b>: if the bar runs out, you stayed silent.<br>
+    Top right: 📜 log, AUTO, ⏩ skip. Your choices and drinks are remembered and change later nights.
+    <h4>🍸 Mixing</h4>
+    Pick a glass and ice → <b>hold</b> a bottle to pour (release to stop; the ml count shows) → pick a method → garnish → serve.<br>
+    <b>Shake/Stir</b> opens a mini-game: hold to shake and let go inside the <b>green zone</b>.<br>
+    The panel next to the glass shows your drink's <b>flavour and ABV</b> live.
+    <h4>✨ Freestyle & happy accidents</h4>
+    Every guest has two <b>secret favourite flavours</b>. Hit one by accident and you trigger a special scene (🎯). While mixing, the guest's face reacts live: 😐 🤔 😋 😖 😍. Ice: tap again for more cubes; crushed ice comes in three levels; big cubes and spheres fit the glass.<br>
+    When a guest orders by taste, <b>your own invention counts if the flavour fits</b>. Hit a classic by accident and it's added to your book.<br>
+    In the <b>🧪 Lab</b>, mix anything, save it as "My creation" and make a shareable card.
+    <h4>⚠️ Watch out</h4>
+    Luo Yu and Ya are under age: alcohol-free only.
+  </div>
+  <div class="btnrow"><button class="primary" id="bHelpOk"><span data-lang="zh">开始营业</span><span data-lang="en">Open the bar</span></button></div>
+</div></div>
+
+<script src="bartender/a/meta.js?v=4"></script>
+<script src="bartender/audio.js?v=1"></script>
+<script src="bartender/data.js?v=7"></script>
+<script src="bartender/story.js?v=9"></script>
+<script>
+// ================= HELPERS =================
+let LANG=(()=>{try{const s=localStorage.getItem('lang');if(s==='zh'||s==='en')return s}catch(e){}return /^zh/i.test(navigator.language||'')?'zh':'en'})();
+const L=(z,e)=>LANG==='en'?e:z;
+const $=id=>document.getElementById(id);
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const range=n=>[...Array(n).keys()];
+function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hashStr(s){let h=2166136261;for(const ch of s){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function shuffle(a,r){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const pick=(a,r)=>a[Math.floor(r()*a.length)];
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function toast(t){const el=$('toast');el.textContent=t;el.className='toast show';clearTimeout(el._t);el._t=setTimeout(()=>el.className='toast',2200)}
+
+// ================= PEOPLE =================
+const FACE_V='20261112-1748';
+const PEOPLE=[
+  {k:'xiaochen',n:'小陈',e:'Xiao Chen',c:'#f472b6',fav:['清爽','酸'],hi:['下班了，终于能坐下来了。','Finally off shift. Time to sit down.']},
+  {k:'richard',n:'理查德',e:'Richard',c:'#60a5fa',fav:['经典','优雅'],hi:['晚上好。','Good evening.']},
+  {k:'luoyu',n:'洛羽',e:'Luo Yu',c:'#34d399',minor:true,fav:['甜'],hi:['你好！我来陪朋友唱歌的～','Hi! I came with my friends to sing~']},
+  {k:'john',n:'John',e:'John',c:'#fbbf24',fav:['气泡','辛辣'],hi:['Hey bartender!','Hey bartender!']},
+  {k:'xiangge',n:'翔哥',e:'Brother Xiang',c:'#c4b5fd',fav:['烈'],hi:['老规矩，别磨叽。','Let\'s go, no fuss.']},
+  {k:'kc',n:'KC',e:'KC',c:'#fca5a5',fav:['酸','经典'],hi:['我自己也是调酒师，别想糊弄我。','I tend bar myself, so no shortcuts.']},
+  {k:'ya',n:'芽',e:'Ya',c:'#a3e635',minor:true,fav:['好看'],hi:['你好呀～','Hiya~']},
+  {k:'mojie',n:'莫姐',e:'Sister Mo',c:'#67e8f9',fav:['苦','经典'],hi:['给我来点像样的。','Make me something proper.']},
+  {k:'jiuge',n:'酒哥',e:'Brother Jiu',c:'#fdba74',fav:['茶','温和'],hi:['别看我叫酒哥，我酒量一般。','Despite the name, I can\'t hold my drink.']},
+  {k:'boluobao',n:'菠萝包',e:'Pineapple Bun',c:'#fde047',fav:['甜','果味'],hi:['嘿嘿，今天吃饱了，来喝点！','Ate well today, now let\'s drink!']},
+  {k:'tiange',n:'天哥',e:'Brother Tian',c:'#e2e8f0',fav:['烈','经典'],hi:['兄弟，来一杯。','Pour me one, brother.']},
+  {k:'ace',n:'Ace',e:'Ace',c:'#e879f9',fav:['好看','优雅'],hi:['要上镜的那种～','Something camera-ready~']},
+  {k:'kevin',n:'Kevin',e:'Kevin',c:'#2dd4bf',fav:['温和','咖啡'],hi:['嗨，麻烦你了。','Hi, sorry to bother you.']},
+  {k:'liyutong',n:'李宇童',e:'Li Yutong',c:'#818cf8',fav:['甜','清爽'],hi:['那个……可以点单吗？','Um… can I order?']},
+  {k:'panda',n:'Panda',e:'Panda',c:'#fb7185',fav:['茶','奶香'],hi:['熊猫来啦！','Panda\'s here!']},
+  {k:'ella',n:'艾辣',e:'Ella',c:'#ef4444',fav:['烈','咸'],hi:['Dirty martini。Extra dirty。……我说的是酒，你脸红什么？','Dirty martini. Extra dirty. …I meant the drink. Why are you blushing?']}
+];
+const PN=p=>L(p.n,p.e);
+const face=p=>`whodunit/p-${p.k}.webp?v=${FACE_V}`;
+const byKey=k=>PEOPLE.find(p=>p.k===k);
+const DN=d=>L(d.n,d.e);
+const IN=k=>L(ING[k].n,ING[k].e);
+const TN=t=>DIM_NAME[Object.keys(DIM_TAG).find(k=>DIM_TAG[k]===t)]?L(t,DIM_NAME[Object.keys(DIM_TAG).find(k=>DIM_TAG[k]===t)][1]):L(t,STYLE[t]||t);
+
+// ================= SHARED SAVE (same as whodunit.html) =================
+let PLAYER=(()=>{try{return localStorage.getItem('whodunit:player')||''}catch(e){return ''}})();
+const K=k=>PLAYER?`whodunit:u:${PLAYER}:${k}`:`whodunit:${k}`;
+let prog=store.get(K('prog'))||{};
+const CLOUD=/^(localhost|127\.0\.0\.1)$/.test(location.hostname)?'http://127.0.0.1:8787':'https://whodunit-save.newtycoonent.workers.dev';
+let cloudState='',pushTimer=null,lastPush=0;
+function bundle(){const saves={},pre=K('s:');try{Object.keys(localStorage).forEach(k=>{if(k.startsWith(pre))saves[k.slice(pre.length)]=store.get(k)})}catch(e){}return {prog:store.get(K('prog'))||{},saves}}
+function mergeIn(data){
+  if(!data)return;
+  const p=store.get(K('prog'))||{};
+  Object.entries(data.prog||{}).forEach(([k,v])=>{if(typeof v==='number'&&v>(p[k]||0))p[k]=v});
+  store.set(K('prog'),p);
+  Object.entries(data.saves||{}).forEach(([id,s])=>{const mine=store.get(K('s:'+id));if(s&&(!mine||(s.updated||0)>(mine.updated||0)))store.set(K('s:'+id),s)});
+  prog=p;
+}
+function setCloud(s){cloudState=s;renderPlayerBtn()}
+async function cloudPull(){
+  if(!PLAYER)return;const who=PLAYER;setCloud('sync');
+  try{const r=await fetch(`${CLOUD}/save/${encodeURIComponent(who)}`);if(!r.ok)throw 0;const rec=await r.json();if(who!==PLAYER)return;
+    mergeIn(rec.data);await cloudPush(true);refreshViews()}catch(e){if(who===PLAYER)setCloud('off')}
+}
+async function cloudPush(now){
+  if(!PLAYER)return;clearTimeout(pushTimer);
+  const wait=now?0:Math.max(0,10000-(Date.now()-lastPush));
+  if(wait){pushTimer=setTimeout(()=>cloudPush(true),wait);return}
+  const who=PLAYER;lastPush=Date.now();setCloud('sync');
+  try{const r=await fetch(`${CLOUD}/save/${encodeURIComponent(who)}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(bundle()),keepalive:true});if(who===PLAYER)setCloud(r.ok?'ok':'off')}catch(e){if(who===PLAYER)setCloud('off')}
+}
+function saveProg(){const p=store.get(K('prog'))||{};Object.keys(prog).forEach(k=>{if(k.startsWith('bar-'))p[k]=prog[k]});prog=p;store.set(K('prog'),p);cloudPush(true)}
+function players(){try{return JSON.parse(localStorage.getItem('whodunit:players'))||[]}catch(e){return []}}
+function renderPlayerBtn(){const icon={ok:' ☁️',sync:' ⏳',off:' ⚠️'}[cloudState]||'';document.querySelectorAll('[data-player]').forEach(b=>b.textContent=PLAYER?`👤 ${PLAYER}${icon}`:L('👤 游客 · 点这里存档','👤 Guest · tap to save'))}
+function openPlayer(){
+  $('pName').value=PLAYER;$('pName').placeholder=L('你的名字','Your name');
+  $('pList').innerHTML=players().map(n=>`<button data-name="${esc(n)}" style="${n===PLAYER?'border-color:var(--pink)':''}">${esc(n)}</button>`).join('');
+  $('mPlayer').classList.add('show');setTimeout(()=>$('pName').focus(),50);
+}
+function switchPlayer(name){
+  name=(name||'').trim().slice(0,20);
+  if(name){const list=players();if(!list.includes(name)){list.push(name);try{localStorage.setItem('whodunit:players',JSON.stringify(list))}catch(e){}
+    if(!PLAYER){try{Object.keys(localStorage).forEach(k=>{const m=k.match(/^whodunit:(prog|s:.+)$/);if(m){localStorage.setItem(`whodunit:u:${name}:${m[1]}`,localStorage.getItem(k));localStorage.removeItem(k)}})}catch(e){}}}}
+  PLAYER=name;try{name?localStorage.setItem('whodunit:player',name):localStorage.removeItem('whodunit:player')}catch(e){}
+  prog=store.get(K('prog'))||{};cloudState='';clearTimeout(pushTimer);
+  $('mPlayer').classList.remove('show');renderPlayerBtn();refreshViews();
+  if(name)cloudPull();
+  toast(name?L(`欢迎，${name}！进度会自动保存，和谜案游戏共用`,`Welcome, ${name}! Progress saves automatically, shared with Whodunit`):L('已退出，现在是游客','Signed out, playing as guest'));
+}
+function myList(){return (store.get(K('s:bar-mine'))||{list:[]}).list}
+function saveMyList(list){store.set(K('s:bar-mine'),{list,updated:Date.now()});cloudPush(true)}
+const known=d=>d.starter||prog['bar-r-'+d.id];
+
+// ================= TASTE ENGINE =================
+const T={sw:2.2,so:1.5,bi:1,fr:1.35,he:1,fz:2,cr:1.2,co:1,sp:1.5,sa:.5,te:1.5,fl:.6};
+const CUBE_MAX={highball:14,mug:14,wine:9,rocks:6,coupe:3,martini:3,flute:3,shot:2};
+const iceMax=(b,k)=>(k||b.ice)==='cubes'?(CUBE_MAX[b.glass]||12):ICE[k||b.ice].max;
+const iceDef=(b,k)=>(k||b.ice)==='cubes'?Math.ceil(iceMax(b,'cubes')/2):ICE[k||b.ice].def;
+const iceN=b=>b.ice&&ICE[b.ice]&&ICE[b.ice].max?Math.min(iceMax(b),b.iceN||iceDef(b)):1;
+function iceVol(b,cap){return b.ice==='cubes'?Math.min(cap*.6,cap*.6*iceN(b)/(CUBE_MAX[b.glass]||12)):b.ice==='crushed'?cap*.17*iceN(b):b.ice==='big'?Math.min(70,cap*.3):b.ice==='sphere'?Math.min(60,cap*.28):0}
+const FULL=.92; // "filled to the top" = 92% of the glass, leaving a little rim
+// how much a mixer must pour to bring the glass to the brim
+function roomLeft(b){const a=analyse(b);return Math.max(0,a.room)}
+// volume, ABV and flavour profile of a build
+function analyse(b){
+  const cap=b.glass?GLASS[b.glass].cap:250,parts=[];let poured=0;
+  const legacy=Object.keys(b.ing).filter(k=>ING[k].mixer&&b.ing[k]>0&&b.ing[k]<=1);
+  Object.entries(b.ing).forEach(([k,v])=>{if(!v||legacy.includes(k))return;const u=ING[k].u;
+    if(u==='pour'){parts.push([k,v,v]);poured+=v}
+    else if(u==='dash')parts.push([k,v,v*ING[k].eq]);
+    else if(u==='count')parts.push([k,0,v*ING[k].eq]);
+  });
+  if(legacy.length){const room=Math.max(30,cap*FULL-iceVol(b,cap)-poured);legacy.forEach(k=>parts.push([k,room/legacy.length,room/legacy.length]))}
+  let liquid=parts.reduce((s,p)=>s+p[1],0);
+  // the glass only holds so much: whatever doesn't fit runs over the rim
+  const ice=b.ice&&b.ice!=='none'?iceVol(b,cap):0,spill=b.glass?Math.max(0,Math.round(liquid+ice-cap)):0;
+  if(spill){const keep=(liquid-spill)/liquid;parts.forEach(p=>{p[1]*=keep;p[2]*=keep});liquid-=spill}
+  const dil=b.method==='shake'?.25:b.method==='stir'?.18:(b.ice&&b.ice!=='none'?.08:0);
+  const total=Math.max(1,liquid*(1+dil));
+  const abv=parts.reduce((s,[k,ml])=>s+ING[k].abv*ml,0)/total;
+  const prof={};DIMS.forEach(d=>prof[d]=0);
+  parts.forEach(([k,,fml])=>Object.entries(ING[k].f).forEach(([d,v])=>prof[d]+=v*fml/total));
+  if(b.garn.includes('salt_rim'))prof.sa+=.6;
+  return {parts,liquid,total,abv,prof,cap,spill,ice,room:Math.round(cap*FULL-liquid-ice)};
+}
+function tagsOf(b,a){
+  a=a||analyse(b);const t=new Set();
+  DIMS.forEach(d=>{if(a.prof[d]>=T[d])t.add(DIM_TAG[d])});
+  if(a.liquid<1)return t;
+  if(a.abv<.05)t.add('无酒精');else if(a.abv<=11)t.add('温和');else if(a.abv>=20)t.add('烈');
+  if(['martini','flute','wine','coupe'].includes(b.glass))t.add('优雅');
+  if(['grenadine','blue_curacao','aperol','campari','cranberry','sweet_vermouth','midori','cassis','rose','raspberry','watermelon','absinthe','matcha','passion'].some(k=>b.ing[k])||b.garn.length>=2)t.add('好看');
+  return t;
+}
+function recipeBuild(d){const b={glass:d.glass,ice:d.ice,method:d.method,ing:Object.fromEntries(Object.entries(d.ing).filter(([k,v])=>v!=='top')),garn:d.garn.slice(),tech:1};
+  const tops=Object.keys(d.ing).filter(k=>d.ing[k]==='top');if(tops.length){const r=roomLeft(b);tops.forEach(k=>b.ing[k]=Math.round(r/tops.length))}return b}
+const RTAGS={};DRINKS.forEach(d=>{const t=tagsOf(recipeBuild(d));(d.style||[]).forEach(s=>t.add(s));RTAGS[d.id]=t});
+// how close a build is to a classic recipe: glass/ice/method 10 each, ingredients 50, garnish 10 (max 90)
+const b0cap=b=>b.glass?GLASS[b.glass].cap:250;
+function recipeScore(b,d){
+  const near={big:'sphere',sphere:'big',cubes:'crushed',crushed:'cubes'},gl={martini:'coupe',coupe:'martini'};
+  const p={glass:b.glass===d.glass?10:gl[d.glass]===b.glass?7:0,ice:b.ice===d.ice?10:near[d.ice]===b.ice?7:0,method:b.method===d.method?10:0};
+  const need=Object.keys(d.ing);let sum=0;
+  need.forEach(k=>{const want=d.ing[k],got=b.ing[k]||0,u=ING[k].u;
+    if(want==='top'){const a=analyse(b);sum+=!got?0:a.spill?.6:a.room<=b0cap(b)*.12?1:a.room<=b0cap(b)*.3?.6:.3}
+    else if(!got)sum+=0;
+    else if(u==='pour'){const diff=Math.abs(got-want);sum+=diff<=6?1:diff<=15?.6:diff<=30?.3:0}
+    else{const diff=Math.abs(got-want);sum+=diff===0?1:diff===1?.6:.2}});
+  const extras=Object.keys(b.ing).filter(k=>b.ing[k]&&!need.includes(k)&&!(ING[k].u==='pour'&&b.ing[k]<5));
+  p.ing=Math.round(Math.max(0,sum/need.length*50-extras.length*8));
+  const gs=new Set(b.garn),gw=new Set(d.garn),inter=[...gs].filter(x=>gw.has(x)).length,uni=new Set([...gs,...gw]).size;
+  p.garn=uni===0?10:Math.round(inter/uni*10);
+  p.total=p.glass+p.ice+p.method+p.ing+p.garn;
+  return p;
+}
+function closest(b){return DRINKS.map(d=>({d,s:recipeScore(b,d)})).sort((x,y)=>y.s.total-x.s.total)[0]}
+const techScore=b=>Math.round(10*(b.method==='shake'||b.method==='stir'?(b.tech??.5):1));
+// does the glass / ice / method suit what's in the drink (0-10 each)
+function craftOf(b){
+  const ks=Object.keys(b.ing).filter(k=>b.ing[k]);
+  const hasTop=ks.some(k=>ING[k].mixer),hasJuice=ks.some(k=>ING[k].g==='juice'),spiritOnly=!hasTop&&!hasJuice;
+  const tall=['highball','mug','wine'].includes(b.glass);
+  const vol=ks.reduce((s,k)=>s+(ING[k].u==='pour'?b.ing[k]:0),0);
+  const glass=!b.glass?0:b.glass==='shot'?(!hasTop&&vol<=70?10:2):hasTop?(tall||(b.glass==='flute'&&b.ing.prosecco)?10:4):(['martini','rocks','coupe'].includes(b.glass)?10:6);
+  const ice=!b.ice?0:(['martini','flute','coupe','shot'].includes(b.glass)?(b.ice==='none'?10:3):b.glass==='rocks'?(b.ice!=='none'?10:6):(['cubes','crushed'].includes(b.ice)?10:5));
+  const method=!b.method?0:hasTop?(b.method==='build'?10:5):hasJuice?(b.method==='shake'?10:5):(b.method==='stir'?10:6);
+  return {glass,ice,method};
+}
+// hidden favourite flavours: hitting one off-script = 歪打正着
+const LOVES={ella:['苦','咖啡'],xiaochen:['草本','咸'],richard:['苦','草本'],luoyu:['奶香','花香'],john:['咸','果味'],xiangge:['辛辣','咖啡'],kc:['草本','苦'],ya:['花香','气泡'],mojie:['咖啡','草本'],jiuge:['花香','甜'],boluobao:['奶香','气泡'],tiange:['茶','咸'],ace:['酸','花香'],kevin:['甜','奶香'],liyutong:['果味','花香'],panda:['甜','咖啡']};
+const FLAVOR_TAGS=new Set(Object.values(DIM_TAG));
+// taste-first score for any build against what someone wants (0-100)
+function tasteJudge(b,a,want,avoid,str,p){
+  const have=new Set(tagsOf(b,a));want=want.filter(t=>t!=='经典');
+  // strength words are judged softly here (a sour at 16% still counts as "strong" to a guest)
+  if(a.abv>=15)have.add('烈');if(a.abv>0&&a.abv<=12)have.add('温和');
+  const sat=want.filter(t=>have.has(t)).length,bad=(avoid||[]).filter(t=>have.has(t));
+  let taste=want.length?50*sat/want.length:40;taste-=15*bad.length;
+  if(str){const ok=str==='low'?a.abv<=11:str==='high'?a.abv>=17:a.abv>6&&a.abv<24;if(!ok)taste-=10}
+  let balance=10;if(a.liquid<60&&b.glass!=='shot')balance-=5;DIMS.forEach(d=>{if(a.prof[d]>T[d]*3.2)balance-=3});balance=Math.max(0,balance);
+  const cr=craftOf(b),tech=techScore(b);taste=Math.max(0,Math.round(taste));
+  const loves=p?(LOVES[p.k]||[]).filter(t=>have.has(t)&&!want.includes(t)):[];
+  const spillPen=a.spill?Math.min(15,4+Math.round(a.spill/6)):0;
+  return {score:Math.max(0,Math.min(100,taste+balance+cr.glass+cr.ice+cr.method+tech-spillPen)),sat,n:want.length,bad,loves,parts:{taste,balance,...cr,tech,want,have,avoid:avoid||[],spill:spillPen}};
+}
+const flavourWant=d=>[...RTAGS[d.id]].filter(t=>!['经典','好看','优雅'].includes(t)).slice(0,4);
+// overall judgement. order: {kind:'named',target} or {kind:'taste',tags}
+function judge(b,order,person){
+  const a=analyse(b);
+  if(person&&person.minor&&a.abv>0)return {score:0,reason:'minor',a};
+  if(a.liquid<20)return {score:0,reason:'empty',a};
+  const c=closest(b),match=c.s.total>=78?c.d:null,tech=techScore(b)-(a.spill?Math.min(10,3+Math.round(a.spill/8)):0);
+  let score,reason='ok',parts;
+  if(order.kind==='named'){
+    const rs=recipeScore(b,order.target);parts={...rs,tech};score=rs.total+tech;
+    const tj=tasteJudge(b,a,flavourWant(order.target),[],null,person);
+    if(tj.sat===tj.n&&!tj.bad.length&&Math.min(88,tj.score)>score){score=Math.min(88,tj.score);parts=tj.parts;reason='ok';
+      return {score,reason,a,match,parts,creative:true,loves:tj.loves}}
+    if(match&&match!==order.target&&c.s.total>=rs.total+10){reason='wrong';score=Math.min(30,score)}
+  }else{
+    const have=tagsOf(b,a),want=order.tags,sat=want.filter(t=>have.has(t)).length;
+    const taste=Math.round(50*sat/want.length);
+    let balance=10;if(a.liquid<60)balance-=5;DIMS.forEach(d=>{if(a.prof[d]>T[d]*3.2)balance-=3});balance=Math.max(0,balance);
+    const cr=craftOf(b);
+    parts={taste,balance,...cr,tech,want,have};
+    score=taste+balance+cr.glass+cr.ice+cr.method+tech;
+    if(sat*2<want.length)reason='wrong';
+  }
+  return {score:Math.max(0,Math.min(100,Math.round(score))),reason,a,match,parts};
+}
+
+// ================= ORDERS (quick modes) =================
+function makeOrder(p,level,r){
+  const pool=DRINKS.filter(d=>p.minor?!RTAGS[d.id].has('无酒精')?false:true:true).filter(d=>!p.minor||RTAGS[d.id].has('无酒精'));
+  const liked=pool.filter(d=>[...RTAGS[d.id]].some(t=>p.fav.includes(t)));
+  if(level===1){const k=pool.filter(known),src=k.filter(d=>liked.includes(d));return {kind:'named',target:pick(r()<.7&&src.length?src:(k.length?k:pool),r),level}}
+  const target=pick(r()<.7&&liked.length?liked:pool,r);
+  let tags=shuffle([...RTAGS[target.id]].filter(t=>t!=='经典'&&t!=='好看'||level===3),r).slice(0,level===2?2:3);
+  if(p.minor&&!tags.includes('无酒精'))tags=['无酒精',...tags.slice(0,2)];
+  return {kind:'taste',tags,target,level};
+}
+function orderText(o,p){
+  if(o.kind==='named')return L(`来一杯${o.target.n}，谢谢。`,`A ${o.target.e}, please.`);
+  const minorLine=p.minor?L('我还没成年，不能喝酒哦。','I\'m under age, so no alcohol. '):'';
+  const tags=o.tags.filter(t=>!(p.minor&&t==='无酒精'));
+  if(o.level===2)return minorLine+L(`我想要${tags.map(TN).join('、')}的。`,`Something ${tags.map(TN).join(', ')}.`);
+  return minorLine+tags.map(t=>MOOD[t]?L(MOOD[t][0],MOOD[t][1]):'').join(L('','  '));
+}
+
+// ================= STATE =================
+let G=null,B=null,tab='glass',timer=null,V=null,typeT=null;
+function newBuild(){return {glass:null,ice:null,method:null,ing:{},garn:[],tech:null}}
+function show(id){if(window.AU){AU.mood(id==='game'?'mix':id==='vn'&&$('vfx').classList.contains('dark')?'dark':'lounge');if(id!=='vn'&&id!=='game')AU.rain(false)}
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('show',s.id===id));window.scrollTo(0,0);if(id!=='game')clearInterval(timer);if(id==='home')renderHome();if(id==='story')renderNights()}
+function refreshViews(){if($('home').classList.contains('show'))renderHome();if($('story').classList.contains('show'))renderNights()}
+
+function startQuick(kind){
+  let seed,cfg,title;
+  if(kind==='daily'){cfg={n:5,levels:[1,2,2,3,3],pat:120};seed=hashStr('bar-daily-'+today());title=L('今日特调','Daily special')}
+  else{cfg={n:5,levels:null,pat:120};seed=(Math.random()*2**32)>>>0;title=L('自由营业','Free shift')}
+  const r=rng32(seed);
+  const guests=shuffle(PEOPLE,r).slice(0,cfg.n);
+  const orders=guests.map((p,i)=>makeOrder(p,cfg.levels?cfg.levels[i]:pick([1,2,2,3,3],r),r));
+  G={kind,title,cfg,guests,orders,idx:0,results:[],tips:0};
+  show('game');nextGuest();
+}
+function startLab(){G={kind:'lab',title:L('🧪 创作台','🧪 The Lab'),guests:[],orders:[],idx:0,results:[],tips:0};B=newBuild();tab='glass';show('game');render()}
+function nextGuest(){
+  if(MIX_MODE==='duel'){clearInterval(timer);const p=G.guests[G.idx],o=G.orders[G.idx];
+    startDuel({p,target:o.target,want:o.kind==='taste'?o.tags:null,level:(o.level||1)+1,hint:`${L('TA 说','They say')}：${orderText(o,p)}`,
+      done:res=>{G.results.push(res.score);G.tips+=res.score>=50?Math.round(res.score/10):0;G.idx++;if(G.idx<G.guests.length)nextGuest();else{show('home');endQuick()}}});return}
+  B=newBuild();PIN=null;tab='glass';G.left=G.cfg.pat;G.start=Date.now();clearInterval(timer);
+  timer=setInterval(()=>{if($('mShake').classList.contains('show'))return;G.left=Math.max(0,G.cfg.pat-(Date.now()-G.start)/1000);drawPatience();if(G.left<=0){clearInterval(timer);serve(true)}},250);
+  render();
+}
+
+// ================= HOME / NIGHTS =================
+function renderHome(){
+  const best=prog['bar-daily-'+today()];
+  const nights=range(STORY.length).filter(i=>prog['bar-n'+(i+1)]).length;
+  const found=DRINKS.filter(known).length;
+  $('menu').innerHTML=`
+    <div class="mcard" data-k="story"><div class="ic">🌙</div><h3>${L('故事模式','Story mode')}</h3><p>${L('和 Space 的同事聊天、选回答，在酒桌上打牌对决，听他们的故事。','Chat with the Space crew, choose your replies, duel them at cards, hear their stories.')}</p><div class="meta">${L(`已过 ${nights}/${STORY.length} 晚`,`${nights}/${STORY.length} nights cleared`)}</div></div>
+    <div class="mcard" data-k="lab"><div class="ic">🧪</div><h3>${L('创作台','The Lab')}</h3><p>${L('没有客人，随便调。发明自己的特调，存起来、生成酒卡分享。','No guests. Invent your own drink, save it and make a shareable card.')}</p><div class="meta">${L(`我的特调 ${myList().length} 杯 · 已收集配方 ${found}/${DRINKS.length}`,`${myList().length} creations · ${found}/${DRINKS.length} recipes found`)}</div></div>
+    <div class="mcard" data-k="daily"><div class="ic">📅</div><h3>${L('今日特调','Daily special')}</h3><p>${L('每天同一组 5 位对手，连打五场酒桌对决。','The same 5 opponents for everyone today: five duels in a row.')}</p><div class="meta">${best!=null?L(`今日最佳：${best} 分`,`Today's best: ${best}`):L('今天还没玩','Not played yet today')}</div></div>
+    <div class="mcard" data-k="free"><div class="ic">🎲</div><h3>${L('自由营业','Free shift')}</h3><p>${L('随机对手，随便练手。','Random opponents, just for practice.')}</p></div>
+    <div class="mcard" data-k="cast"><div class="ic">👥</div><h3>${L('人物图鉴','Cast')}</h3><p>${L('Space 的每一位：岗位、口味、对战特长、你们的好感度。','Everyone at Space: their job, tastes, duel skill and how much they like you.')}</p><div class="meta">${L(`${PEOPLE.length} 位人物`,`${PEOPLE.length} characters`)}</div></div>`;
+  document.querySelectorAll('#menu [data-k]').forEach(el=>el.onclick=()=>{const k=el.dataset.k;k==='cast'?openCast():k==='story'?show('story'):k==='lab'?startLab():startQuick(k)});
+}
+const STORY_COMING_LIST=[['意外的访客','Unexpected Visitor'],['歌王之夜','Karaoke King'],['停电之后','After the Blackout'],['最后一杯','Last Call']];
+function renderNights(){
+  $('nights').innerHTML=range(Math.max(STORY.length+((typeof STORY_COMING!=='undefined'?STORY_COMING:[]).length),5)).map(i=>{
+    const ch=STORY[i];
+    if(!ch){const t=(typeof STORY_COMING!=='undefined'?STORY_COMING:[])[i-STORY.length]||['',''];return `<button disabled><b>${i+1}</b><span style="font-size:.78rem">${L(t[0],t[1])}</span><small style="color:var(--muted)">${L('敬请期待','Coming soon')}</small></button>`}
+    const st=prog['bar-n'+(i+1)]||0,open=i===0||prog['bar-n'+i];
+    return `<button data-n="${i+1}" ${open?'':'disabled'}><b>${open?i+1:'🔒'}</b><span style="font-size:.78rem">${L(ch.title[0],ch.title[1])}</span><small>${st?'★'.repeat(st)+'☆'.repeat(3-st):open?'☆☆☆':''}</small><span style="display:flex;gap:2px;margin-top:2px">${ch.scenes.map(sc=>`<img src="${face(byKey(sc.who))}" alt="" style="width:20px;height:20px;border-radius:50%;opacity:${open?1:.4}">`).join('')}</span></button>`}).join('');
+  document.querySelectorAll('#nights [data-n]').forEach(b=>b.onclick=()=>startStory(+b.dataset.n));
+  const E=ENDS(),got=E.filter(x=>prog['bar-e-'+x[0]]).length;$('bEndings').hidden=!E.length;
+  $('bEndings').textContent=L(`🏁 结局收集 ${got}/${E.length}`,`🏁 Endings ${got}/${E.length}`);
+  const loves=Object.keys(prog).filter(k=>k.startsWith('bar-love-')).length;if(loves)$('bEndings').textContent+=L(` · 🎯 隐藏口味 ${loves}/30`,` · 🎯 Secret tastes ${loves}/30`);
+  $('bEndings').onclick=()=>{$('endBody').innerHTML=E.map(([id,zh,en,hz,he])=>prog['bar-e-'+id]?`<div class="endrow got">🏆 <b>${esc(L(zh,en))}</b></div>`:`<div class="endrow">🔒 ??? <small>${esc(L(hz||'',he||''))}</small></div>`).join('')+
+    `<h3 style="margin:14px 0 6px">${L('🎯 客人的隐藏口味','🎯 Guests\' secret favourites')}</h3><div style="display:flex;flex-wrap:wrap;gap:6px">${Object.keys(LOVES).map(k=>{const p=byKey(k);return `<span class="lovechip" style="--pc:${p.c}">${PN(p)}：${LOVES[k].map(t=>prog['bar-love-'+k+'-'+t]?TN(t):'？').join(' / ')}</span>`}).join('')}</div>`;$('mEnd').classList.add('show')};
+  $('endClose').onclick=()=>$('mEnd').classList.remove('show');
+}
+
+// ================= MIXING STATION RENDER =================
+const SHAPES={
+  highball:{path:'M34 24 L86 24 L84 152 L36 152 Z',top:24,bot:152,w:[34,86],wb:[36,84],base:7},
+  rocks:{path:'M24 82 L96 82 L93 152 L27 152 Z',top:82,bot:152,w:[24,96],wb:[27,93],base:9},
+  martini:{path:'M12 36 L108 36 L60 98 Z',top:36,bot:98,w:[12,108],wb:[60,60],stem:[98,152]},
+  mug:{path:'M28 50 L90 50 L88 152 L30 152 Z',top:50,bot:152,w:[28,90],wb:[30,88],handle:true},
+  wine:{path:'M30 30 Q26 100 60 106 Q94 100 90 30 Z',top:30,bot:106,w:[30,90],wb:[50,70],stem:[106,152]},
+  flute:{path:'M46 16 L74 16 L71 102 Q60 110 49 102 Z',top:16,bot:108,w:[46,74],wb:[52,68],stem:[108,152]},
+  coupe:{path:'M14 70 Q16 104 60 106 Q104 104 106 70 Z',top:70,bot:106,w:[14,106],wb:[44,76],stem:[106,152]},
+  shot:{path:'M42 96 L78 96 L76 152 L44 152 Z',top:96,bot:152,w:[42,78],wb:[44,76],base:12}
+};
+function hex2rgb(h){const n=parseInt(h.slice(1),16);return [n>>16&255,n>>8&255,n&255]}
+function mixRGB(list){let t=0,r=0,g=0,bl=0;list.forEach(([c,w])=>{const [a,b2,c2]=hex2rgb(c);r+=a*w;g+=b2*w;bl+=c2*w;t+=w});return t?[r/t,g/t,bl/t]:[255,255,255]}
+const rgbS=(c,f=1)=>`rgb(${c.map(v=>Math.max(0,Math.min(255,Math.round(f>1?v+(255-v)*(f-1):v*f)))).join(',')})`;
+function mixColor(list){return rgbS(mixRGB(list))}
+let GUID=0,POURFX=null;
+const HAS=k=>!!(window.ASSETS&&ASSETS.has(k)),AURL=k=>'bartender/a/'+k+'.webp';
+const aIco=(k,fb)=>HAS(k)?`<span class="ico img"><img src="${AURL(k)}" alt="" draggable="false"></span>`:fb;
+const GARN_A=k=>'g_'+k,ICE_A={cubes:'ice_cube',big:'ice_big',sphere:'ice_sphere',crushed:'ice_crushed'},METH_A={build:'t_build',shake:'t_shake',stir:'t_stir'};
+// premium glass: gradient liquid layers, meniscus, glossy ice, rim, frost, shadow, pour stream
+function glassSVG(b,big){
+  const g=b.glass;
+  if(!g)return `<svg viewBox="0 0 120 170"><g opacity=".5" fill="none" stroke="#c4b5fd" stroke-width="1.5" stroke-dasharray="4 4"><path d="${SHAPES.highball.path}"/></g><text x="60" y="95" text-anchor="middle" fill="#e9d5ff" font-size="11">${L('先选杯子','Pick a glass')}</text></svg>`;
+  const id='g'+(++GUID),a=analyse(b),now=performance.now()/1000;
+  const gi=window.GIMG&&GIMG[g]&&HAS('glass_'+g)?GIMG[g]:null;let sh=SHAPES[g],box=null;
+  if(gi){const sc=Math.min(120/gi.W,150/gi.H),iw=gi.W*sc,ih=gi.H*sc,ox=(120-iw)/2,oy=158-ih;box={ox,oy,iw,ih};
+    const pr=gi.prof.map(([l,r])=>[ox+l*iw,ox+r*iw]);sh={top:oy+gi.top*ih,bot:oy+gi.bot*ih,pr,img:true};sh.w=pr[0];sh.wb=pr[pr.length-1]}
+  const H=sh.bot-sh.top;
+  const wAt=sh.img?(y=>{const t=Math.max(0,Math.min(1,(y-sh.top)/H))*(sh.pr.length-1),i=Math.min(sh.pr.length-2,Math.floor(t)),f=t-i;return [sh.pr[i][0]+(sh.pr[i+1][0]-sh.pr[i][0])*f,sh.pr[i][1]+(sh.pr[i+1][1]-sh.pr[i][1])*f]})
+    :(y=>{const t=Math.max(0,Math.min(1,(y-sh.top)/H));return [sh.w[0]+(sh.wb[0]-sh.w[0])*t,sh.w[1]+(sh.wb[1]-sh.w[1])*t]});
+  const mixed=b.method==='shake'||b.method==='stir';
+  const visible=a.parts.filter(p=>p[1]>0);
+  const fill=a.liquid<1?0:a.spill?.985:Math.min(.97,(a.liquid+a.ice)/a.cap*.97/FULL*FULL);
+  const layers=[];
+  if(visible.length){
+    if(mixed||visible.length<2)layers.push([mixRGB(visible.map(([k,ml])=>[ING[k].c,ml])),fill]);
+    else{
+      const dense=visible.filter(([k])=>(ING[k].d||0)>=2),light=visible.filter(([k])=>(ING[k].d||0)<0),mid=visible.filter(p=>!dense.includes(p)&&!light.includes(p)),tot=a.liquid||1;
+      [dense,mid,light].forEach(grp=>{const ml=grp.reduce((s2,p)=>s2+p[1],0);if(ml)layers.push([mixRGB(grp.map(([k,m])=>[ING[k].c,m])),fill*ml/tot])});
+    }
+  }
+  let defs=(sh.img?`<clipPath id="${id}c"><rect x="0" y="${sh.top}" width="120" height="${H}"/></clipPath><mask id="${id}m" maskUnits="userSpaceOnUse" x="0" y="0" width="120" height="170"><image href="${AURL('glass_'+g).replace('.webp','-m.webp')}" x="${box.ox}" y="${box.oy}" width="${box.iw}" height="${box.ih}" preserveAspectRatio="none"/></mask>`:`<clipPath id="${id}c"><path d="${sh.path}"/></clipPath>`)+`
+    <linearGradient id="${id}gl" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".16"/><stop offset=".3" stop-color="#fff" stop-opacity=".03"/><stop offset=".8" stop-color="#fff" stop-opacity=".02"/><stop offset="1" stop-color="#fff" stop-opacity=".2"/></linearGradient>
+    <linearGradient id="${id}ice" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".85"/><stop offset=".5" stop-color="#dff4ff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity=".6"/></linearGradient>
+    <linearGradient id="${id}cu" x1="0" x2="1"><stop offset="0" stop-color="#7a3f17"/><stop offset=".35" stop-color="#f0b071"/><stop offset=".55" stop-color="#c47a3a"/><stop offset="1" stop-color="#6b3712"/></linearGradient>`;
+  let y=sh.bot,liq='',topC=null;
+  layers.forEach(([c,f],i)=>{const h=f*H;y-=h;topC=c;
+    defs+=`<linearGradient id="${id}l${i}" x1="0" x2="1"><stop offset="0" stop-color="${rgbS(c,.62)}"/><stop offset=".38" stop-color="${rgbS(c,1.12)}"/><stop offset=".7" stop-color="${rgbS(c,.95)}"/><stop offset="1" stop-color="${rgbS(c,.55)}"/></linearGradient>`;
+    liq+=`<rect x="0" y="${y.toFixed(1)}" width="120" height="${(h+.8).toFixed(1)}" fill="url(#${id}l${i})" opacity=".93"/>`;
+    if(i<layers.length-1&&!mixed)liq+=`<rect x="0" y="${(y-2.5).toFixed(1)}" width="120" height="5" fill="${rgbS(layers[i+1][0])}" opacity=".4"/>`});
+  const surface=y;
+  if(topC){const [x0,x1]=wAt(surface);liq+=`<ellipse cx="${(x0+x1)/2}" cy="${surface}" rx="${Math.max(1,(x1-x0)/2)}" ry="${Math.max(1,(x1-x0)/14)}" fill="${rgbS(topC,1.35)}" opacity=".85"/>`;
+    if(a.prof.fz>1.2||(mixed&&(a.prof.cr>.5||b.ing.lemon||b.ing.lime)))liq+=`<ellipse cx="${(x0+x1)/2}" cy="${surface+1}" rx="${Math.max(1,(x1-x0)/2-1)}" ry="${Math.max(1.5,(x1-x0)/12)}" fill="#fffaf0" opacity="${mixed?.75:.45}"/>`}
+  let ice='';
+  const IW=y=>{const [x0,x1]=wAt(y);return x1-x0};
+  if(b.ice==='cubes'){const n=iceN(b),top0=topC?surface-8:sh.bot-24,span=Math.max(14,sh.bot-top0-20);
+    // stack cubes from the bottom up, as many per row as the glass is wide
+    const cs=Math.max(10,Math.min(19,IW(sh.bot-10)/2.2));
+    for(let i=0,row=0,col=0;i<n;i++){const yy0=sh.bot-cs-2-row*cs*.82,[x0,x1]=wAt(yy0+cs/2),per=Math.max(1,Math.floor((x1-x0-2)/(cs*.9)));
+      if(col>=per){row++;col=0}
+      const yy=Math.max(sh.top+2,sh.bot-cs-2-row*cs*.82),[a0,a1]=wAt(yy+cs/2),per2=Math.max(1,Math.floor((a1-a0-2)/(cs*.9))),slot=(a1-a0-cs)/Math.max(1,per2-1),cx=per2===1?(a0+a1-cs)/2:a0+((col+(row%2)*.5)%per2)*slot;col++;
+    ice+=HAS('ice_cube')?`<image href="${AURL('ice_cube')}" x="${cx}" y="${yy}" width="${cs}" height="${cs}" opacity=".92" transform="rotate(${(i*37)%40-20} ${cx+cs/2} ${yy+cs/2})"/>`:`<g transform="rotate(${i*13-18} ${cx+8} ${yy+8})"><rect x="${cx}" y="${yy}" width="16" height="16" rx="3.5" fill="url(#${id}ice)" stroke="rgba(255,255,255,.9)" stroke-width=".8"/><path d="M${cx+3} ${yy+4} l6 -1" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></g>`}}
+  if(b.ice==='big'||b.ice==='sphere'){
+    // one piece that just fits: as wide as the glass near the bottom, but never taller than the bowl
+    let sz=Math.min(IW(sh.bot-4)*.94,IW(sh.bot-H*.5)*.94,H*.92);
+    const [x0,x1]=wAt(sh.bot-sz/2),cx=(x0+x1)/2,yy=sh.bot-sz-1;
+    const key=b.ice==='big'?'ice_big':'ice_sphere';
+    ice=HAS(key)?`<image href="${AURL(key)}" x="${cx-sz/2}" y="${yy}" width="${sz}" height="${sz}" preserveAspectRatio="none" opacity=".93"/>`
+      :b.ice==='sphere'?`<circle cx="${cx}" cy="${yy+sz/2}" r="${sz/2}" fill="url(#${id}ice)" stroke="rgba(255,255,255,.9)"/>`
+      :`<rect x="${cx-sz/2}" y="${yy}" width="${sz}" height="${sz}" rx="${sz/8}" fill="url(#${id}ice)" stroke="rgba(255,255,255,.95)"/>`}
+  if(b.ice==='crushed'){const lv=iceN(b),top=sh.bot-H*[0,.38,.66,.97][lv];
+    let sd=lv*97+(g.length*13);const R=()=>{sd=(sd*16807)%2147483647;return sd/2147483647};
+    const above=topC?Math.min(surface,sh.bot):sh.bot;
+    defs+=`<radialGradient id="${id}sh" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".55" stop-color="#e6f4ff" stop-opacity=".55"/><stop offset="1" stop-color="#cfe6f7" stop-opacity=".35"/></radialGradient>`;
+    // frosty body of the pile, slightly lumpy top edge
+    let body=`M0 ${sh.bot+2} L0 ${top+4}`;for(let x=0;x<=120;x+=8)body+=` L${x} ${(top+2+R()*5).toFixed(1)}`;body+=` L120 ${sh.bot+2} Z`;
+    let sh2=`<path d="${body}" fill="#f4fbff" opacity="${topC?.22:.38}"/>`;
+    // shards: many small irregular polygons, denser and whiter above the liquid
+    const cnt=Math.round((sh.bot-top)*Math.max(20,IW((top+sh.bot)/2))/16);
+    for(let i=0;i<cnt;i++){const yy=top+2+R()*(sh.bot-top-2),[x0,x1]=wAt(yy);if(x1-x0<4)continue;
+      const xx=x0+R()*(x1-x0),r=1.6+R()*3.2,k=5+Math.floor(R()*3),rot=R()*6.28,dry=yy<above;
+      let pts=[];for(let j=0;j<k;j++){const ang=rot+j*6.28/k,rr=r*(.6+R()*.55);pts.push((xx+Math.cos(ang)*rr).toFixed(1)+','+(yy+Math.sin(ang)*rr*.85).toFixed(1))}
+      sh2+=`<polygon points="${pts.join(' ')}" fill="url(#${id}sh)" opacity="${dry?(.75+R()*.25).toFixed(2):(.35+R()*.3).toFixed(2)}" stroke="#fff" stroke-opacity="${dry?.7:.35}" stroke-width=".35"/>`;
+      if(R()<.25)sh2+=`<circle cx="${(xx-r*.3).toFixed(1)}" cy="${(yy-r*.3).toFixed(1)}" r="${(r*.22).toFixed(1)}" fill="#fff" opacity=".9"/>`}
+    ice=sh2}
+  if(false){const cx=0;ice=`<g><rect x="${cx-19}" y="${sh.bot-44}" width="38" height="38" rx="6" fill="url(#${id}ice)" stroke="rgba(255,255,255,.95)"/><path d="M${cx-13} ${sh.bot-38} l12 -2" stroke="#fff" stroke-width="2" stroke-linecap="round"/></g>`}
+  let bub='';
+  if(a.prof.fz>.8&&topC)for(let i=0;i<9;i++){const yy=sh.bot-6,[x0,x1]=wAt(yy-10),x=x0+5+(i*11)%Math.max(8,x1-x0-10),d=1.1+(i%3)*.45,h=Math.max(10,yy-surface-2);
+    bub+=`<circle cx="${x}" cy="${yy}" r="${(1+(i%3)*.5).toFixed(1)}" fill="rgba(255,255,255,.8)" style="--h:${h};animation:bub ${d}s linear ${(-((now+i*.31)%d)).toFixed(2)}s infinite"/>`}
+  const mint=b.ing.mint&&topC?`<g fill="#3fa34d" stroke="#1f6b2c" stroke-width=".5">${range(Math.min(6,b.ing.mint*3)).map(i=>{const yy=sh.bot-10-(i%3)*12,[x0,x1]=wAt(yy),cx=x0+8+(i*13)%Math.max(8,x1-x0-14);return `<ellipse cx="${cx}" cy="${yy}" rx="6" ry="3" transform="rotate(${i*40} ${cx} ${yy})"/>`}).join('')}</g>`:'';
+  const frost=mixed&&!big?(sh.img?`<rect x="0" y="0" width="120" height="170" fill="#fff" opacity=".08"/>`:`<path d="${sh.path}" fill="#fff" opacity=".1"/>`):'';
+  const dew=b.ice&&b.ice!=='none'&&topC&&g!=='mug'?range(10).map(i=>{const yy=surface+6+(i*11)%Math.max(8,sh.bot-surface-10),[x0,x1]=wAt(yy);return `<circle cx="${i%2?x1-2:x0+2}" cy="${yy}" r="${.8+(i%3)*.35}" fill="#fff" opacity=".55"/>`}).join(''):'';
+  const stroke=g==='mug'?'#e0a060':'rgba(255,255,255,.88)';
+  const stem=sh.stem?`<path d="M58.5 ${sh.stem[0]} L58 ${sh.stem[1]-2} L62 ${sh.stem[1]-2} L61.5 ${sh.stem[0]} Z" fill="rgba(255,255,255,.55)"/><ellipse cx="60" cy="${sh.stem[1]}" rx="24" ry="3.5" fill="rgba(255,255,255,.18)" stroke="${stroke}" stroke-width="1.5"/>`:'';
+  const handle=sh.handle?`<path d="M89 70 Q114 72 112 100 Q110 126 88 128" fill="none" stroke="url(#${id}cu)" stroke-width="8" stroke-linecap="round"/>`:'';
+  const base=sh.base?`<path d="M${sh.wb[0]+1} ${sh.bot-sh.base} L${sh.wb[1]-1} ${sh.bot-sh.base} L${sh.wb[1]} ${sh.bot} L${sh.wb[0]} ${sh.bot} Z" fill="rgba(255,255,255,.22)"/>`:'';
+  const ry=Math.max(2,(sh.w[1]-sh.w[0])/16),cxr=(sh.w[0]+sh.w[1])/2,rxr=(sh.w[1]-sh.w[0])/2;
+  const rim=`<ellipse cx="${cxr}" cy="${sh.top}" rx="${rxr}" ry="${ry}" fill="none" stroke="${stroke}" stroke-width="1.6"/>`;
+  const sugarRim=b.garn.includes('sugar_rim')?`<ellipse cx="${(sh.w[0]+sh.w[1])/2}" cy="${sh.top}" rx="${(sh.w[1]-sh.w[0])/2}" ry="${Math.max(2,(sh.w[1]-sh.w[0])/16)}" fill="none" stroke="#fffbe6" stroke-width="3.5" stroke-dasharray="1 1.4"/>`:'';
+  const salt=sugarRim+(b.garn.includes('salt_rim')?`<ellipse cx="${cxr}" cy="${sh.top}" rx="${rxr}" ry="${ry}" fill="none" stroke="#fff" stroke-width="3.5" stroke-dasharray="1.5 1.5"/>`:'');
+  const garn=b.garn.filter(k=>k!=='salt_rim'&&k!=='sugar_rim').map((k,i)=>HAS(GARN_A(k))?`<image href="${AURL(GARN_A(k))}" x="${sh.w[1]-16-i*18}" y="${sh.top-17}" width="28" height="28"/>`:`<text x="${sh.w[1]-2-i*17}" y="${sh.top+4}" font-size="20" text-anchor="middle">${GARN[k].em}</text>`).join('');
+  const foot=sh.img?158:(sh.stem?sh.stem[1]:sh.bot);
+  const glow=topC?`<ellipse cx="60" cy="${foot+4}" rx="46" ry="6" fill="${rgbS(topC,1.1)}" opacity=".28"/>`:'';
+  const shadow=`<ellipse cx="60" cy="${foot+3}" rx="36" ry="4.5" fill="#000" opacity=".55"/>`;
+  let spillFx='';
+  if(a.spill&&topC){const c=rgbS(topC),[x0,x1]=wAt(sh.top+1),foot2=sh.img?158:(sh.stem?sh.stem[1]:sh.bot),nd=Math.min(5,1+Math.floor(a.spill/15));
+    for(let i=0;i<nd;i++){const left=i%2===0,x=left?x0-1-(i>>1)*2:x1+1+(i>>1)*2,len=(foot2-sh.top)*(.35+((i*37)%50)/100),y1=sh.top+len;
+      spillFx+=`<path d="M${x} ${sh.top} C${x+(left?-1:1)} ${sh.top+len*.4} ${x+(left?-2:2)} ${y1-6} ${x+(left?-1.5:1.5)} ${y1}" stroke="${c}" stroke-width="${(2.2-i*.25).toFixed(1)}" fill="none" stroke-linecap="round" opacity=".85"/><circle cx="${x+(left?-1.5:1.5)}" cy="${y1+1.5}" r="${(2-i*.2).toFixed(1)}" fill="${c}" opacity=".9"/>`}
+    spillFx+=`<ellipse cx="60" cy="${foot2+4}" rx="${Math.min(58,30+a.spill/3)}" ry="${Math.min(9,4+a.spill/25)}" fill="${c}" opacity=".55"/><ellipse cx="60" cy="${sh.top}" rx="${(x1-x0)/2+2}" ry="${Math.max(2,(x1-x0)/14)}" fill="${rgbS(topC,1.25)}" opacity=".85"/>`}
+  let stream='';
+  const pk=!big&&(pour?pour.k:(POURFX&&POURFX.until>performance.now()?POURFX.k:null));
+  if(pk){const c=ING[pk].c,sy=topC?surface:sh.bot-(sh.base||0),off=((now*60)%9).toFixed(1);
+    stream=`<line x1="66" y1="2" x2="64" y2="${sy}" stroke="${c}" stroke-width="3.2" stroke-linecap="round" opacity=".95"/><line x1="66" y1="2" x2="64" y2="${sy}" stroke="#fff" stroke-width="1" stroke-dasharray="5 4" stroke-dashoffset="${off}" opacity=".6"/>
+      <ellipse cx="64" cy="${sy}" rx="${(5+Math.sin(now*20)*1.5).toFixed(1)}" ry="1.8" fill="#fff" opacity=".6"/>
+      <g transform="translate(66 2) rotate(-128) translate(-14 -1)">${HAS(pk)?`<image href="${AURL(pk)}" x="-2" y="-4" width="32" height="46"/>`:bottleShape(pk)}</g>`}
+  if(sh.img){
+    const salt2=sugarRim+(b.garn.includes('salt_rim')?`<ellipse cx="${(sh.w[0]+sh.w[1])/2}" cy="${sh.top-H*.02}" rx="${(sh.w[1]-sh.w[0])/2+2}" ry="${Math.max(2,(sh.w[1]-sh.w[0])/14)}" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="1.5 1.5"/>`:'');
+    const mugTop=g==='mug'&&topC?`<ellipse cx="${(sh.w[0]+sh.w[1])/2}" cy="${sh.top+2}" rx="${(sh.w[1]-sh.w[0])/2}" ry="${Math.max(2,(sh.w[1]-sh.w[0])/12)}" fill="${rgbS(topC,1.1)}"/>`:'';
+    return `<svg viewBox="0 0 120 170" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs>${defs}</defs>${glow}${shadow}
+    ${g==='mug'?'':`<g mask="url(#${id}m)"><g clip-path="url(#${id}c)">${liq}${mint}${bub}${ice}${frost}</g></g>`}
+    <image href="${AURL('glass_'+g)}" x="${box.ox}" y="${box.oy}" width="${box.iw}" height="${box.ih}" preserveAspectRatio="none"/>${mugTop}${dew}${salt2}${spillFx}${garn}${stream}</svg>`;
+  }
+  return `<svg viewBox="0 0 120 170" xmlns="http://www.w3.org/2000/svg"><defs>${defs}</defs>${glow}${shadow}
+    <g clip-path="url(#${id}c)">${g==='mug'?`<path d="${sh.path}" fill="url(#${id}cu)"/>`:`<path d="${sh.path}" fill="url(#${id}gl)"/>${liq}${mint}${bub}${ice}${frost}`}</g>
+    ${g==='mug'&&topC?`<ellipse cx="59" cy="${sh.top+5}" rx="29" ry="4" fill="${rgbS(topC,1.1)}"/>`:''}
+    <path d="${sh.path}" fill="none" stroke="${stroke}" stroke-width="${g==='mug'?3:1.8}" stroke-linejoin="round"/>${base}${rim}${dew}
+    <path d="M${sh.w[0]+5} ${sh.top+8} L${(wAt(Math.min(sh.bot-12,sh.top+H*.6))[0]+5).toFixed(1)} ${Math.min(sh.bot-12,sh.top+H*.6).toFixed(1)}" stroke="rgba(255,255,255,.55)" stroke-width="2.6" stroke-linecap="round"/>
+    <path d="M${sh.w[1]-6} ${sh.top+10} L${sh.w[1]-7} ${sh.top+22}" stroke="rgba(255,255,255,.4)" stroke-width="1.6" stroke-linecap="round"/>${stem}${handle}${salt}${spillFx}${garn}${stream}</svg>`;
+}
+// bottle / container icons per ingredient group (viewBox 28x40, neck at 14,1)
+function bottleShape(k){
+  const i=ING[k],c=i.c,stroke='rgba(255,255,255,.7)';
+  const shine=`<path d="M9 16 L9 33" stroke="#fff" stroke-opacity=".45" stroke-width="1.6" stroke-linecap="round"/>`;
+  const label=(y,h,col)=>`<rect x="7.5" y="${y}" width="13" height="${h}" rx="1.2" fill="${col||'#f6efe0'}" opacity=".93"/><rect x="7.5" y="${y+h-2}" width="13" height="1.2" fill="${c}" opacity=".9"/>`;
+  if(k==='mint')return `<g fill="#3fa34d" stroke="#1f6b2c" stroke-width=".8"><path d="M14 38 C2 30 4 14 14 4 C24 14 26 30 14 38Z"/><path d="M14 38 V8" stroke="#bbf7d0"/></g>`;
+  if(k==='sugar')return `<g><rect x="5" y="16" width="18" height="18" rx="2" fill="#fff" stroke="#e5e7eb"/><path d="M5 16 l5 -5 h18 l-5 5z" fill="#f3f4f6" stroke="#e5e7eb"/><path d="M23 16 l5 -5 v18 l-5 5z" fill="#d1d5db"/></g>`;
+  if(k==='bitters')return `<g><rect x="11" y="1" width="6" height="7" rx="2" fill="#111"/><path d="M10 8h8v4q5 2 5 7v16q0 3-3 3H8q-3 0-3-3V19q0-5 5-7z" fill="${c}" stroke="${stroke}"/>${label(20,11,'#fdf6e3')}${shine}</g>`;
+  if(i.g==='spirit')return `<g><rect x="10.5" y="0" width="7" height="5" rx="1" fill="#1b1b1b"/><path d="M11 4h6v7q0 2 4 4v21q0 3-3 3H10q-3 0-3-3V15q4-2 4-4z" fill="${c}" fill-opacity=".92" stroke="${stroke}"/>${label(20,10)}${shine}</g>`;
+  if(i.g==='liqueur')return `<g><rect x="11" y="0" width="6" height="5" rx="1" fill="#2a1a10"/><path d="M11 4h6v8q9 4 9 14q0 13-12 13t-12-13q0-10 9-14z" fill="${c}" fill-opacity=".92" stroke="${stroke}"/><ellipse cx="14" cy="27" rx="6.5" ry="4.5" fill="#f6efe0" opacity=".9"/>${shine}</g>`;
+  if(i.g==='juice'||/tea|oolong/.test(k))return `<g><path d="M8 3h12l-1.5 7q6 4 6 12v14q0 3-3 3H7.5q-3 0-3-3V22q0-8 6-12z" fill="${c}" fill-opacity=".9" stroke="${stroke}"/><path d="M8 3 l-3 -2" stroke="${stroke}" stroke-width="1.5"/><path d="M8 18 h12" stroke="#fff" stroke-opacity=".5"/>${shine}</g>`;
+  if(i.g==='syrup')return `<g><rect x="11" y="4" width="6" height="5" rx="1" fill="#222"/><path d="M11 9h6v4q5 2 5 7v15q0 3-3 3H9q-3 0-3-3V20q0-5 5-7z" fill="${c}" fill-opacity=".95" stroke="${stroke}"/>${label(22,8)}${shine}</g>`;
+  if(k==='prosecco')return `<g><rect x="10.5" y="0" width="7" height="9" rx="1.5" fill="#d4af37"/><path d="M11 7h6v6q6 3 6 9v14q0 3-3 3H8q-3 0-3-3V22q0-6 6-9z" fill="#2f4f2f" stroke="${stroke}"/>${label(22,9,'#fff7d6')}${shine}</g>`;
+  return `<g><rect x="6" y="6" width="16" height="32" rx="3" fill="${c}" stroke="${stroke}"/><rect x="6" y="5" width="16" height="4" rx="2" fill="#cbd5e1"/><rect x="6" y="15" width="16" height="12" fill="#fff" opacity=".85"/><text x="14" y="23.5" font-size="5.5" text-anchor="middle" fill="#334155" font-weight="900">${esc((i.e||'').split(' ')[0].slice(0,5).toUpperCase())}</text>${shine}</g>`;
+}
+const bottleIcon=k=>aIco(k,`<span class="ico"><svg viewBox="0 0 28 40">${bottleShape(k)}</svg></span>`);
+function render(){
+  const lab=G.kind==='lab',p=lab?null:G.guests[G.idx],o=lab?null:G.orders[G.idx];
+  $('gTitle').textContent=G.title;
+  $('gMoney').textContent=lab?'':`💰 $${G.tips}`;
+  if(lab){$('cust').innerHTML=`<div style="font-size:.92rem;line-height:1.6;color:var(--muted)">${L('自由发挥吧：倒什么、倒多少都随你。杯子旁边会实时显示这杯酒的风味。满意了就存下来，给它起个名字。','Go wild: any ingredients, any amounts. The panel shows the flavour live. Happy with it? Save it and give it a name.')}</div>`}
+  else{
+    $('cust').style.setProperty('--pc',p.c);
+    $('cust').innerHTML=`<div class="face" style="--pc:${p.c}"><img src="${face(p)}" alt=""></div>
+      <div style="flex:1;min-width:0"><div class="who">${PN(p)}<small>${G.vn?'':L(`第 ${G.idx+1}/${G.guests.length} 位`,`Guest ${G.idx+1}/${G.guests.length}`)}${p.minor?L(' · 未成年',' · under age'):''}</small></div>
+      <div class="bubble">${G.vn?`${L('（想想刚才的对话，给 TA 调一杯最合适的。）','(Think back to the conversation and mix what suits them best.)')}${G.clues&&G.clues.length?`<div class="clues">${G.clues.map(c=>`<span>📓 ${esc(c)}</span>`).join('')}</div>`:`<div class="recap">${(G.recap||[]).map(t=>'「'+esc(t)+'」').join('<br>')}</div>`}`:`${L(p.hi[0],p.hi[1])}<br>${orderText(o,p)}`}</div></div>`;
+  }
+  $('patWrap').hidden=lab||!!G.vn;$('queue').hidden=lab||!!G.vn;
+  if(!lab&&!G.vn)$('queue').innerHTML=L('今晚：','Tonight: ')+G.guests.map((g,i)=>`<span class="${i<G.idx?'done':''}"><img src="${face(g)}" alt=""></span>`).join('');
+  $('actions').innerHTML=`<button id="bBook">${L('📖 酒谱','📖 Recipes')}</button><button id="bDump">${G.cg?L(`🔄 倒掉重来（${Math.max(0,G.cg.retry)}）`,`🔄 Restart (${Math.max(0,G.cg.retry)})`):L('🗑 倒掉','🗑 Dump')}</button>`+
+    (lab?`<button id="bCard">${L('🖼 酒卡','🖼 Card')}</button><button class="primary" id="bSave">${L('💾 存为我的特调','💾 Save creation')}</button>`:`<button class="primary" id="bServe">${L('🍸 出酒','🍸 Serve')}</button>`);
+  drawPatience();renderGlass();renderBuild();renderTabs();renderItems();
+}
+function drawPatience(){if(!G||G.vn||G.kind==='lab'||!G.cfg)return;const f=G.left/G.cfg.pat;$('patience').style.width=(f*100)+'%';$('patience').style.backgroundPosition=`${(1-f)*100}% 0`}
+function liveReact(){
+  if(!G||!G.vn||!V||!V.pending)return;const f=document.querySelector('#cust .face');if(!f)return;
+  const a=analyse(B);let e='';
+  if(a.liquid>=20){const st=V.pending,best=DRINKS.find(d=>d.id===st.mix.best),tj=tasteJudge(B,a,st.mix.want||flavourWant(best),st.mix.avoid||[],st.mix.str,vGuest());
+    e=tj.bad.length?'😖':tj.loves.length?'😍':tj.sat===tj.n?'😋':tj.sat?'🤔':'😐'}
+  let r=f.querySelector('.react');if(!r){r=document.createElement('span');r.className='react';f.appendChild(r)}
+  if(r.textContent!==e){r.textContent=e;r.classList.remove('pop');void r.offsetWidth;r.classList.add('pop')}
+}
+function renderGlass(){
+  $('glass').innerHTML=glassSVG(B);renderPin();liveReact();
+  const a=analyse(B);
+  if(a.liquid<1){$('taste').innerHTML=`<div style="color:var(--muted);line-height:1.6">${L('倒点东西进去，这里会显示风味。','Pour something in to see the flavour here.')}</div>`;return}
+  const dims=DIMS.filter(d=>a.prof[d]>.05).sort((x,y)=>a.prof[y]-a.prof[x]).slice(0,6);
+  const colors={sw:'#f472b6',so:'#a3e635',bi:'#a16207',fr:'#fb923c',he:'#4ade80',fz:'#7dd3fc',cr:'#fef3c7',co:'#92400e',sp:'#ef4444',sa:'#e5e7eb',te:'#86efac',fl:'#e879f9'};
+  const tags=[...tagsOf(B,a)];
+  const c=closest(B),kn=c.s.total>=78&&known(c.d)?c.d:null;
+  $('taste').innerHTML=`<div>${L('酒精度','ABV')} <span class="abv">${a.abv.toFixed(1)}%</span> · ${Math.round(a.total)}ml</div>`+
+    dims.map(d=>`<div class="bar"><span>${L(DIM_NAME[d][0],DIM_NAME[d][1])}</span><i style="--c:${colors[d]};width:${Math.min(100,a.prof[d]/(T[d]*2.5)*100)}%"></i></div>`).join('')+
+    `<div class="tags">${tags.map(t=>`<span>${TN(t)}</span>`).join('')}</div>`+(kn?`<div class="known">✓ ${L('像是','Looks like')} ${DN(kn)}</div>`:'');
+}
+function amountTxt(k,v){const u=ING[k].u;return ING[k].mixer&&v<=1?L('加满','top up'):u==='pour'?`${Math.round(v)}ml`:u==='dash'?L(`${v} 滴`,`${v} dash`):L(`${v} ${k==='mint'?'把':'块'}`,`${v}`)}
+function renderBuild(){if(G&&!G.cg&&$("tabs").childElementCount)renderTabs();
+  const rows=[];
+  if(B.glass)rows.push([L('杯','Glass'),L(GLASS[B.glass].n,GLASS[B.glass].e)]);
+  if(B.ice)rows.push([L('冰','Ice'),L(ICE[B.ice].n,ICE[B.ice].e)+(ICE[B.ice].max?(B.ice==='crushed'?' · '+L(['','少量','半杯','满杯'][iceN(B)],['','a little','half','full'][iceN(B)]):` × ${iceN(B)}`):'')]);
+  Object.keys(B.ing).forEach(k=>{if(B.ing[k])rows.push([IN(k),amountTxt(k,B.ing[k])])});
+  {const a=analyse(B);if(a.spill)rows.push([`<span style="color:var(--red)">💦 ${L('溢出','Spilled')}</span>`,`<span style="color:var(--red)">${a.spill}ml</span>`]);else if(B.glass&&a.liquid>0&&a.room<=4)rows.push([L('液面','Level'),L('满到杯口','to the brim')])}
+  if(B.method)rows.push([L('手法','Method'),L(METHOD[B.method].n,METHOD[B.method].e)+(B.method!=='build'&&B.tech!=null?` · ${B.tech>=.95?L('完美','perfect'):B.tech>=.6?L('不错','good'):L('一般','meh')}`:'')]);
+  if(B.garn.length)rows.push([L('装饰','Garnish'),B.garn.map(k=>L(GARN[k].n,GARN[k].e)).join(L('、',', '))]);
+  $('build').innerHTML=rows.length?rows.map(r=>`<div class="row"><b>${r[0]}</b><span>${r[1]}</span></div>`).join(''):`<div class="none">${L('杯子还是空的。','The glass is empty.')}</div>`;
+}
+const TABS=[['glass','🥃','杯子','Glass'],['ice','🧊','冰','Ice'],['spirit','🍾','烈酒','Spirits'],['liqueur','🍷','利口/起泡酒','Liqueurs & bubbly'],['juice','🧃','果汁奶','Juice'],['syrup','🍯','糖/香料','Sweet/Herbs'],['top','🫧','汽水','Sodas'],['tea','🍵','茶饮','Teas'],['method','🌀','手法','Method'],['garn','🍒','装饰','Garnish']];
+function renderTabs(){if(G&&G.cg){$('tabs').innerHTML='';$('tabs').style.display='none';return}$('tabs').style.display='';$('tabs').innerHTML=TABS.map(t=>{const n=t[0]==='glass'?(B.glass?1:0):t[0]==='ice'?(B.ice?1:0):t[0]==='method'?(B.method?1:0):t[0]==='garn'?B.garn.length:Object.keys(B.ing).filter(k=>B.ing[k]&&ING[k].g===t[0]).length;
+  return `<button data-t="${t[0]}" class="${tab===t[0]?'on':''}"><span class="ti">${t[1]}</span><span class="tl">${L(t[2],t[3])}</span>${n?`<i class="tdot">${t[0]==='glass'||t[0]==='ice'||t[0]==='method'?'✓':n}</i>`:''}</button>`}).join('')}
+function renderItems(){
+  if(G&&G.cg){renderCards();return}$('items').className='items';
+  let html='';
+  if(tab==='glass')html=Object.keys(GLASS).map(k=>`<button class="item ${B.glass===k?'on':''}" data-a="glass" data-k="${k}">${aIco('glass_'+k,`<span class="em">${GLASS[k].em}</span>`)}${L(GLASS[k].n,GLASS[k].e)}</button>`).join('');
+  else if(tab==='ice')html=Object.keys(ICE).map(k=>{const on=B.ice===k,mx=ICE[k].max,n=on?iceN(B):0;
+    return `<button class="item ${on?'on':''}" data-a="ice" data-k="${k}">${aIco(ICE_A[k]||'',`<span class="em">${ICE[k].em}</span>`)}<span>${L(ICE[k].n,ICE[k].e)}${mx?`<br><small>${on?(k==='crushed'?L(['','少量','半杯','满杯'][n],['','a little','half','full'][n]):L(`${n} 块`,`${n} cubes`)):L('点多次加量','tap again for more')}</small>`:''}</span>${mx?`<span class="fillb" data-icefill="${k}" title="${L('装满一杯冰','Fill with ice')}">${L('满','full')}</span>`:''}${on&&mx?`<span class="cnt">${n}</span><span class="adj"><i data-adj="-1" data-ice="1">−</i><i data-adj="1" data-ice="1">+</i></span>`:''}</button>`}).join('');
+  else if(tab==='method')html=Object.keys(METHOD).map(k=>`<button class="item ${B.method===k?'on':''}" data-a="method" data-k="${k}">${aIco(METH_A[k],`<span class="em">${METHOD[k].em}</span>`)}<span>${L(METHOD[k].n,METHOD[k].e)}<br><small>${L(METHOD[k].d[0],METHOD[k].d[1])}</small></span></button>`).join('');
+  else if(tab==='garn')html=Object.keys(GARN).map(k=>`<button class="item ${B.garn.includes(k)?'on':''}" data-a="garn" data-k="${k}">${aIco(GARN_A(k),`<span class="em">${GARN[k].em}</span>`)}${L(GARN[k].n,GARN[k].e)}</button>`).join('');
+  else html=Object.keys(ING).filter(k=>ING[k].g===tab).map(k=>{const v=B.ing[k]||0,u=ING[k].u;
+    const cnt=v?(u==='pour'?Math.round(v):v):'';
+    return `<button class="item ${v?'on':''}" data-a="ing" data-k="${k}">${bottleIcon(k)}<span>${IN(k)}<br><small>${u==='pour'?L('按住倒','hold to pour'):u==='dash'?L('点一下 1 滴','tap = 1 dash'):L('点一下 +1','tap = +1')}${ING[k].abv?` · ${ING[k].abv}%`:''}</small></span>${cnt?`<span class="cnt">${cnt}</span><span class="x" data-x="${k}">✕</span><span class="adj"><i data-adj="-1" data-k="${k}">−</i><i data-adj="1" data-k="${k}">+</i></span>`:''}${u==='pour'?`<span class="fillb" data-fill="${k}" title="${L('倒到杯口','Fill to the brim')}">${L('满','full')}</span>`:''}</button>`}).join('');
+  $('items').innerHTML=html;
+  $('tip').textContent={glass:L('先选杯子。长饮料用高球杯，短而烈的用古典杯，摇过不加冰的用马天尼杯。','Pick a glass. Tall drinks: highball. Short and strong: rocks. Shaken, served up: martini glass.'),
+    ice:L('马天尼杯和香槟杯一般不加冰。','Martini glasses and flutes usually take no ice.'),
+    spirit:L('按住酒瓶倒酒，松手就停。45ml 大约按 1.5 秒。点 ✕ 可以清掉这一样。','Hold a bottle to pour, let go to stop. 45 ml is about 1.5 s. Tap ✕ to clear it.'),
+    liqueur:L('利口酒通常用量比较少，15–30ml。起泡酒、啤酒一般最后倒，点「满」刚好倒到杯口。','Liqueurs are used sparingly, 15–30 ml. Sparkling wine and beer usually go in last; tap "full" to fill to the brim.'),
+    juice:L('果汁让酒更好入口，加奶和椰浆的酒一般要摇。','Juice makes drinks easier; anything with cream or coconut is usually shaken.'),
+    syrup:L('糖浆、苦精、薄荷：一点点就够。','Syrups, bitters, mint: a little goes a long way.'),
+    top:L('汽水一般最后加。按住倒，或点「满」刚好倒到杯口；倒太多会溢出。','Sodas usually go in last. Hold to pour, or tap "full" to fill to the brim; too much spills over.'),
+    tea:L('茶饮适合配威士忌、金酒、桂花酒，做清爽的长饮。点「满」刚好倒到杯口。','Teas pair well with whisky, gin or osmanthus wine for light long drinks. Tap "full" to fill to the brim.'),
+    method:L('有汽水的直调；有果汁/奶的摇匀；只有酒的搅拌。','Fizzy: build. Juice or cream: shake. Spirits only: stir.'),
+    garn:L('装饰可以多选，再点一次取消。','Pick as many garnishes as you like; tap again to remove.')}[tab];
+}
+
+// ================= INPUT: tabs, tap items, hold-to-pour =================
+$('tabs').onclick=e=>{const b=e.target.closest('[data-t]');if(b){window.AU&&AU.play('tap');tab=b.dataset.t;renderTabs();renderItems()}};
+function refresh(){renderGlass();renderBuild();renderItems()}
+let pour=null;
+function hud(k){
+  if(!k){$('hud').classList.remove('on');return}
+  const v=B.ing[k]||0,max=90;
+  $('hud').innerHTML=`${IN(k)}<b>${Math.round(v)} ml</b><div class="jigger"><i style="width:${Math.min(100,v/max*100)}%"></i>${[15,30,45,60,75].map(m=>`<s style="left:${m/max*100}%"></s>`).join('')}</div>`;
+  $('hud').classList.add('on');
+}
+function startPour(k,el){
+  stopPour();
+  pour={k,el,last:performance.now()};el.classList.add('pouring');window.AU&&AU.play('pourStart');
+  pour.iv=setInterval(()=>{if(!pour)return;const now=performance.now(),dt=(now-pour.last)/1000;pour.last=now;
+    B.ing[k]=Math.min(400,(B.ing[k]||0)+(ING[k].mixer?60:30)*dt);hud(k);renderGlass();
+    const cnt=el.querySelector('.cnt');if(cnt)cnt.textContent=Math.round(B.ing[k])},50);
+}
+function stopPour(){
+  if(!pour)return;clearInterval(pour.iv);window.AU&&AU.play('pourStop');
+  const k=pour.k;pour.el.classList.remove('pouring');pour=null;
+  B.ing[k]=Math.round(B.ing[k]||0);if(B.ing[k]<1)delete B.ing[k];
+  setTimeout(()=>{if(!pour)hud(null)},900);
+  renderBuild();renderItems();renderGlass();
+}
+$('items').addEventListener('pointerdown',e=>{
+  if(e.target.closest('[data-x],[data-adj],[data-fill],[data-icefill]'))return;
+  const b=e.target.closest('[data-a="ing"]');if(!b)return;
+  const k=b.dataset.k;if(ING[k].u!=='pour')return;
+  e.preventDefault();b.setPointerCapture&&b.setPointerCapture(e.pointerId);startPour(k,b);
+});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>$('items').addEventListener(ev,()=>stopPour()));
+document.addEventListener('pointerup',()=>stopPour());
+$('items').addEventListener('click',e=>{
+  if(G&&G.cg){const d=e.target.closest('[data-disc]');if(d){e.stopPropagation();cgDiscard(+d.dataset.disc);return}
+    if(e.target.closest('[data-draw]')){cgDraw();return}
+    const c=e.target.closest('[data-card]');if(c)cgPlay(+c.dataset.card);return}
+  const x=e.target.closest('[data-x]');if(x){e.stopPropagation();delete B.ing[x.dataset.x];refresh();return}
+  const fb=e.target.closest('[data-fill],[data-icefill]');if(fb){e.stopPropagation();
+    if(!B.glass){toast(L('先选个杯子吧。','Pick a glass first.'));return}
+    if(fb.dataset.icefill){const k=fb.dataset.icefill;B.ice=k;B.iceN=iceMax(B,k);window.AU&&AU.play('ice',4)}
+    else{const k=fb.dataset.fill,r=roomLeft(B);if(r<1){toast(L('已经满到杯口了。','Already full to the brim.'));return}
+      B.ing[k]=Math.round((B.ing[k]||0)+r);window.AU&&AU.play('splash');POURFX={k,until:performance.now()+600};setTimeout(renderGlass,620)}
+    refresh();if(analyse(B).spill)window.AU&&AU.play('splash');return}
+  const adj=e.target.closest('[data-adj]');if(adj){e.stopPropagation();const d=+adj.dataset.adj;
+    if(adj.dataset.ice){B.iceN=Math.max(1,Math.min(iceMax(B),iceN(B)+d));window.AU&&AU.play(d>0?'ice':'tap',1)}
+    else{const k=adj.dataset.k,u=ING[k].u,step=u==='pour'?5:1,v=Math.max(0,Math.min(u==='pour'?400:8,(B.ing[k]||0)+d*step));
+      if(v)B.ing[k]=v;else delete B.ing[k];window.AU&&AU.play(d>0?'splash':'tap');if(d>0&&u==='pour'){POURFX={k,until:performance.now()+300};setTimeout(renderGlass,320)}}
+    refresh();return}
+  const im=e.target.closest('[data-a="iceminus"]');if(im){e.stopPropagation();B.iceN=Math.max(1,iceN(B)-1);window.AU&&AU.play('tap');refresh();return}
+  const b=e.target.closest('[data-a]');if(!b)return;
+  const a=b.dataset.a,k=b.dataset.k;
+  if(a==='glass'){B.glass=k;window.AU&&AU.play('clink')}
+  else if(a==='ice'){const mx=ICE[k].max&&iceMax(B,k);if(B.ice===k&&mx)B.iceN=Math.min(mx,iceN(B)+1);else{B.ice=k;B.iceN=mx?iceDef(B,k):1}window.AU&&AU.play(k==='none'?'tap':'ice',mx?Math.min(4,B.iceN):1)}
+  else if(a==='iceminus'){B.iceN=Math.max(1,iceN(B)-1);window.AU&&AU.play('tap')}
+  else if(a==='garn'){window.AU&&AU.play('select');B.garn=B.garn.includes(k)?B.garn.filter(x=>x!==k):[...B.garn,k]}
+  else if(a==='method'){if(k==='build'){B.method='build';B.tech=null;window.AU&&AU.play('stirTick')}else{openShake(k);return}}
+  else if(a==='ing'){const u=ING[k].u;if(u==='pour')return;B.ing[k]=Math.min(8,(B.ing[k]||0)+1);if(!B.ing[k])delete B.ing[k];else if(k==='mint'||k==='sugar'){window.AU&&AU.play('tap')}else{window.AU&&AU.play('splash');POURFX={k,until:performance.now()+450};setTimeout(renderGlass,470)}}
+  refresh();
+});
+document.addEventListener('contextmenu',e=>{if(e.target.closest('.item'))e.preventDefault()});
+
+// ================= CARD MIXING (story mode): build the drink by playing cards =================
+// Each mix gets its own deck: the cards for the scene's recipes, cards that fit what the guest wants,
+// a few traps the guest dislikes, and some spares. Hand of 7, a limited number of draws.
+const CARD_HAND=7,CARD_DRAWS=5;
+const CTYPE={glass:['杯子','Glass'],ice:['冰','Ice'],ing:['酒水','Pour'],method:['手法','Method'],garn:['装饰','Garnish']};
+function stdAmt(k){const i=ING[k];return i.mixer?'top':i.u==='dash'?2:i.u==='count'?1:i.g==='spirit'?45:i.g==='liqueur'?(i.abv<=12?60:25):i.g==='syrup'?15:30}
+function strSeed(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function buildDeck(st,p,tryN){
+  const r=rng32(strSeed((V?V.n:0)+':'+p.k+':'+st.mix.best+':'+(tryN||0))),best=DRINKS.find(d=>d.id===st.mix.best);
+  const acc=(st.mix.accept||[]).map(id=>DRINKS.find(d=>d.id===id)).filter(d=>d&&d!==best);
+  const cards=[],have=new Set(),add=(t,k,amt)=>{const key=t+':'+k;if(have.has(key))return false;have.add(key);cards.push({t,k,amt});return true};
+  const addRecipe=d=>{add('glass',d.glass);add('ice',d.ice);add('method',d.method);Object.entries(d.ing).forEach(([k,v])=>add('ing',k,v));d.garn.forEach(g=>add('garn',g))};
+  addRecipe(best);shuffle(acc,r).slice(0,1).forEach(addRecipe);
+  ['build','shake','stir'].forEach(m=>add('method',m));add('ice','none');add('ice','cubes');
+  const want=st.mix.want||flavourWant(best),avoid=st.mix.avoid||[],dimOf=tag=>Object.keys(DIM_TAG).find(d=>DIM_TAG[d]===tag);
+  const pool=shuffle(Object.keys(ING),r);
+  const byTag=(tags,n,safe)=>{let c=0;for(const k of pool){if(c>=n)break;if(have.has('ing:'+k)||(safe&&p.minor&&ING[k].abv>0))continue;
+    if(tags.some(t=>{const d=dimOf(t);return d&&(ING[k].f[d]||0)>=4}))if(add('ing',k,stdAmt(k)))c++}};
+  byTag(want,4,true);byTag(avoid,3,false);
+  let n=0;for(const k of pool){if(n>=2)break;if(add('ing',k,stdAmt(k)))n++}
+  n=0;for(const k of shuffle(Object.keys(GLASS),r)){if(n>=2)break;if(add('glass',k))n++}
+  n=0;for(const k of shuffle(Object.keys(GARN),r)){if(n>=2)break;if(add('garn',k))n++}
+  const deck=shuffle(cards,r),gi=deck.findIndex(c=>c.t==='glass');
+  if(gi>=CARD_HAND){const [c]=deck.splice(gi,1);deck.splice(Math.floor(r()*CARD_HAND),0,c)}   // the opening hand always holds a glass
+  return deck;
+}
+function cgStart(st,p){const tryN=G.cg?G.cg.tryN+1:0,retry=G.cg?G.cg.retry-1:1;
+  G.cg={deck:buildDeck(st,p,tryN),hand:[],draws:CARD_DRAWS,tryN,retry,played:0};
+  B=newBuild();B.ice='none';G.cg.hand=G.cg.deck.splice(0,CARD_HAND)}
+function cgDraw(){const c=G.cg;if(c.hand.length>=CARD_HAND){toast(L('手牌是满的：先出牌，或者弃掉不要的牌。','Your hand is full: play or discard first.'));return}
+  if(!c.deck.length){toast(L('牌堆摸完了。','The deck is empty.'));return}
+  if(!c.draws){toast(L('摸牌次数用完了，就用手上的牌发挥吧。','No draws left. Work with what you have.'));return}
+  c.draws--;while(c.hand.length<CARD_HAND&&c.deck.length)c.hand.push(c.deck.shift());window.AU&&AU.play('card');renderItems()}
+function cgDiscard(i){G.cg.hand.splice(i,1);window.AU&&AU.play('tap');renderItems()}
+function cgPlay(i){const c=G.cg.hand[i];if(!c)return;const k=c.k;
+  if(!B.glass&&c.t==='ing'&&c.amt==='top'){toast(L('「加满」的牌要先有杯子：先打出一张杯子牌。','Top-up cards need a glass first.'));return}
+  if(c.t==='glass'){B.glass=k;window.AU&&AU.play('clink')}
+  else if(c.t==='ice'){B.ice=k;B.iceN=null;window.AU&&AU.play(k==='none'?'tap':'ice',3)}
+  else if(c.t==='garn'){if(!B.garn.includes(k))B.garn.push(k);window.AU&&AU.play('select')}
+  else if(c.t==='method'){B.method=k;B.tech=k==='build'?null:.6;window.AU&&AU.play('stirTick')}
+  else{let v=c.amt;if(v==='top'){v=roomLeft(B);if(v<5){toast(L('杯子已经满了，加不进去。','The glass is already full.'));return}}
+    B.ing[k]=Math.round((B.ing[k]||0)+v);window.AU&&AU.play(ING[k].u==='pour'?'splash':'tap');if(ING[k].u==='pour'){POURFX={k,until:performance.now()+500};setTimeout(renderGlass,520)}}
+  G.cg.hand.splice(i,1);G.cg.played++;refresh();
+  if(c.t==='method'&&k!=='build')openShake(k);
+  if(analyse(B).spill)toast(L('溢出来了！汽水这类「加满」的牌要最后出。','It spilled! Play "top up" cards last.'))}
+function cardFlavour(k){const f=ING[k].f;return Object.keys(f).filter(d=>f[d]>=4).sort((a,b)=>f[b]-f[a]).slice(0,2).map(d=>L(DIM_NAME[d][0],DIM_NAME[d][1]))}
+function cardHTML(c,i){const k=c.k;let ico,name,sub='',tags='';
+  if(c.t==='glass'){ico=aIco('glass_'+k,`<span class="em">${GLASS[k].em}</span>`);name=L(GLASS[k].n,GLASS[k].e);sub=GLASS[k].cap+'ml'}
+  else if(c.t==='ice'){ico=aIco(ICE_A[k]||'',`<span class="em">${ICE[k].em}</span>`);name=L(ICE[k].n,ICE[k].e)}
+  else if(c.t==='method'){ico=aIco(METH_A[k],`<span class="em">${METHOD[k].em}</span>`);name=L(METHOD[k].n,METHOD[k].e);sub=k==='build'?L('不混匀','no mixing'):L('有小游戏','mini-game')}
+  else if(c.t==='garn'){ico=aIco(GARN_A(k),`<span class="em">${GARN[k].em}</span>`);name=L(GARN[k].n,GARN[k].e)}
+  else{ico=bottleIcon(k);name=IN(k);sub=c.amt==='top'?L('加满 · 最后出','top up · play last'):amountTxt(k,c.amt);
+    tags=[...(ING[k].abv?[ING[k].abv+'%']:[]),...cardFlavour(k)].map(t=>`<em>${t}</em>`).join('')}
+  return `<button class="pcard t-${c.t}" data-card="${i}"><span class="ctype">${L(CTYPE[c.t][0],CTYPE[c.t][1])}</span>${ico}<b>${name}</b><small>${sub}</small>${tags?`<span class="ctags">${tags}</span>`:''}<i class="cx" data-disc="${i}" title="${L('弃掉','Discard')}">✕</i></button>`}
+function renderCards(){const c=G.cg,box=$('items');box.className='cards';
+  box.innerHTML=`<div class="cgbar"><span>🃏 ${L(`牌堆 ${c.deck.length} 张`,`Deck ${c.deck.length}`)}</span><span>${L(`还能摸 ${c.draws} 次`,`${c.draws} draws left`)}</span><button data-draw="1" ${c.draws&&c.deck.length&&c.hand.length<CARD_HAND?'':'disabled'}>${L('摸牌补满','Draw')}</button></div>`+
+    (c.hand.length?`<div class="hand">${c.hand.map(cardHTML).join('')}</div>`:`<div class="none" style="padding:18px 0">${L('手上没牌了。可以摸牌，或者直接出酒。','No cards in hand. Draw, or serve.')}</div>`);
+  $('tip').textContent=L('点一张牌打进杯子；右上角 ✕ 弃掉不要的牌，再摸牌补满。牌不凑巧也没关系，口味对上就行。','Tap a card to play it; ✕ discards. Draw to refill. No perfect hand needed, just match the taste.')}
+
+// ================= DUEL (酒桌对决): the mix is replaced by a card duel against the character =================
+// 'duel' = card duel · 'cards' = build the drink with cards · 'pour' = the original hold-to-pour station
+const MIX_MODE='duel';
+const ROLE={jiuge:['调酒师','Bartender'],kc:['首席调酒师','Head bartender'],mojie:['店长','Manager'],richard:['老板','Owner'],xiangge:['保安队长','Head of security'],tiange:['音响师','Sound tech'],
+  ace:['驻唱歌手','House singer'],john:['DJ','DJ'],kevin:['网管','IT guy'],panda:['服务员','Server'],ya:['美工','Designer'],boluobao:['甜品师','Pastry chef'],liyutong:['前台','Front desk'],luoyu:['实习生','Intern'],ella:['通缉犯','Wanted woman'],xiaochen:['领班','Shift lead']};
+const PASSIVE={jiuge:['养生：每回合回 1 点清醒','Steady: regains 1 each turn'],xiangge:['硬汉：烈酒多灌 2','Tough: spirits hit 2 harder'],kc:['行家：凑成一杯酒时多灌 4','Pro: combos hit 4 harder'],
+  mojie:['苦口：出苦味的酒，你下回合少 1 点手速','Bitter: bitter drinks cost you 1 energy next turn'],tiange:['稳：开局自带 6 点挡酒','Solid: starts with 6 block'],ace:['台风：每回合多摸 1 张','Stage presence: draws 1 extra'],
+  kevin:['续命：出咖啡类回 2 点清醒','Caffeine: coffee cards heal 2'],panda:['端茶：挡酒牌多挡 2','Tea service: blocks 2 more'],richard:['老板：清醒值多 6','The boss: 6 more sobriety'],
+  john:['气氛组：带气泡的酒多灌 2','Hype: fizzy drinks hit 2 harder'],ya:['逆风：清醒不到一半时多灌 2','Underdog: hits 2 harder below half'],boluobao:['嗜甜：出甜的回 1 点清醒','Sweet tooth: sweet cards heal 1'],
+  liyutong:['蓄力：每 3 回合多 1 点手速','Charge: +1 energy every 3rd turn'],ella:['泼辣：她的每张酒牌都多灌 2','Fiery: every drink she pours hits 2 harder'],luoyu:['未成年：只打果汁局','Under age: juice only'],xiaochen:['稳妥：挡酒牌多挡 2','Careful: blocks 2 more']};
+const TRICKS={cut:{n:['切歌','Skip song'],em:'⏭️',cost:0,d:['摸 2 张牌','Draw 2']},cheer:{n:['起哄','Heckle'],em:'📣',cost:1,d:['对方下回合少 1 点手速','Foe: -1 energy next turn']},
+  dice:{n:['摇骰子','Dice'],em:'🎲',cost:1,d:['随机灌对方 2–9','Random 2–9 to foe']},toast:{n:['干杯','Cheers'],em:'🍻',cost:1,d:['双方各喝 4，你摸 1 张','Both drink 4, draw 1']},
+  snack:{n:['果盘','Fruit plate'],em:'🍉',cost:1,d:['回 3 清醒，挡 3','Heal 3, block 3']}};
+let DU=null;
+function dCard(k,noAlc){
+  if(TRICKS[k])return {k,type:'trick',cost:TRICKS[k].cost};
+  const i=ING[k];
+  if(i.abv>0)return noAlc?null:{k,type:'wine',cost:i.abv>=35?2:1,dmg:i.abv>=50?8:i.abv>=35?6:i.abv>=15?3:2};
+  if(/^(green_tea|oolong|jasmine|matcha)$/.test(k))return {k,type:'tea',cost:1,block:6};
+  if(['honey','milk','coconut_water','wm_tea'].includes(k))return {k,type:'cure',cost:1,heal:4};
+  if(noAlc&&(i.g==='juice'||i.mixer))return {k,type:'wine',cost:1,dmg:i.mixer?2:3};
+  return {k,type:'mix',cost:0,boost:2};
+}
+function dDeck(o,mine,p,r){
+  const out=[],push=k=>{const c=dCard(k,o.noAlc);if(c)out.push(c)},pool=shuffle(Object.keys(ING).filter(k=>dCard(k,o.noAlc)),r);
+  if(mine){Object.keys(o.target.ing).forEach(push);(o.accept[0]?Object.keys(o.accept[0].ing):[]).forEach(push);
+    ['green_tea','honey','oolong','cut','cut','cheer','dice','toast','snack'].forEach(push)}
+  else{const likes=[...(p.fav||[]),...(LOVES[p.k]||[])],dimOf=t=>Object.keys(DIM_TAG).find(d=>DIM_TAG[d]===t);
+    pool.filter(k=>likes.some(t=>{const d=dimOf(t);return d&&(ING[k].f[d]||0)>=4})).slice(0,7).forEach(push);
+    ['oolong','honey','cut','dice','snack'].forEach(push)}
+  for(const k of pool){if(out.length>=22)break;if(out.filter(c=>c.k===k).length<1)push(k)}
+  while(out.filter(c=>c.type==='wine').length<8){const k=pool.find(k=>dCard(k,o.noAlc).type==='wine'&&out.filter(c=>c.k===k).length<2);if(!k)break;push(k)}
+  return shuffle(out,r);
+}
+// o: {p, target, accept:[drinks], want:[tags]|null, avoid:[tags], level, done(res), story}
+function startDuel(o){
+  const p=o.p,r=rng32(strSeed(p.k+':'+o.target.id+':'+Date.now()));o.accept=o.accept||[];o.avoid=o.avoid||[];o.noAlc=!!p.minor;
+  const lv=o.level||1,side=(hp,k)=>({k,hp,max:hp,block:0,en:0,debuff:0,boost:0,hand:[],deck:[],disc:[],bar:[]});
+  DU={o,r,turn:0,busy:false,over:false,log:[],fx:[],combos:[],loves:[],hitTarget:false,hitAccept:false,
+    me:side(40,null),op:side(30+2*lv+(p.k==='richard'?6:0),p.k),opEn:lv<=5?2:3};
+  DU.me.deck=dDeck(o,true,p,r);DU.op.deck=dDeck(o,false,p,r);
+  if(p.k==='tiange')DU.op.block=6;
+  dDraw(DU.me,4);dDraw(DU.op,5);
+  clearInterval(timer);show('duel');dSay(L(`${PN(p)}（${ROLE[p.k][0]}）坐到你对面：来，走一个。`,`${PN(p)} (${ROLE[p.k][1]}) sits across from you: let's go.`));dTurn('me');
+}
+function dDraw(s,n){for(let i=0;i<n&&s.hand.length<8;i++){if(!s.deck.length){if(!s.disc.length)break;s.deck=shuffle(s.disc,DU.r);s.disc=[]}s.hand.push(s.deck.shift())}}
+function dSay(t){DU.log.push(t);if(DU.log.length>4)DU.log.shift()}
+function dHit(s,d){const b=Math.min(s.block,d);s.block-=b;s.hp=Math.max(0,s.hp-(d-b));if(DU)DU.fx.push({who:s===DU.me?'me':'op',n:d-b,blocked:b});return d-b}
+// one place decides how hard a drink card hits (so the opponent's "intent" preview matches what it will do)
+function dWineDmg(s,c,isOp){let d=c.dmg+(s.boost||0);const f=ING[c.k].f;if(isOp){if(s.k==='ella')d+=2;if(s.k==='xiangge'&&ING[c.k].abv>=35)d+=2;if(s.k==='john'&&(f.fz||0)>=4)d+=2;if(s.k==='ya'&&s.hp<s.max/2)d+=2}return d}
+// the opponent's simple brain: free cards first, heal when low, then the hardest drink it can afford
+function dPick(hand,en,hp,max){const pl=hand.map((c,i)=>[c,i]).filter(([c])=>c.cost<=en);if(!pl.length)return -1;
+  const free=pl.find(([c])=>c.cost===0),cure=pl.find(([c])=>c.type==='cure'||c.k==='snack'),tea=pl.find(([c])=>c.type==='tea'),wines=pl.filter(([c])=>c.type==='wine').sort((a,b)=>b[0].dmg-a[0].dmg);
+  return free?free[1]:hp<max*.4&&cure?cure[1]:wines.length?wines[0][1]:tea&&hp<max*.75?tea[1]:pl[0][1]}
+const dOpEnergy=()=>Math.max(1,DU.opEn-DU.op.debuff+(DU.op.k==='liyutong'&&DU.turn%3===0?1:0));
+// what the opponent is about to do on its next turn (shown to the player)
+function dIntent(){const D=DU,op=D.op,h=op.hand.slice(),sim={k:op.k,hp:op.hp,max:op.max,boost:0};let en=dOpEnergy(),dmg=0,blk=0,heal=0;
+  for(let g=0;g<12;g++){const i=dPick(h,en,sim.hp,sim.max);if(i<0)break;const c=h.splice(i,1)[0];en-=c.cost;
+    if(c.type==='wine'){dmg+=dWineDmg(sim,c,true);sim.boost=0}else if(c.type==='mix')sim.boost+=c.boost;else if(c.type==='tea')blk+=c.block;else if(c.type==='cure'){heal+=c.heal;sim.hp+=c.heal}
+    else if(c.k==='dice')dmg+=5;else if(c.k==='toast')dmg+=4;else if(c.k==='snack'){heal+=3;blk+=3}}
+  return {dmg,blk,heal}}
+// recipes the player is close to completing (something already on the bar, at most 2 cards missing)
+function dNear(){const D=DU,bar=D.me.bar,hand=D.me.hand.map(c=>c.k),out=[];
+  for(const d of DRINKS){const ks=Object.keys(d.ing);if(ks.length<2)continue;if(!ks.some(k=>bar.includes(k)))continue;const miss=ks.filter(k=>!bar.includes(k));if(miss.length>2)continue;
+    out.push({d,ks,miss,inHand:miss.filter(k=>hand.includes(k)).length})}
+  return out.sort((a,b)=>(a.miss.length-a.inHand*.6)-(b.miss.length-b.inHand*.6)||a.ks.length-b.ks.length).slice(0,2)}
+function dName(who){return who==='me'?L('你','You'):PN(DU.o.p)}
+function dTurn(who){const D=DU,s=D[who];if(D.over)return;
+  if(who==='me'){if(D.turn>0)dDraw(D.op,3+(D.op.k==='ace'?1:0));D.turn++;if(D.turn>16){dFinish();return}}
+  s.block=who==='op'&&D.turn===1&&s.k==='tiange'?s.block:0;s.boost=0;
+  s.en=who==='me'?Math.max(1,3-s.debuff):dOpEnergy();s.debuff=0;
+  if(who==='op'&&s.k==='jiuge')s.hp=Math.min(s.max,s.hp+1);
+  if(who==='me')dDraw(s,3);D.busy=who==='op';dRender();
+  if(who==='me'&&!prog['bar-duel-tut']){prog['bar-duel-tut']=1;saveProg();openRules()}
+  if(who==='op')dAI();
+}
+function dPlay(who,i){const D=DU,me=D[who],op=D[who==='me'?'op':'me'],c=me.hand[i];if(!c||c.cost>me.en||D.over)return false;
+  me.en-=c.cost;me.hand.splice(i,1);me.disc.push(c);const nm=dName(who),T=TRICKS[c.k],opk=who==='op'?me.k:null;let txt;
+  if(T){txt=L(T.n[0],T.n[1]);
+    if(c.k==='cut')dDraw(me,2);else if(c.k==='cheer')op.debuff=1;else if(c.k==='dice'){const d=2+Math.floor(D.r()*8);dHit(op,d);txt+=L(`，摇出 ${d}`,` rolls ${d}`)}
+    else if(c.k==='toast'){dHit(op,4);dHit(me,4);dDraw(me,1)}else if(c.k==='snack'){me.hp=Math.min(me.max,me.hp+3);me.block+=3}
+    dSay(`${nm}：${txt}`)}
+  else{const f=ING[c.k].f;
+    if(c.type==='wine'){const d=dWineDmg(me,c,who==='op');me.boost=0;
+      const real=dHit(op,d);dSay(L(`${nm}敬了一杯${IN(c.k)}，${who==='me'?PN(D.o.p):'你'}喝下 ${real}`,`${nm} pours ${IN(c.k)}: ${real}`));
+      if(opk==='mojie'&&(f.bi||0)>=3)op.debuff=1}
+    else if(c.type==='mix'){me.boost+=c.boost;dSay(L(`${nm}备了${IN(c.k)}，下一杯更上头`,`${nm} adds ${IN(c.k)}: next drink hits harder`))}
+    else if(c.type==='tea'){me.block+=c.block+(opk==='panda'||opk==='xiaochen'?2:0);dSay(L(`${nm}以${IN(c.k)}代酒，挡住一些`,`${nm} sips ${IN(c.k)} instead: block`))}
+    else{me.hp=Math.min(me.max,me.hp+c.heal);dSay(L(`${nm}喝了${IN(c.k)}，清醒了一点`,`${nm} has ${IN(c.k)}: sobers up a bit`))}
+    if(opk==='kevin'&&(f.co||0)>=4)me.hp=Math.min(me.max,me.hp+2);if(opk==='boluobao'&&(f.sw||0)>=6)me.hp=Math.min(me.max,me.hp+1);
+    me.bar.push(c.k);if(me.bar.length>6)me.bar.shift();dCombo(who)}
+  window.AU&&AU.play(c.type==='wine'?'splash':c.type==='trick'?'card':'select');return true;
+}
+const dRecipes=bar=>DRINKS.filter(d=>{const ks=Object.keys(d.ing);return ks.length>=2&&ks.every(k=>bar.includes(k))});
+function dCombo(who){const D=DU,me=D[who],op=D[who==='me'?'op':'me'],o=D.o,c=dRecipes(me.bar);if(!c.length)return;
+  const d=(who==='me'&&c.includes(o.target))?o.target:c.sort((a,b)=>Object.keys(b.ing).length-Object.keys(a.ing).length)[0],ks=Object.keys(d.ing),n=ks.length,tags=RTAGS[d.id];
+  ks.forEach(k=>{const i=me.bar.indexOf(k);if(i>=0)me.bar.splice(i,1)});
+  let dmg=4*n,note='';
+  if(who==='op'&&me.k==='kc')dmg+=4;
+  if(who==='me'){
+    if(d===o.target){dmg+=6;D.hitTarget=true;note=L('正中下怀！','Exactly what they wanted!')}
+    else if(o.accept.includes(d)||(o.want&&o.want.every(t=>tags.has(t)))){dmg+=3;D.hitAccept=true;note=L('对味了','That hits the spot')}
+    else if(o.avoid.some(t=>tags.has(t))){dmg=Math.ceil(dmg/2);note=L('TA 不爱这口，效果减半','Not their taste: half effect')}
+    const lv=(LOVES[op.k]||[]).filter(t=>tags.has(t));
+    if(lv.length){dmg+=5;lv.forEach(t=>{if(!D.loves.includes(t))D.loves.push(t);prog['bar-love-'+op.k+'-'+t]=1});note+=L(` 歪打正着：TA 偷偷偏爱「${lv.map(TN).join('、')}」！`,` Happy accident: they secretly love ${lv.map(TN).join(', ')}!`)}
+    if(!known(d)){prog['bar-r-'+d.id]=1;saveProg();note+=L(' 🎉 新配方进了酒谱',' 🎉 New recipe unlocked')}}
+  if(tags.has('无酒精')&&!o.noAlc){me.hp=Math.min(me.max,me.hp+2*n);dmg=Math.ceil(dmg/2);note+=L(' 无酒精：自己回了点清醒',' Alcohol-free: you sober up')}
+  const real=dHit(op,dmg);D.combos.push({who,d});D.banner={t:`🍸 ${DN(d)}！`,s:L(`${dName(who)}凑成一杯，多灌 ${real}。`,`${dName(who)} completes a drink: ${real} more.`)+note,at:Date.now()};
+  dSay(`🍸 ${dName(who)}：${DN(d)}（${real}）${note}`);window.AU&&AU.play('win');
+}
+function dCheckEnd(){const D=DU;if(D.over)return true;if(D.me.hp<=0||D.op.hp<=0){dFinish();return true}return false}
+function dAI(){const D=DU,op=D.op;const step=()=>{if(!DU||DU!==D||D.over)return;
+    const pk=dPick(op.hand,op.en,op.hp,op.max);
+    if(pk<0){dTurn('me');return false}
+    dPlay('op',pk);dRender();if(dCheckEnd())return false;if(!D.fast)setTimeout(step,700);return true};
+  if(D.fast){let g=0;while(g++<30&&step());}else setTimeout(step,650)}
+function dFinish(){const D=DU,o=D.o,p=o.p;D.over=true;D.busy=true;
+  const win=D.op.hp<=0||(D.me.hp>0&&D.me.hp/D.me.max>=D.op.hp/D.op.max),pct=D.me.hp/D.me.max;
+  const tier=!win?'bad':D.loves.length?'wow':(D.hitTarget||D.hitAccept)?'great':'ok';
+  const score=!win?30+Math.round(20*(1-D.op.hp/D.op.max)):tier==='ok'?70+Math.round(14*pct):tier==='great'?88+Math.round(12*pct):Math.max(95,88+Math.round(12*pct));
+  const res={tier,score,match:D.hitTarget?o.target:null,loves:D.loves.slice(),a:{liquid:0},duel:true},st=score>=90?3:score>=75?2:score>=50?1:0;
+  saveProg();window.AU&&AU.play(win?'win':'fail');
+  const made=D.combos.filter(c=>c.who==='me').map(c=>DN(c.d));
+  $('resultBox').innerHTML=`<h2>${win?L('🏆 你赢了','🏆 You win'):L('😵 你先趴下了','😵 You went down first')}</h2>
+    <div class="reply"><div class="face" style="--pc:${p.c}"><img src="${face(p)}" alt=""></div><div class="bubble">${win?L('行……你厉害，我认了。','All right… you win this one.'):L('哈哈，再练练吧！','Ha, go practise!')}</div></div>
+    <div class="score">${score}</div><div class="stars">${'⭐'.repeat(st)}${'☆'.repeat(3-st)}</div>
+    ${tier==='wow'?`<div class="wow">🎯 ${L('歪打正着！','Happy accident!')}<small>${L(`原来 ${PN(p)} 偷偷偏爱「${D.loves.map(TN).join('、')}」`,`${PN(p)} secretly loves ${D.loves.map(TN).join(', ')}`)}</small></div>`:''}
+    <p style="margin:6px 0">${D.hitTarget?L(`你凑出了 TA 最想喝的 <b>${DN(o.target)}</b>。`,`You made the drink they wanted most: <b>${DN(o.target)}</b>.`):win?L(`TA 其实最想喝的是 <b style="color:var(--gold)">${DN(o.target)}</b>，凑出来分数更高。`,`What they really wanted was <b style="color:var(--gold)">${DN(o.target)}</b>; make it for a higher score.`):''}</p>
+    ${made.length?`<p style="margin:0;color:var(--muted);font-size:.85rem">${L('你凑成的酒','Drinks you completed')}：${made.join(L('、',', '))}</p>`:''}
+    <div class="btnrow"><button class="primary" id="bDuelNext">${L('继续 →','Continue →')}</button></div>`;
+  $('mResult').classList.add('show');$('bDuelNext').onclick=()=>{$('mResult').classList.remove('show');DU=null;o.done(res)};
+}
+function dBarHTML(s){return s.bar.length?s.bar.map(k=>`<span class="dchip" title="${IN(k)}">${bottleIcon(k)}</span>`).join(''):`<small style="color:var(--muted)">${L('吧台是空的','bar is empty')}</small>`}
+function dSideHTML(who){const D=DU,s=D[who],p=D.o.p,me=who==='me',pct=Math.max(0,s.hp/s.max*100);
+  return `${me?'':`<div class="face" style="--pc:${p.c}"><img src="${face(p)}" alt=""></div>`}
+    <div class="dinfo"><div class="dname">${me?L('你','You'):`${PN(p)} <small>${L(ROLE[p.k][0],ROLE[p.k][1])}</small>`}${s.block?`<span class="dblock">🛡 ${s.block}</span>`:''}${s.debuff?`<span class="dblock" style="background:#7f1d1d">⚡-1</span>`:''}</div>
+      <div class="dhp"><i style="width:${pct}%;background:${pct>50?'linear-gradient(90deg,#22d3ee,#34d399)':pct>25?'linear-gradient(90deg,#f59e0b,#fbbf24)':'linear-gradient(90deg,#ef4444,#f97316)'}"></i><b>${L(D.o.noAlc?'肚量':'清醒',D.o.noAlc?'Room':'Sober')} ${s.hp}/${s.max}</b></div>
+      ${me?`<div class="den">${L('手速','Energy')} ${'●'.repeat(s.en)}${'○'.repeat(Math.max(0,3-s.en))}</div>`:`<div class="dpas">✦ ${L('特长','Skill')}：${L(PASSIVE[p.k][0],PASSIVE[p.k][1])}</div>${(()=>{if(D.over)return '';const it=dIntent(),a=[];if(it.dmg)a.push(L(`🍺 敬你约 ${it.dmg}`,`🍺 pour you about ${it.dmg}`));if(it.blk)a.push(L('🛡 挡酒','🛡 block'));if(it.heal)a.push(L('🍯 缓一缓','🍯 recover'));return `<div class="dintent">${L('下回合打算','Next turn')}：${a.join(' · ')||L('歇一下','rest')}</div>`})()}`}
+      <div class="dbar"><small>${L('吧台','Bar')}：</small>${dBarHTML(s)}</div></div>`}
+function dCardHTML(c,i){const D=DU,T=TRICKS[c.k],ok=!D.busy&&c.cost<=D.me.en,spark=!T&&dRecipes([...D.me.bar,c.k]).length>0;
+  const eff=c.type==='wine'?L(`灌 ${c.dmg+(D.me.boost||0)}`,`Hit ${c.dmg+(D.me.boost||0)}`):c.type==='mix'?L(`配料：下一杯 +${c.boost}`,`Mixer: next +${c.boost}`):c.type==='tea'?L(`挡 ${c.block}`,`Block ${c.block}`):c.type==='cure'?L(`回 ${c.heal}`,`Heal ${c.heal}`):L(T.d[0],T.d[1]);
+  return `<button class="pcard dc t-${c.type}${ok?'':' off'}${spark?' spark':''}" data-dc="${i}"><span class="cost">${c.cost}</span>${T?`<span class="ico"><span class="em">${T.em}</span></span>`:bottleIcon(c.k)}<b>${T?L(T.n[0],T.n[1]):IN(c.k)}</b><small>${eff}</small>${spark?`<span class="ctags"><em>✨ ${L('能凑成一杯','completes a drink')}</em></span>`:''}</button>`}
+function dRender(){const D=DU;if(!D)return;const o=D.o,p=o.p;
+  $('dTitle').textContent=L(`酒桌对决 · 第 ${D.turn} 回合`,`Bar duel · turn ${D.turn}`);
+  $('dOp').innerHTML=dSideHTML('op');$('dMe').innerHTML=dSideHTML('me');
+  const hint=o.clues&&o.clues.length?`<div class="clues">${o.clues.map(c=>`<span>📓 ${esc(c)}</span>`).join('')}</div>`:o.hint?`<div class="dhint">${o.hint}</div>`:'';
+  const fresh=D.banner&&Date.now()-D.banner.at<2600;
+  const near=dNear().map(x=>`<div class="dnear">🍸 ${L('快凑成','Almost')} <b>${known(x.d)?DN(x.d):L('一杯没见过的酒','an unknown drink')}</b>：${x.ks.map(k=>`<span class="${D.me.bar.includes(k)?'ok':D.me.hand.some(c=>c.k===k)?'inhand':'no'}">${D.me.bar.includes(k)?'✓':'○'}${known(x.d)?IN(k):(D.me.bar.includes(k)?IN(k):'？')}${!D.me.bar.includes(k)&&D.me.hand.some(c=>c.k===k)?L('（手上有）',' (in hand)'):''}</span>`).join(' ')}</div>`).join('');
+  $('dMid').innerHTML=`${fresh?`<div class="dbanner"><b>${D.banner.t}</b><span>${D.banner.s}</span></div>`:''}<div class="dlog">${D.log.map(t=>`<div>${t}</div>`).join('')}</div>${hint}${near}`;
+  D.fx.splice(0).forEach(f=>{const el=$(f.who==='me'?'dMe':'dOp');if(f.n>0){el.classList.remove('hit');void el.offsetWidth;el.classList.add('hit')}const fl=document.createElement('span');fl.className='dfloat'+(f.n>0?'':' blk');fl.textContent=f.n>0?'-'+f.n:L('挡住了','Blocked');el.appendChild(fl);setTimeout(()=>fl.remove(),900)});
+  $('dHand').innerHTML=D.me.hand.length?D.me.hand.map(dCardHTML).join(''):`<div class="none" style="grid-column:1/-1;padding:14px 0">${L('手上没牌了，结束回合摸牌。','No cards. End the turn to draw.')}</div>`;
+  $('dEnd').classList.toggle('pulse',!D.busy&&!D.me.hand.some(c=>c.cost<=D.me.en));$('dEnd').disabled=D.busy;$('dEnd').textContent=D.busy?L(`${PN(p)} 出牌中…`,`${PN(p)} is playing…`):L('结束回合 →','End turn →');
+  $('dTip').textContent=L('点牌出牌，左上角数字是要花的手速。手速用完或不想出了，点「结束回合」。不懂随时点「📕 规则」。','Tap a card to play it; the number is its energy cost. Out of energy or done? Tap "End turn". Tap "📕 Rules" any time.');
+}
+$('dHand').addEventListener('click',e=>{const b=e.target.closest('[data-dc]');if(!b||!DU||DU.busy)return;const i=+b.dataset.dc,c=DU.me.hand[i];
+  if(c.cost>DU.me.en){toast(L('手速不够了，结束回合吧。','Not enough energy. End your turn.'));return}
+  dPlay('me',i);dRender();dCheckEnd()});
+$('dEnd').onclick=()=>{if(!DU||DU.busy||DU.over)return;window.AU&&AU.play('tap');dTurn('op')};
+$('dBook').onclick=()=>openBook('classic');
+function openRules(){$('mRules').classList.add('show')}
+$('dRules').onclick=openRules;$('rulesClose').onclick=()=>$('mRules').classList.remove('show');
+$('dQuit').onclick=()=>{if(confirm(L('离开会放弃这一局，确定吗？','Leave and abandon this run?'))){DU=null;V=null;show('home')}};
+
+// ================= CAST GALLERY =================
+function openCast(one){const box=$('castBody');
+  if(one){const p=byKey(one),loves=(LOVES[p.k]||[]).map(t=>prog['bar-love-'+p.k+'-'+t]?TN(t):'？');
+    box.innerHTML=`<div class="castbig" style="--pc:${p.c}"><img src="${face(p)}" alt=""><h3 style="color:${p.c};margin:10px 0 4px">${PN(p)}</h3>
+      <p style="margin:0 0 6px;color:var(--muted)">${L((ROLE[p.k]||['',''])[0],(ROLE[p.k]||['',''])[1])}</p>
+      <p style="margin:0;line-height:1.8">${L('爱喝','Likes')}：${p.fav.map(TN).join(L('、',', '))}${p.minor?L('（未成年，只喝无酒精）',' (under age, alcohol-free only)'):''}<br>${L('隐藏口味','Secret favourites')}：${loves.join(' / ')}<br>${L('对战特长','Duel skill')}：${L((PASSIVE[p.k]||['',''])[0],(PASSIVE[p.k]||['',''])[1])}<br>${L('好感度','Affection')}：<span style="color:#f472b6">${hearts(p.k)}</span></p>
+      <div class="btnrow"><button id="castBack">${L('← 返回图鉴','← Back')}</button></div></div>`;$('castBack').onclick=()=>openCast();}
+  else{box.innerHTML=`<div class="castgrid">${PEOPLE.map(p=>`<div class="castc" data-ck="${p.k}" style="--pc:${p.c}"><img src="${face(p)}" alt="" loading="lazy"><b>${PN(p)}</b><small>${L((ROLE[p.k]||['',''])[0],(ROLE[p.k]||['',''])[1])} · ${L('爱喝','likes')} ${p.fav.map(TN).join(L('、',', '))}</small><span class="hearts">${hearts(p.k)}</span></div>`).join('')}</div>`;
+    box.querySelectorAll('[data-ck]').forEach(el=>el.onclick=()=>openCast(el.dataset.ck));}
+  $('mCast').classList.add('show');}
+$('castClose').onclick=()=>$('mCast').classList.remove('show');
+// ================= SHAKE / STIR MINI-GAME =================
+let SH=null;
+const SHAKER_SVG=`<svg viewBox="0 0 64 100"><defs><linearGradient id="mtl" x1="0" x2="1"><stop offset="0" stop-color="#6b7380"/><stop offset=".3" stop-color="#f8fafc"/><stop offset=".55" stop-color="#c3c9d1"/><stop offset="1" stop-color="#5b6370"/></linearGradient></defs><rect x="25" y="2" width="14" height="9" rx="3" fill="url(#mtl)"/><path d="M20 11h24l3 14H17z" fill="url(#mtl)"/><path d="M16 27h32l-5 68H21z" fill="url(#mtl)"/><path d="M16 27h32" stroke="#475569" stroke-width="2"/><path d="M23 34 L26 88" stroke="#fff" stroke-opacity=".7" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+const STIR_SVG=`<svg viewBox="0 0 64 100"><path d="M14 30h36l-3 64H17z" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="2"/><path d="M16 55h32l-2 38H18z" fill="#c8762c" opacity=".85"/><path d="M40 4 L30 92" stroke="#e5e7eb" stroke-width="3" stroke-linecap="round"/><circle cx="40" cy="4" r="3" fill="#e5e7eb"/><path d="M19 36 L21 88" stroke="#fff" stroke-opacity=".6" stroke-width="2" stroke-linecap="round"/></svg>`;
+function openShake(kind){
+  const zone=kind==='shake'?[.55,.85]:[.45,.78];
+  SH={kind,zone,v:0,holding:false,last:0,done:false};
+  $('shakeTitle').textContent=kind==='shake'?L('🥤 摇酒','🥤 Shake it'):L('🥄 搅拌','🥄 Stir it');
+  $('shakeTip').textContent=L('按住按钮，进度条走到绿色区域时松手。','Hold the button and let go when the bar is in the green zone.');
+  $('shakeBtn').innerHTML=kind==='shake'?SHAKER_SVG:STIR_SVG;
+  $('shakeZone').style.left=zone[0]*100+'%';$('shakeZone').style.width=(zone[1]-zone[0])*100+'%';
+  $('shakeFill').style.width='0%';
+  $('mShake').classList.add('show');
+}
+function shakeTick(){
+  if(!SH||!SH.holding){clearInterval(SH&&SH.iv);return}const now=performance.now();SH.v=Math.min(1.05,SH.v+(now-SH.last)/1000/(SH.kind==='shake'?3.2:2.8));SH.last=now;
+  $('shakeFill').style.width=Math.min(100,SH.v*100)+'%';
+  if(now-(SH.lastS||0)>(SH.kind==='shake'?140:320)){SH.lastS=now;window.AU&&AU.play(SH.kind==='shake'?'shakeTick':'stirTick')}
+  if(SH.v>=1.05)shakeRelease();
+}
+$('shakeBtn').addEventListener('pointerdown',e=>{if(!SH||SH.done)return;e.preventDefault();SH.holding=true;SH.v=0;SH.last=performance.now();$('shakeBtn').classList.add('on');$('glass').classList.add('shake');clearInterval(SH.iv);SH.iv=setInterval(shakeTick,40)});
+function shakeRelease(){
+  if(!SH||!SH.holding)return;clearInterval(SH.iv);SH.holding=false;SH.done=true;$('shakeBtn').classList.remove('on');$('glass').classList.remove('shake');
+  const [a,b]=SH.zone,v=SH.v;
+  const q=v>=a&&v<=b?1:v<a?Math.max(.2,1-(a-v)*2.2):Math.max(.2,1-(v-b)*3);
+  B.method=SH.kind;B.tech=Math.round(q*100)/100;window.AU&&AU.play(q>=.95?'win':'select');
+  toast(q>=.95?L('✨ 完美！','✨ Perfect!'):v<a?L('有点短，酒还不够冰。','A bit short, not cold enough.'):L('有点久，冰化了一些。','A bit long, slightly diluted.'));
+  setTimeout(()=>{$('mShake').classList.remove('show');SH=null;refresh()},500);
+}
+['pointerup','pointerleave','pointercancel'].forEach(ev=>$('shakeBtn').addEventListener(ev,shakeRelease));
+$('shakeCancel').onclick=()=>{SH=null;$('mShake').classList.remove('show');$('glass').classList.remove('shake')};
+
+// ================= SERVE =================
+const REPLY={
+  great:[['完美！就是这个味道。','Perfect! Exactly right.'],['哇，比我想的还好喝！','Wow, even better than I hoped!'],['你手艺可以啊！','You\'ve got skills!']],
+  good:[['不错，挺好喝的。','Nice, that\'s good.'],['嗯，还行，下次再精确一点。','Not bad. A bit more precise next time.']],
+  meh:[['……味道有点怪。','…It tastes a bit off.'],['这跟我想的不太一样。','Not quite what I had in mind.']],
+  wrong:[['这不是我想要的那种……','That\'s not what I was after…']],
+  minor:[['我说了我还没成年！不能喝酒！','I told you I\'m under age! No alcohol!']],
+  empty:[['……杯子几乎是空的？','…The glass is basically empty?']],
+  left:[['等太久了，我先走了。','Took too long, I\'m off.']]
+};
+function discoverCheck(res){
+  if(res.match&&!known(res.match)){prog['bar-r-'+res.match.id]=1;saveProg();return res.match}
+  return null;
+}
+function breakdownHTML(res){
+  const p=res.parts;if(!p)return '';
+  const row=(n,v,m)=>`<span>${n}</span><span class="${v>=m?'ok':v>0?'mid':'bad'}">${v}/${m}</span>`;
+  const sp=res.a&&res.a.spill?`<span style="grid-column:1/3;color:var(--red);font-size:.82rem">💦 ${L(`溢出了 ${res.a.spill}ml，吧台湿了一片，扣分`,`Spilled ${res.a.spill}ml over the bar, points off`)}</span>`:'';
+  if(p.want)return `<div class="breakdown">${row(L('口味','Taste'),p.taste,50)}${row(L('平衡','Balance'),p.balance,10)}${row(L('杯子','Glass'),p.glass,10)}${row(L('冰','Ice'),p.ice,10)}${row(L('手法','Method'),p.method,10)}${row(L('技巧','Technique'),p.tech,10)}
+    ${sp}<span style="grid-column:1/3;color:var(--muted);font-size:.8rem">${L('客人想要','Wanted')}：${p.want.map(t=>`<b style="color:${p.have.has(t)?'var(--green)':'var(--red)'}">${p.have.has(t)?'✓':'✗'}${TN(t)}</b>`).join(' ')}${(p.avoid||[]).length?' · '+L('不要','No')+'：'+p.avoid.map(t=>`<b style="color:${p.have.has(t)?'var(--red)':'var(--green)'}">${TN(t)}</b>`).join(' '):''}</span></div>`;
+  return `<div class="breakdown">${row(L('杯子','Glass'),p.glass,10)}${row(L('冰','Ice'),p.ice,10)}${row(L('配方','Recipe'),p.ing,50)}${row(L('手法','Method'),p.method,10)}${row(L('装饰','Garnish'),p.garn,10)}${row(L('技巧','Technique'),p.tech,10)}${sp}</div>`;
+}
+function serve(timeout){
+  if(!B.glass&&!timeout){toast(L('先选个杯子吧。','Pick a glass first.'));return}
+  clearInterval(timer);stopPour();
+  const p=G.guests[G.idx],o=G.orders[G.idx];
+  if(G.vn){vServe();return}
+  const res=timeout?{score:0,reason:'left'}:judge(B,o,p);
+  const found=timeout?null:discoverCheck(res);
+  const tf=timeout?0:G.left/G.cfg.pat,tip=res.score>=50?Math.round(res.score/10+tf*6):0;
+  G.tips+=tip;G.results.push(res.score);
+  const kind=['minor','left','wrong','empty'].includes(res.reason)?res.reason:res.score>=90?'great':res.score>=70?'good':'meh';
+  window.AU&&AU.play('serve');setTimeout(()=>window.AU&&AU.play(kind==='great'||kind==='good'?'win':'fail'),350);
+  const line=pick(REPLY[kind],Math.random),st=res.score>=90?3:res.score>=75?2:res.score>=50?1:0;
+  const what=res.a&&res.a.liquid>0?(res.match?`${L('你调的是','You made a')} <b>${DN(res.match)}</b>`:L('你调了一杯<b>原创特调</b>','You made an <b>original</b>')):'';
+  const want=o.kind==='named'?`${L('TA 点的是','They ordered')} <b style="color:var(--gold)">${DN(o.target)}</b>`:'';
+  $('resultBox').innerHTML=`
+    <div class="reply"><div class="face" style="--pc:${p.c}"><img src="${face(p)}" alt=""></div><div class="bubble">${L(line[0],line[1])}</div></div>
+    <div class="score">${res.score}</div><div class="stars">${'⭐'.repeat(st)}${'☆'.repeat(3-st)}</div>
+    ${found?`<div class="discover">🎉 ${L('发现新配方：','New recipe found: ')}${DN(found)}</div>`:''}
+    <p style="margin:0">${what}${what&&want?' · ':''}${want}</p>${breakdownHTML(res)}
+    <p style="margin:6px 0 0">💰 ${L('小费','Tip')} +$${tip}</p>
+    <div class="btnrow">${!timeout&&res.a&&res.a.liquid>20&&!res.match?`<button id="bSaveRes">${L('💾 存为我的特调','💾 Save creation')}</button>`:''}<button class="primary" id="bNextGuest">${G.idx+1<G.guests.length?L('下一位客人 →','Next guest →'):L('结束今晚 →','Close the night →')}</button></div>`;
+  $('mResult').classList.add('show');
+  const snapshot=JSON.parse(JSON.stringify(B));
+  if($('bSaveRes'))$('bSaveRes').onclick=()=>openSave(snapshot);
+  $('bNextGuest').onclick=()=>{$('mResult').classList.remove('show');G.idx++;G.idx<G.guests.length?nextGuest():endQuick()};
+}
+function endQuick(){
+  const avg=Math.round(G.results.reduce((a,b)=>a+b,0)/G.results.length),st=avg>=90?3:avg>=75?2:avg>=50?1:0;
+  if(G.kind==='daily'){const k='bar-daily-'+today();prog[k]=Math.max(prog[k]||0,avg);saveProg()}
+  $('nightBox').innerHTML=`<h2>${L('🌙 打烊了','🌙 Last call')}</h2><p>${G.title} · ${L(`${G.results.length} 位客人`,`${G.results.length} guests`)}</p>
+    <div class="score">${avg}</div><div class="stars">${'⭐'.repeat(st)}${'☆'.repeat(3-st)}</div><p>💰 ${L('今晚小费','Tips tonight')}：$${G.tips}</p>
+    <div class="btnrow"><button id="bAgain">${L('再来一次','Play again')}</button><button id="bHome">${L('返回','Back')}</button></div>`;
+  $('mNight').classList.add('show');const kind=G.kind;
+  $('bAgain').onclick=()=>{$('mNight').classList.remove('show');startQuick(kind)};
+  $('bHome').onclick=()=>{$('mNight').classList.remove('show');show('home')};
+}
+$('actions').addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.id==='bBook')openBook('classic');
+  if(b.id==='bDump'){if(G.cg){if(G.cg.retry<=0){toast(L('重来的机会用过了。','You already used your restart.'));return}
+      cgStart(V.pending,vGuest());render();toast(L('倒掉重来：换了一副新洗的牌。','Starting over with a reshuffled deck.'));return}
+    B=newBuild();refresh();toast(L('倒掉了，重新来。','Dumped. Start over.'))}
+  if(b.id==='bServe')serve(false);
+  if(b.id==='bSave'){if(analyse(B).liquid<20){toast(L('先调点东西再存吧。','Mix something first.'));return}openSave(JSON.parse(JSON.stringify(B)))}
+  if(b.id==='bCard'){if(analyse(B).liquid<20){toast(L('先调点东西吧。','Mix something first.'));return}makeCard({name:L('未命名特调','Untitled'),b:JSON.parse(JSON.stringify(B)),by:PLAYER})}
+});
+$('bQuit').onclick=()=>{
+  if(G&&G.kind==='lab'){show('home');return}
+  if(confirm(L('现在离开会放弃这一晚，确定吗？','Leaving now abandons this night. Sure?'))){clearInterval(timer);const story=G&&G.vn;V=null;G=null;show(story?'story':'home')}
+};
+
+// ================= MY CREATIONS + CARDS =================
+let pendingSave=null;
+function openSave(b){
+  pendingSave=b;const c=closest(b);
+  $('saveName').value='';$('saveName').placeholder=c.s.total>=78?DN(c.d)+L('（我的版本）',' (my take)'):L('比如：深夜包厢','e.g. Midnight Room');
+  $('mSave').classList.add('show');setTimeout(()=>$('saveName').focus(),50);
+}
+$('saveOk').onclick=()=>{
+  const name=($('saveName').value.trim()||$('saveName').placeholder).slice(0,20);
+  const list=myList();const item={id:Date.now().toString(36),name,by:PLAYER||'',b:pendingSave,created:Date.now()};
+  list.unshift(item);saveMyList(list.slice(0,60));
+  $('mSave').classList.remove('show');toast(L(`已保存「${name}」到我的特调`,`Saved "${name}" to My creations`));
+  makeCard(item);
+};
+$('saveCancel').onclick=()=>$('mSave').classList.remove('show');
+function describe(b){
+  const a=analyse(b);
+  return Object.keys(b.ing).filter(k=>b.ing[k]).map(k=>`${IN(k)} ${amountTxt(k,b.ing[k])}`);
+}
+async function makeCard(item){
+  const b=item.b,a=analyse(b),W=1080,H=1350,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  const gr=x.createLinearGradient(0,0,W,H);gr.addColorStop(0,'#2a1050');gr.addColorStop(.55,'#160a2c');gr.addColorStop(1,'#3a0f2e');x.fillStyle=gr;x.fillRect(0,0,W,H);
+  x.globalAlpha=.25;const rg=x.createRadialGradient(W/2,560,40,W/2,560,520);rg.addColorStop(0,'#f59e0b');rg.addColorStop(1,'transparent');x.fillStyle=rg;x.fillRect(0,0,W,H);x.globalAlpha=1;
+  x.strokeStyle='rgba(251,191,36,.6)';x.lineWidth=4;x.strokeRect(36,36,W-72,H-72);
+  x.fillStyle='#f472b6';x.font='bold 40px "Segoe UI",sans-serif';x.textAlign='center';x.fillText(L('Space 夜调 · 我的特调','Last Call at Space · My creation'),W/2,110);
+  let svg=glassSVG(b,true).replace(/<animate[^>]*\/>/g,'');
+  const hrefs=[...new Set([...svg.matchAll(/href="(bartender\/a\/[^"]+)"/g)].map(m=>m[1]))];
+  for(const h of hrefs){try{const bl=await (await fetch(h)).blob();const du=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(bl)});svg=svg.split('"'+h+'"').join('"'+du+'"')}catch(e){}}
+  await new Promise(res=>{const img=new Image();img.onload=()=>{x.drawImage(img,W/2-230,150,460,652);res()};img.onerror=res;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
+  x.fillStyle='#fff';x.font='bold 76px "ZCOOL QingKe HuangYou","Segoe UI",sans-serif';x.fillText(item.name,W/2,880);
+  x.fillStyle='#fbbf24';x.font='34px Orbitron,"Segoe UI",sans-serif';
+  const tags=[...tagsOf(b,a)].map(TN).join(' · ');
+  x.fillText(`${L('酒精度','ABV')} ${a.abv.toFixed(1)}%   ${L(GLASS[b.glass]?.n||'',GLASS[b.glass]?.e||'')}`,W/2,940);
+  x.fillStyle='#d8ccf5';x.font='30px "Segoe UI",sans-serif';x.fillText(tags,W/2,990);
+  x.fillStyle='#ece6fa';x.font='30px "Segoe UI",sans-serif';
+  const lines=describe(b);let y=1050;
+  for(let i=0;i<lines.length;i+=2){x.fillText(lines.slice(i,i+2).join('　·　'),W/2,y);y+=44;if(y>1210)break}
+  x.fillStyle='#9a8cc0';x.font='28px "Segoe UI",sans-serif';
+  x.fillText(`${item.by?L('调酒师：','Bartender: ')+item.by+'　':''}spacektv.net/bartender`,W/2,H-70);
+  const url=cv.toDataURL('image/png');
+  $('cardImg').src=url;$('cardDl').href=url;$('cardDl').download=(item.name||'drink')+'.png';
+  $('cardShare').onclick=async()=>{
+    try{const blob=await (await fetch(url)).blob();const file=new File([blob],(item.name||'drink')+'.png',{type:'image/png'});
+      if(navigator.canShare&&navigator.canShare({files:[file]}))await navigator.share({files:[file],title:item.name,text:L('我在 Space 夜调里调的特调','My creation in Last Call at Space')});
+      else toast(L('这个浏览器不支持直接分享，请先保存图片。','Sharing isn\'t supported here; save the image instead.'))}catch(e){}
+  };
+  $('mCard').classList.add('show');
+}
+$('cardClose').onclick=()=>$('mCard').classList.remove('show');
+
+// ================= RECIPE BOOK =================
+let bookTab='classic',bookFilter='all',PIN=null;const PEEK=new Set();
+const BOOK_FILTERS=[['all','全部','All'],['无酒精','无酒精','Alcohol-free'],['甜','甜','Sweet'],['酸','酸','Sour'],['苦','苦','Bitter'],['烈','烈','Strong'],['气泡','气泡','Fizzy'],['果味','果味','Fruity'],['茶','茶','Tea']];
+function recipeLine(d){return Object.keys(d.ing).map(k=>`${IN(k)} ${d.ing[k]==='top'?L('加满','top up'):amountTxt(k,d.ing[k])}`).join(L('，',', '))}
+function renderBook(){
+  document.querySelectorAll('[data-bt]').forEach(b=>b.classList.toggle('on',b.dataset.bt===bookTab));
+  const inGame=$('game').classList.contains('show');
+  $('bchips').hidden=bookTab!=='classic';
+  if(bookTab==='classic'){
+    $('bchips').innerHTML=BOOK_FILTERS.map(f=>`<button data-bf="${f[0]}" class="${bookFilter===f[0]?'on':''}">${L(f[1],f[2])}</button>`).join('');
+    const n=DRINKS.filter(known).length;
+    $('bookSub').textContent=L(`已收集 ${n}/${DRINKS.length}。没解锁的可以点"👀 偷看配方"，亲手调出来才算收集。${inGame?'点"📌 钉到吧台"可以边看边调。':''}`,`${n}/${DRINKS.length} found. Tap "👀 Peek" on a locked one; it only counts once you've made it.${inGame?' "📌 Pin" keeps it next to your glass.':''}`);
+    const list=DRINKS.filter(d=>bookFilter==='all'||RTAGS[d.id].has(bookFilter));
+    $('recipes').innerHTML=list.map(d=>{const k=known(d),pk=PEEK.has(d.id),open=k||pk,t=[...RTAGS[d.id]];
+      return `<div class="recipe ${open?(k?'':'peeked'):'locked'}"><b>${k?'':pk?'👀 ':'🔒 '}${DN(d)}</b>${t.includes('无酒精')?`<span class="na">${L('无酒精','alcohol-free')}</span>`:''}<br>
+      ${GLASS[d.glass].em} ${L(GLASS[d.glass].n,GLASS[d.glass].e)} · ${L(ICE[d.ice].n,ICE[d.ice].e)} · ${L(METHOD[d.method].n,METHOD[d.method].e)}<br>
+      ${open?recipeLine(d)+`<br>${L('装饰','Garnish')}：${d.garn.length?d.garn.map(g=>GARN[g].em+' '+L(GARN[g].n,GARN[g].e)).join(L('、',', ')):L('无','none')}`:L(`配料 ${Object.keys(d.ing).length} 种：`,`${Object.keys(d.ing).length} ingredients: `)+Object.keys(d.ing).map((g,i)=>i===0?IN(g):'？').join(L('、',', '))}
+      <div class="tags">${t.map(x=>`<i>${TN(x)}</i>`).join('')}</div>
+      <div class="ops">${open?'':`<button data-peek="${d.id}">👀 ${L('偷看配方','Peek')}</button>`}${open&&inGame?`<button data-pin="${d.id}">📌 ${PIN===d.id?L('已钉在吧台','Pinned'):L('钉到吧台','Pin to bar')}</button>`:''}</div></div>`}).join('')||`<p>${L('没有符合的配方。','No matching recipes.')}</p>`;
+  }else{
+    const list=myList();
+    $('bookSub').textContent=list.length?L('你发明的酒。可以重新生成酒卡，或者删掉。','Drinks you invented. Make a card again or delete.'):L('还没有特调。去🧪 创作台调一杯，或者出酒后点"存为我的特调"。','No creations yet. Head to the 🧪 Lab, or tap "Save creation" after serving.');
+    $('recipes').innerHTML=list.map(it=>{const a=analyse(it.b);
+      return `<div class="recipe"><b>${esc(it.name)}</b> <small style="color:var(--muted)">${it.by?esc(it.by)+' · ':''}${a.abv.toFixed(1)}%</small><br>
+      ${GLASS[it.b.glass]?GLASS[it.b.glass].em+' '+L(GLASS[it.b.glass].n,GLASS[it.b.glass].e):''}${it.b.method?' · '+L(METHOD[it.b.method].n,METHOD[it.b.method].e):''}<br>${describe(it.b).join(L('，',', '))}
+      <div class="tags">${[...tagsOf(it.b,a)].map(x=>`<i>${TN(x)}</i>`).join('')}</div>
+      <div class="ops"><button data-card="${it.id}">🖼 ${L('酒卡','Card')}</button><button data-del="${it.id}">🗑 ${L('删除','Delete')}</button></div></div>`}).join('');
+  }
+}
+function openBook(t){bookTab=t||bookTab;renderBook();$('mBook').classList.add('show')}
+// pinned recipe card next to the glass, ticking off each step as you go
+function renderPin(){
+  const el=$('pin');if(!el)return;
+  const d=PIN&&DRINKS.find(x=>x.id===PIN);if(!d||!B){el.innerHTML='';return}
+  const row=(ok,name,val,near)=>`<div class="r ${ok?'ok':near?'near':''}"><b>${name}</b><span>${val}</span></div>`;
+  let h=`<div class="pin"><button class="x" data-unpin>✕</button><h5>${DN(d)}</h5>`;
+  h+=row(B.glass===d.glass,L('杯','Glass'),L(GLASS[d.glass].n,GLASS[d.glass].e));
+  h+=row(B.ice===d.ice,L('冰','Ice'),L(ICE[d.ice].n,ICE[d.ice].e));
+  Object.keys(d.ing).forEach(k=>{const want=d.ing[k],got=B.ing[k]||0,u=ING[k].u;
+    const ok=want==='top'?(!!got&&roomLeft(B)<=b0cap(B)*.12):u==='pour'?Math.abs(got-want)<=6:got===want;
+    const val=want==='top'?L('加满','top up'):amountTxt(k,want);
+    h+=row(ok,IN(k),got&&!ok?`${amountTxt(k,got)} / ${val}`:val,got&&!ok)});
+  h+=row(B.method===d.method,L('手法','Method'),L(METHOD[d.method].n,METHOD[d.method].e));
+  if(d.garn.length)h+=row(d.garn.every(g=>B.garn.includes(g)),L('装饰','Garnish'),d.garn.map(g=>GARN[g].em).join(' '));
+  el.innerHTML=h+'</div>';
+}
+$('pin').addEventListener('click',e=>{if(e.target.closest('[data-unpin]')){PIN=null;renderPin()}});
+$('bchips').addEventListener('click',e=>{const b=e.target.closest('[data-bf]');if(b){bookFilter=b.dataset.bf;renderBook()}});
+$('recipes').addEventListener('click',e=>{
+  const c=e.target.closest('[data-card]'),d=e.target.closest('[data-del]'),pk=e.target.closest('[data-peek]'),pn=e.target.closest('[data-pin]');
+  if(pk){PEEK.add(pk.dataset.peek);renderBook();return}
+  if(pn){PIN=pn.dataset.pin;$('mBook').classList.remove('show');renderPin();$('pin').scrollIntoView({behavior:'smooth',block:'nearest'});toast(L('配方钉在吧台上了，边看边调吧','Recipe pinned next to your glass'));return}
+  if(c){const it=myList().find(x=>x.id===c.dataset.card);if(it){$('mBook').classList.remove('show');makeCard(it)}}
+  if(d&&confirm(L('删除这杯特调？','Delete this creation?'))){saveMyList(myList().filter(x=>x.id!==d.dataset.del));renderBook()}
+});
+document.querySelectorAll('[data-bt]').forEach(b=>b.onclick=()=>{bookTab=b.dataset.bt;renderBook()});
+$('bBookHome').onclick=()=>openBook('classic');
+$('bBookClose').onclick=()=>$('mBook').classList.remove('show');
+
+// ================= STORY (visual novel / AVG engine) =================
+// step kinds: {s,t} line · {c:[...],timer?,timeout?} choice · {mix} · {aff} · {flag} · {if,then,else}
+//             {fx} screen effect · {emo} emote · {card} caption card
+function affOf(k){return prog['bar-aff-'+k]||0}
+function hearts(k){const a=Math.max(0,affOf(k)+(V?V.gain[k]||0:0)),full=Math.min(5,Math.floor(a/2));return '♥'.repeat(full)+'♡'.repeat(5-full)}
+function hasFlag(n){return !!((V&&V.flags[n])||prog['bar-f-'+n])}
+function condOK(c){
+  if(c==null)return true;
+  if(Array.isArray(c))return c.every(condOK);
+  if(typeof c==='string')return c[0]==='!'?!hasFlag(c.slice(1)):hasFlag(c);
+  if(c.aff)return affOf(c.aff)+((V&&V.gain[c.aff])||0)>=(c.min||0);
+  if(c.tier)return !!V&&(V.lastTier===c.tier||(c.tier==='great'&&V.lastTier==='wow'));
+  return true;
+}
+function startStory(n){
+  const ch=STORY[n-1];
+  V={n,ch,si:-1,queue:ch.intro.slice(),gain:{},scores:[],mixes:[],typing:false,wait:false,lastLines:[],flags:{},log:[],clues:{},lastTier:null,shown:null,auto:false,skip:false};
+  clearInterval(timer);G=null;show('vn');
+  $('vTitle').textContent=L(`第 ${n} 晚 · ${ch.title[0]}`,`Night ${n} · ${ch.title[1]}`);
+  $('vChar').classList.add('hidden');$('vHearts').hidden=true;$('vfx').className='vfx';if(window.AU){AU.rain(false);AU.mood('lounge')}$('vCard').classList.remove('on');vModes();
+  vNext();
+}
+function vGuest(){return V&&V.si>=0?byKey(V.cur||V.ch.scenes[V.si].who):null}
+function vShow(p){const ch=$('vChar');if(!p){ch.classList.add('hidden');V.shown=null;return}
+  if(V.shown!==p.k){ch.style.setProperty('--pc',p.c);$('vImg').src=face(p);ch.classList.remove('hidden');ch.classList.remove('swap');void ch.offsetWidth;ch.classList.add('swap');V.shown=p.k}
+  ch.classList.remove('hidden')}
+function vNext(){
+  if(!V)return;
+  clearTimeout(V.autoT);
+  if(V.cardOn){V.cardOn=false;$('vCard').classList.remove('on')}
+  if(V.typing){clearInterval(typeT);V.typing=false;vFinishLine();return}
+  if(V.wait)return;
+  for(let guard=0;guard<500;guard++){
+    let st=V.queue.shift();
+    if(!st){
+      V.si++;if(V.si>=V.ch.scenes.length){vEndNight();return}
+      V.cur=null;const g=vGuest();V.queue=V.ch.scenes[V.si].steps.slice();V.lastLines=[];V.lastTier=null;
+      vShow(g);$('vChar').classList.remove('dim');window.AU&&AU.play('door');
+      $('vHearts').hidden=false;$('vHearts').textContent=`${PN(g)} ${hearts(g.k)}`;continue;
+    }
+    if(st.flag){V.flags[st.flag]=1;continue}
+    if(st.who){V.cur=st.who;const g=vGuest();vShow(g);$('vChar').classList.remove('dim');$('vHearts').hidden=false;$('vHearts').textContent=`${PN(g)} ${hearts(g.k)}`;continue}
+    if(st.tip!=null){V.tips=(V.tips||0)+st.tip;vTipPop(st.tip);continue}
+    if(st.ending){vEnding(st.ending);return}
+    if(st.if!==undefined){V.queue=[...(condOK(st.if)?(st.then||[]):(st.else||[])),...V.queue];continue}
+    if(st.fx){vFx(st.fx);continue}
+    if(st.emo){vEmo(st.emo);continue}
+    if(st.aff!=null){vAff(st.aff);continue}
+    if(st.card){vCardShow(st.card);return}
+    if(st.c){vChoices(st);return}
+    if(st.mix){vMix(st);return}
+    vSay(st);return;
+  }
+}
+const clueHTML=s=>esc(s).replace(/【([^】]+)】/g,'<b class="clue">$1</b>');
+function vSay(st){
+  const txt=L(st.t[0],st.t[1]),name=$('vName'),ch=$('vChar');
+  if(st.s==='n'){name.hidden=true;$('vText').className='vtext narr';ch.classList.toggle('dim',!!V.shown)}
+  else if(st.s==='me'){name.hidden=false;name.className='vname me';name.textContent=L('你','You');$('vText').className='vtext';ch.classList.add('dim')}
+  else{const p=byKey(st.s);vShow(p);name.hidden=false;name.className='vname';name.style.background=p.c;name.textContent=PN(p);$('vText').className='vtext';ch.classList.remove('dim');V.lastLines.push(txt.replace(/[【】]/g,''))}
+  V.log.push([st.s==='n'?'':st.s==='me'?L('你','You'):PN(byKey(st.s)),txt]);
+  const g=vGuest();
+  (st.t[0].match(/【([^】]+)】/g)||[]).forEach(m=>{V.flags['clue:'+m.slice(1,-1)]=1});
+  (txt.match(/【([^】]+)】/g)||[]).forEach(m=>{const c=m.slice(1,-1),k=g?g.k:'_';V.clues[k]=V.clues[k]||[];if(!V.clues[k].includes(c)){V.clues[k].push(c);vClueToast(c)}});
+  V.full=txt;$('vNext').hidden=true;clearInterval(typeT);
+  if(V.skip){vFinishLine();return}
+  V.typing=true;let i=0;const plain=txt.replace(/[【】]/g,'');$('vText').textContent='';
+  typeT=setInterval(()=>{i+=1;$('vText').textContent=plain.slice(0,i);if(i>=plain.length){clearInterval(typeT);V.typing=false;vFinishLine()}},LANG==='en'?14:28);
+}
+function vFinishLine(){
+  $('vText').innerHTML=clueHTML(V.full);$('vNext').hidden=false;
+  if(V.skip)V.autoT=setTimeout(vNext,90);
+  else if(V.auto)V.autoT=setTimeout(vNext,900+V.full.length*(LANG==='en'?25:55));
+}
+function vTipPop(n){const el=document.createElement('div');el.className='affpop';el.style.color='#fbbf24';el.textContent=n>=0?`💰 +$${n}`:`💸 -$${-n}`;if(n<0)el.style.color='#94a3b8';$('vn').appendChild(el);setTimeout(()=>el.remove(),1500)}
+const ENDS=()=>typeof ENDINGS!=='undefined'?ENDINGS:[];
+function vEnding(e){const [id,zh,en]=e;const isNew=!prog['bar-e-'+id];prog['bar-e-'+id]=1;saveProg();V.ends=(V.ends||[]).concat(id);
+  window.AU&&AU.play('card');V.cardOn=true;$('vNext').hidden=true;
+  $('vCard').innerHTML=`<div><div style="font-size:.5em;letter-spacing:6px;color:#f472b6">${isNew?L('— 新结局达成 —','— NEW ENDING —'):L('— 结局 —','— ENDING —')}</div>${esc(L(zh,en))}<div style="font-size:.4em;letter-spacing:2px;color:#cbbbe8;margin-top:10px">${L('结局收集','Endings')} ${ENDS().filter(x=>prog['bar-e-'+x[0]]).length}/${ENDS().length}</div></div>`;$('vCard').classList.add('on')}
+function vClueToast(c){window.AU&&AU.play('clue');const el=document.createElement('div');el.className='cluepop';el.textContent='📓 '+L('记下线索：','Clue noted: ')+c;$('vn').appendChild(el);setTimeout(()=>el.remove(),2200)}
+function vChoices(st){
+  V.wait=true;V.skip=false;vModes();$('vNext').hidden=true;const box=$('vChoices');box.hidden=false;window.AU&&AU.play('choice');
+  const opts=st.c.map((o,i)=>[o,i]).filter(([o])=>condOK(o.need));
+  box.innerHTML=(st.timer?`<div class="ctimer"><i id="cTimer" style="animation-duration:${st.timer}s"></i></div>`:'')+
+    opts.map(([o,i])=>`<button data-i="${i}" class="${o.need?'key':''}">${o.need?'🔑 ':''}${L(o.t[0],o.t[1])}</button>`).join('');
+  const done=()=>{clearTimeout(V.choiceT);box.hidden=true;box.innerHTML='';V.wait=false};
+  if(st.timer)V.choiceT=setTimeout(()=>{if(!V||box.hidden)return;done();vEmo('…');V.queue=[...(st.timeout||[]),...V.queue];vNext()},st.timer*1000);
+  box.onclick=e=>{const b=e.target.closest('[data-i]');if(!b)return;e.stopPropagation();
+    const o=st.c[+b.dataset.i];done();window.AU&&AU.play('select');
+    V.queue=[ME(o.t[0],o.t[1]),...o.then,...V.queue];if(o.aff)vAff(o.aff);vNext()};
+}
+function vAff(n){
+  const g=vGuest();if(!g||!n)return;V.gain[g.k]=(V.gain[g.k]||0)+n;
+  $('vHearts').textContent=`${PN(g)} ${hearts(g.k)}`;
+  window.AU&&AU.play(n>0?'affUp':'affDown');
+  const pop=document.createElement('div');pop.className='affpop';pop.style.color=n>0?'#f472b6':'#94a3b8';
+  pop.textContent=n>0?`♥ +${n}`:`💔 ${n}`;$('vn').appendChild(pop);setTimeout(()=>pop.remove(),1500);
+}
+function vFx(t){
+  const f=$('vfx'),vn=$('vn');
+  const A=window.AU;
+  if(t==='shake'){vn.classList.remove('vshake');void vn.offsetWidth;vn.classList.add('vshake');A&&A.play('thud')}
+  else if(t==='flash'){f.classList.remove('flash');void f.offsetWidth;f.classList.add('flash');A&&A.play('thunder')}
+  else if(t==='dark'){f.classList.add('dark');A&&A.mood('dark')}
+  else if(t==='light'){f.classList.remove('dark');A&&A.mood('lounge')}
+  else if(t==='rain'){f.classList.add('rain');A&&A.rain(true)}
+  else if(t==='clear'){f.classList.remove('rain');A&&A.rain(false)}
+}
+function vEmo(e){window.AU&&AU.play('emo');const el=document.createElement('div');el.className='vemo';el.textContent=e;$('vChar').appendChild(el);setTimeout(()=>el.remove(),1400)}
+function vCardShow(c){window.AU&&AU.play('card');V.cardOn=true;$('vCard').textContent=L(c[0],c[1]);$('vCard').classList.add('on');$('vNext').hidden=true;
+  if(V.auto||V.skip)V.autoT=setTimeout(vNext,V.skip?400:1800)}
+function vModes(){if(!V)return;$('vAuto').classList.toggle('on',V.auto);$('vSkip').classList.toggle('on',V.skip)}
+function vMix(st){
+  const p=vGuest();V.pending=st;V.skip=false;V.auto=false;vModes();
+  const clues=(V.clues[p.k]||[]).slice();
+  G={kind:'vn',vn:true,title:L(`第 ${V.n} 晚`,`Night ${V.n}`),cfg:{pat:9999},guests:[p],orders:[{kind:'named',target:DRINKS.find(d=>d.id===st.mix.best)}],idx:0,results:[],tips:V.tips||0,recap:clues.length?null:V.lastLines.slice(-3),clues};
+  if(MIX_MODE==='duel'){const best=DRINKS.find(d=>d.id===st.mix.best);
+    startDuel({p,target:best,accept:(st.mix.accept||[]).map(id=>DRINKS.find(d=>d.id===id)).filter(d=>d&&d!==best),want:st.mix.want||null,avoid:st.mix.avoid||[],level:V.n,clues,
+      done:res=>{G.tips=V.tips||0;vAfterMix(res)}});return}
+  B=newBuild();PIN=null;tab='glass';if(MIX_MODE==='cards')cgStart(st,p);show('game');render();
+}
+// story judging: the scene's best recipe = great; another listed recipe, or anything with the
+// right flavour, = ok; alcohol for a minor or the wrong flavour = bad
+function vJudge(){
+  const st=V.pending,p=vGuest(),best=DRINKS.find(d=>d.id===st.mix.best),a=analyse(B);
+  if(p.minor&&a.abv>0)return {tier:'bad',score:0,reason:'minor',a};
+  if(a.liquid<20)return {tier:'bad',score:0,reason:'empty',a};
+  const tech=techScore(B)-(a.spill?Math.min(10,3+Math.round(a.spill/8)):0),c=closest(B),match=c.s.total>=78?c.d:null;
+  const want=st.mix.want||flavourWant(best),tj=tasteJudge(B,a,want,st.mix.avoid||[],st.mix.str,p);
+  const rsBest=recipeScore(B,best);
+  const acc=[best,...(st.mix.accept||[]).map(id=>DRINKS.find(d=>d.id===id)).filter(Boolean)];
+  const bestAcc=acc.map(d=>({d,s:recipeScore(B,d)})).sort((x,y)=>y.s.total-x.s.total)[0];
+  const full=tj.sat===tj.n&&!tj.bad.length,wow=tj.loves.length>0&&!tj.bad.length&&tj.sat/Math.max(1,tj.n)>=.5&&tj.score>=62;
+  const out=(tier,score,m,parts,extra)=>({tier,score:Math.round(score),a,match:m,parts,loves:tj.loves,...extra});
+  if(rsBest.total+tech>=85)return out(wow?'wow':'great',Math.max(rsBest.total+tech,wow?95:0),best,{...rsBest,tech});
+  if(full&&tj.score>=78)return out(wow?'wow':'great',Math.max(tj.score,wow?92:85),match,tj.parts,{creative:!match});
+  if(wow)return out('wow',Math.max(tj.score,86),match,tj.parts,{creative:!match,lucky:true});
+  if(bestAcc.s.total+tech>=55)return out('ok',bestAcc.s.total+tech,bestAcc.d,{...bestAcc.s,tech});
+  if(tj.sat/Math.max(1,tj.n)>=.5&&!tj.bad.length&&tj.score>=50)return out('ok',Math.min(84,tj.score),match,tj.parts,{creative:!match});
+  return out('bad',Math.min(45,tj.score),match,tj.parts);
+}
+function vJudgeOld(){
+  const st=V.pending,p=vGuest(),best=DRINKS.find(d=>d.id===st.mix.best),a=analyse(B);
+  if(p.minor&&a.abv>0)return {tier:'bad',score:0,reason:'minor',a};
+  if(a.liquid<20)return {tier:'bad',score:0,reason:'empty',a};
+  const tech=techScore(B),c=closest(B),match=c.s.total>=78?c.d:null;
+  const rsBest=recipeScore(B,best);
+  if(rsBest.total+tech>=85)return {tier:'great',score:rsBest.total+tech,a,match:best,parts:{...rsBest,tech}};
+  const acc=st.mix.accept.map(id=>DRINKS.find(d=>d.id===id));
+  const bestAcc=acc.map(d=>({d,s:recipeScore(B,d)})).sort((x,y)=>y.s.total-x.s.total)[0];
+  if(bestAcc.s.total+tech>=55)return {tier:'ok',score:bestAcc.s.total+tech,a,match:bestAcc.d,parts:{...bestAcc.s,tech}};
+  const want=[...RTAGS[best.id]].filter(t=>!['经典','好看','优雅'].includes(t)).slice(0,4),have=tagsOf(B,a);
+  const sat=want.filter(t=>have.has(t)).length;
+  const cr=craftOf(B),score=Math.round(50*sat/want.length+cr.glass+cr.ice+cr.method+tech+10);
+  if(sat/want.length>=.6)return {tier:'ok',score:Math.min(84,score),a,match,parts:{taste:Math.round(50*sat/want.length),balance:10,...cr,tech,want,have},creative:true};
+  return {tier:'bad',score:Math.min(45,score),a,match,parts:{taste:Math.round(50*sat/want.length),balance:10,...cr,tech,want,have}};
+}
+function vServe(){
+  const res=vJudge(),p=vGuest(),found=discoverCheck(res);window.AU&&AU.play('serve');setTimeout(()=>window.AU&&AU.play(res.tier==='bad'?'fail':'win'),350);
+  const st=res.score>=90?3:res.score>=75?2:res.score>=50?1:0;
+  const what=res.a.liquid>0?(res.match?`${L('你调的是','You made a')} <b>${DN(res.match)}</b>`:L('你调了一杯<b>原创特调</b>','You made an <b>original</b>')):'';
+  $('resultBox').innerHTML=`<h2>${L('🍸 出酒','🍸 Served')}</h2>${found?`<div class="discover">🎉 ${L('发现新配方：','New recipe found: ')}${DN(found)}</div>`:''}
+    <p style="margin:0">${what}</p><div class="score">${res.score}</div><div class="stars">${'⭐'.repeat(st)}${'☆'.repeat(3-st)}</div>
+    ${res.tier==='wow'?`<div class="wow">🎯 ${L('歪打正着！','Happy accident!')}<small>${L(`原来 ${PN(p)} 偷偷偏爱「${res.loves.map(TN).join('、')}」`,`Turns out ${PN(p)} secretly loves ${res.loves.map(TN).join(', ')}`)}</small></div>`:''}
+    ${res.creative&&res.tier!=='wow'?`<p style="margin:0;color:var(--green)">${L('不是经典配方，但口味对上了！','Not a classic, but the flavour fits!')}</p>`:''}
+    ${breakdownHTML(res)}
+    <p style="margin:6px 0 0">${L('递给','Hand it to')} <b style="color:${p.c}">${PN(p)}</b>${L('，看看 TA 的反应……',' and see how they react…')}</p>
+    <div class="btnrow">${res.a.liquid>20&&!res.match?`<button id="bSaveRes">${L('💾 存为我的特调','💾 Save creation')}</button>`:''}<button class="primary" id="bNextGuest">${L('递过去 →','Hand it over →')}</button></div>`;
+  $('mResult').classList.add('show');
+  const snapshot=JSON.parse(JSON.stringify(B));
+  if($('bSaveRes'))$('bSaveRes').onclick=()=>openSave(snapshot);
+  $('bNextGuest').onclick=()=>{$('mResult').classList.remove('show');vAfterMix(res)};
+}
+function vAfterMix(res){
+  const st=V.pending,p=vGuest();
+  V.scores.push(res.score);V.mixes.push({k:p.k,drink:res.match,score:res.score,tier:res.tier});
+  V.tips=(V.tips||0)+(res.score>=50?Math.round(res.score/10):0);
+  V.lastTier=res.tier;V.flags[p.k+'_'+res.tier]=1;if(res.tier==='wow'){V.flags[p.k+'_great']=1;V.wows=(V.wows||0)+1;
+    (res.loves||[]).forEach(t=>{const c=L('偏爱'+t,'loves '+TN(t));V.clues[p.k]=V.clues[p.k]||[];if(!V.clues[p.k].includes(c))V.clues[p.k].push(c);prog['bar-love-'+p.k+'-'+t]=1})}
+  show('vn');if(window.AU&&$('vfx').classList.contains('rain'))AU.rain(true);V.queue=[...(res.tier==='wow'?(st.wow||st.great||[]):st[res.tier]||[]),...V.queue];
+  if(res.tier==='wow')vEmo('✨');
+  vAff(res.tier==='wow'?3:res.tier==='great'?2:res.tier==='ok'?1:-1);vNext();
+}
+function vEndNight(){
+  const avg=V.scores.length?Math.round(V.scores.reduce((a,b)=>a+b,0)/V.scores.length):0,st=avg>=90?3:avg>=75?2:avg>=50?1:0;
+  const k='bar-n'+V.n;prog[k]=Math.max(prog[k]||0,st);
+  Object.entries(V.gain).forEach(([pk,g])=>{prog['bar-aff-'+pk]=Math.max(0,(prog['bar-aff-'+pk]||0)+g)});
+  Object.keys(V.flags).forEach(f=>{prog['bar-f-'+f]=1});
+  saveProg();$('vfx').className='vfx';if(window.AU){AU.rain(false);AU.mood('lounge')}
+  const rows=(V.mixes.length?V.mixes:V.ch.scenes.map(sc=>({k:sc.who}))).map(m0=>{const p=byKey(m0.k),m=m0.score!=null?m0:null,g=V.gain[m0.k]||0,sc={who:m0.k};
+    return `<div style="display:flex;align-items:center;gap:10px;text-align:left;background:var(--card);border-radius:12px;padding:8px 10px">
+      <div class="face" style="--pc:${p.c};width:44px;height:44px;border-width:2px"><img src="${face(p)}" alt=""></div>
+      <div style="flex:1;min-width:0"><b style="color:${p.c}">${PN(p)}</b><br><small style="color:var(--muted)">${m?(m.tier==='wow'?'🎯 ':'')+(m.drink?DN(m.drink):L('原创特调','original')):'—'} · ${m?m.score:0} ${L('分','pts')}</small></div>
+      <div style="text-align:right;font-size:.85rem">${hearts(sc.who).replace(/♡/g,'<span style="opacity:.35">♡</span>')}<br><small style="color:${g>=0?'#f472b6':'#94a3b8'}">${g>=0?'+':''}${g}</small></div></div>`}).join('');
+  const nextOpen=st>0&&V.n<STORY.length;
+  $('nightBox').innerHTML=`<h2>${L('🌙 打烊了','🌙 Last call')}</h2><p>${L(`第 ${V.n} 晚 · ${V.ch.title[0]}`,`Night ${V.n} · ${V.ch.title[1]}`)}</p>
+    <div class="score">${avg}</div><div class="stars">${'⭐'.repeat(st)}${'☆'.repeat(3-st)}</div>
+    <p style="margin:4px 0;color:var(--muted);font-size:.88rem">💰 ${L('小费','Tips')} $${V.tips||0}${V.wows?` · 🎯 ${L('歪打正着','happy accidents')} ×${V.wows}`:''}${(V.ends||[]).length?` · 🏁 ${L('结局','ending')}：${V.ends.map(id=>{const e=ENDS().find(x=>x[0]===id);return e?esc(L(e[1],e[2])):id}).join('、')}`:''}</p>
+    <div style="display:flex;flex-direction:column;gap:8px;margin:10px 0">${rows}</div>
+    ${!st?`<p style="color:var(--red)">${L('平均分不到 50，没能解锁下一晚，再试一次吧！','Average under 50, so the next night stays locked. Try again!')}</p>`:''}
+    ${st&&V.n>=STORY.length?((typeof STORY_COMING!=='undefined'&&STORY_COMING.length)?`<p>${L(`第 ${STORY.length+1} 晚的故事正在写，敬请期待！`,`Night ${STORY.length+1} is still being written. Stay tuned!`)}</p>`:`<p style="color:#fbbf24">${L('— 全剧终 · 感谢光临 Space —','— The End · Thanks for drinking at Space —')}<br><small style="color:var(--muted)">${L('换个选择重玩，去解锁其他结局吧。','Replay with different choices to unlock other endings.')}</small></p>`):''}
+    ${V.ch.preview?`<div class="preview"><b style="color:#f472b6">${L('下回预告','Next time')}</b><br>${esc(L(V.ch.preview[0],V.ch.preview[1]))}</div>`:''}
+    <div class="btnrow">${nextOpen?`<button class="primary" id="bNextNight">${L(`第 ${V.n+1} 晚 →`,`Night ${V.n+1} →`)}</button>`:''}<button id="bAgain">${L('重玩这一晚','Replay night')}</button><button id="bHome">${L('返回','Back')}</button></div>`;
+  $('mNight').classList.add('show');
+  const n=V.n;V=null;
+  if(nextOpen)$('bNextNight').onclick=()=>{$('mNight').classList.remove('show');startStory(n+1)};
+  $('bAgain').onclick=()=>{$('mNight').classList.remove('show');startStory(n)};
+  $('bHome').onclick=()=>{$('mNight').classList.remove('show');show('story')};
+}
+$('vn').addEventListener('click',e=>{if(e.target.closest('button'))return;if(V&&V.skip){V.skip=false;vModes();return}vNext()});
+$('vLog').onclick=e=>{e.stopPropagation();if(!V)return;V.auto=false;V.skip=false;vModes();$('logBody').innerHTML=V.log.map(([n,t])=>n?`<div><b>${esc(n)}</b>${clueHTML(t)}</div>`:`<div><i>${clueHTML(t)}</i></div>`).join('');$('mLog').classList.add('show');setTimeout(()=>{$('logBody').scrollTop=1e6},30)};
+$('vClue').onclick=e=>{e.stopPropagation();if(!V)return;V.auto=false;vModes();const ks=Object.keys(V.clues);$('clueBody').innerHTML=ks.length?ks.map(k=>{const p=byKey(k);return `<div style="margin:8px 0"><b style="color:${p?p.c:'#fff'}">${p?PN(p):''}</b><div class="clues">${V.clues[k].map(c=>`<span>${esc(c)}</span>`).join('')}</div></div>`}).join(''):`<p>${L('还没有线索。','No clues yet.')}</p>`;$('mClue').classList.add('show')};
+$('vAuto').onclick=e=>{e.stopPropagation();if(!V)return;V.auto=!V.auto;V.skip=false;vModes();if(V.auto&&!V.typing&&!V.wait)V.autoT=setTimeout(vNext,600)};
+$('vSkip').onclick=e=>{e.stopPropagation();if(!V)return;V.skip=!V.skip;V.auto=false;vModes();if(V.skip&&!V.wait)vNext()};
+$('logClose').onclick=()=>$('mLog').classList.remove('show');
+$('clueClose').onclick=()=>$('mClue').classList.remove('show');
+document.addEventListener('keydown',e=>{if(V&&$('vn').classList.contains('show')&&(e.key===' '||e.key==='Enter')){e.preventDefault();vNext()}});
+$('vQuit').onclick=e=>{e.stopPropagation();if(confirm(L('离开会放弃这一晚的进度，确定吗？','Leaving abandons this night. Sure?'))){V=null;clearInterval(typeT);show('story')}};
+
+// ================= MISC =================
+$('bHelpHome').onclick=()=>$('mHelp').classList.add('show');
+$('bHelpOk').onclick=()=>$('mHelp').classList.remove('show');
+['mBook','mHelp','mCard','mSave','mPlayer','mLog','mClue','mEnd','mRules','mCast'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target.id===id)$(id).classList.remove('show')}));
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>show(b.dataset.go));
+document.querySelectorAll('[data-player]').forEach(b=>b.onclick=openPlayer);
+$('playerForm').onsubmit=e=>{e.preventDefault();const n=$('pName').value.trim();if(n)switchPlayer(n)};
+$('pList').onclick=e=>{const b=e.target.closest('[data-name]');if(b)switchPlayer(b.dataset.name)};
+$('bPlayerOut').onclick=()=>switchPlayer('');
+$('bPlayerClose').onclick=()=>$('mPlayer').classList.remove('show');
+function renderSnd(){document.querySelectorAll('[data-snd]').forEach(b=>b.textContent=window.AU&&AU.on?'🔊':'🔇')}
+document.querySelectorAll('[data-snd]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();if(window.AU){AU.toggle();renderSnd()}}));
+renderSnd();
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&pushTimer)cloudPush(true)});
+function setLang(l){
+  LANG=l;document.body.classList.toggle('en',l==='en');document.documentElement.lang=l;
+  document.title=L('Space 夜调 · 调酒师','Last Call at Space · Bartender');
+  document.querySelectorAll('[data-setlang]').forEach(b=>b.classList.toggle('on',b.dataset.setlang===l));
+  try{localStorage.setItem('lang',l)}catch(e){}
+  renderPlayerBtn();refreshViews();
+  if(G&&$('game').classList.contains('show'))render();
+  if($('mBook').classList.contains('show'))renderBook();
+}
+document.querySelectorAll('[data-setlang]').forEach(b=>b.onclick=()=>setLang(b.dataset.setlang));
+setLang(LANG);show('home');cloudPull();
+if(!store.get('bar:helped')){store.set('bar:helped',1);$('mHelp').classList.add('show')}
+</script>
+</body>
+</html>

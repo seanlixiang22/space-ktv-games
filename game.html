@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Center – Space KTV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#06040d;--surface:rgba(20,14,40,.82);--card:#1c1535;--purple:#8b5cf6;--pink:#ec4899;--cyan:#22d3ee;--gold:#fbbf24;--text:#ece6fa;--muted:#9a8cc0;--border:rgba(139,92,246,.28)}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,'PingFang SC','Microsoft YaHei',sans-serif;min-height:100vh;overflow-x:hidden}
+#fx{position:fixed;inset:0;z-index:0;pointer-events:none}
+.glow{position:fixed;width:60vmax;height:60vmax;border-radius:50%;filter:blur(90px);opacity:.22;z-index:0;pointer-events:none}
+.g1{background:#8b5cf6;top:-25vmax;left:-20vmax}.g2{background:#ec4899;bottom:-30vmax;right:-20vmax}
+.wrap{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:18px 16px 40px}
+[data-lang="zh"]{display:none}
+body.zh [data-lang="en"]{display:none}
+body.zh [data-lang="zh"]{display:revert}
+nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.back{color:var(--muted);text-decoration:none;font-size:.85rem;padding:6px 14px;border:1px solid var(--border);border-radius:999px;transition:all .2s}
+.back:hover{color:var(--text);border-color:var(--purple)}
+.langs{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:3px}
+.langs button{font:inherit;font-size:.8rem;color:var(--muted);background:none;border:none;border-radius:999px;padding:5px 12px;cursor:pointer}
+.langs button.on{background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff}
+header{text-align:center;padding:34px 0 30px}
+h1{font-family:'ZCOOL QingKe HuangYou',Orbitron,sans-serif;font-weight:400;font-size:clamp(2.4rem,9vw,4rem);line-height:1.1;background:linear-gradient(90deg,#f472b6,#a78bfa,#22d3ee,#f472b6);background-size:300%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite;filter:drop-shadow(0 0 24px rgba(167,139,250,.45))}
+@keyframes shine{to{background-position:300%}}
+.en-sub{font-family:Orbitron,sans-serif;letter-spacing:6px;color:var(--muted);font-size:.78rem;margin-top:8px}
+.tag{margin-top:12px;color:var(--muted);font-size:.95rem}
+.cast{margin:46px 0 10px}
+.cast h2{font-family:'ZCOOL QingKe HuangYou',sans-serif;font-weight:400;font-size:2rem;text-align:center;margin:0 0 4px}
+.castgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:14px;margin-top:16px}
+.cc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:8px;text-align:center;cursor:pointer;transition:transform .15s,border-color .15s}
+.cc:hover{transform:translateY(-4px);border-color:var(--pc)}
+.cc img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:2px solid var(--pc);display:block}
+.cc b{display:block;margin-top:6px;color:var(--pc)}.cc small{color:var(--muted);font-size:.78rem}
+.cmodal{position:fixed;inset:0;background:rgba(3,2,8,.82);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.cmodal.show{display:flex}
+.cbox{background:linear-gradient(160deg,#21163f,#120c26);border:1px solid var(--pc);border-radius:20px;padding:20px;max-width:420px;width:100%;text-align:center;box-shadow:0 0 40px var(--pc)}
+.cbox img{width:min(300px,78vw);border-radius:16px;border:3px solid var(--pc)}
+.cbox h3{color:var(--pc);font-size:1.5rem;margin:12px 0 4px}.cbox p{color:var(--text);line-height:1.7;margin:6px 0}
+.cbox button{margin-top:10px;padding:9px 26px;border-radius:999px;border:1px solid var(--border);background:var(--card);color:var(--text);font:inherit;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.game{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--border);border-radius:22px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .25s,box-shadow .25s,border-color .25s;backdrop-filter:blur(10px)}
+.game:hover{transform:translateY(-6px);box-shadow:0 18px 50px rgba(139,92,246,.35);border-color:rgba(236,72,153,.6)}
+.cover{position:relative;aspect-ratio:16/9;background:linear-gradient(135deg,#2a1d55,#4a1640) center/cover}
+.cover::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(20,14,40,.95))}
+.badge{position:absolute;top:12px;left:12px;z-index:1;font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;box-shadow:0 4px 14px rgba(236,72,153,.4)}
+.body{padding:4px 20px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.title{display:flex;align-items:center;gap:10px;margin-top:-26px;position:relative;z-index:1}
+.title .ic{font-size:2rem;filter:drop-shadow(0 4px 8px rgba(0,0,0,.6))}
+.title h2{font-size:1.35rem}
+.desc{color:var(--muted);font-size:.9rem;line-height:1.7}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chips span{font-size:.75rem;padding:3px 10px;border-radius:999px;background:rgba(139,92,246,.15);border:1px solid var(--border);color:#d8ccf5}
+.play{margin-top:auto;align-self:flex-start;font-weight:700;font-size:.92rem;padding:10px 26px;border-radius:999px;background:linear-gradient(90deg,var(--pink),var(--purple));color:#fff;box-shadow:0 4px 20px rgba(236,72,153,.35)}
+.soon{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:260px;border:2px dashed var(--border);border-radius:22px;color:var(--muted);text-align:center;padding:20px}
+.soon .ic{font-size:2.4rem;opacity:.6}
+footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:34px}
+footer a{color:var(--cyan);text-decoration:none}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas><div class="glow g1"></div><div class="glow g2"></div>
+<div class="wrap">
+  <nav>
+    <a class="back" href="index.html"><span data-lang="en">← Space KTV</span><span data-lang="zh">← 返回首页</span></a>
+    <div class="langs"><button id="btn-en" onclick="setLang('en')">EN</button><button id="btn-zh" onclick="setLang('zh')">中文</button></div>
+  </nav>
+
+  <header>
+    <h1><span data-lang="en">Game Center</span><span data-lang="zh">游戏大厅</span></h1>
+    <div class="en-sub">SPACE KTV · ARCADE</div>
+    <p class="tag"><span data-lang="en">Waiting for your room? Play a round.</span><span data-lang="zh">等包厢的时候，来玩一局</span></p>
+  </header>
+
+  <div class="grid">
+    <a class="game" href="whodunit.html">
+      <div class="cover" style="background-image:url(whodunit/c-hero.webp)"><span class="badge">NEW</span></div>
+      <div class="body">
+        <div class="title"><span class="ic">🕵️</span><h2><span data-lang="en">Space Whodunit</span><span data-lang="zh">Space 谜案</span></h2></div>
+        <p class="desc">
+          <span data-lang="en">A murder-mystery sudoku. Use the clues to put every suspect back where they stood, then name the one who was alone with the victim.</span>
+          <span data-lang="zh">推理数独。根据线索把每个人放回案发时的位置，揪出唯一和死者独处一室的凶手。</span>
+        </p>
+        <div class="chips">
+          <span data-lang="en">Logic puzzle</span><span data-lang="zh">推理解谜</span>
+          <span data-lang="en">Daily case</span><span data-lang="zh">每日案件</span>
+          <span data-lang="en">45 story cases</span><span data-lang="zh">45 个剧情案件</span>
+          <span data-lang="en">Endless mode</span><span data-lang="zh">无限随机</span>
+        </div>
+        <span class="play"><span data-lang="en">Play ▶</span><span data-lang="zh">开始推理 ▶</span></span>
+      </div>
+    </a>
+
+    <a class="game" href="fps.html">
+      <div class="cover" style="background-image:url(games/fps.webp)"><span class="badge">NEW</span></div>
+      <div class="body">
+        <div class="title"><span class="ic">🔫</span><h2><span data-lang="en">Defend SPACE</span><span data-lang="zh">SPACE 保卫战</span></h2></div>
+        <p class="desc">
+          <span data-lang="en">A first-person shooter set in the KTV. Clear the rooms, beat the boss, and don't hit the guests. Best played on a computer.</span>
+          <span data-lang="zh">第一人称射击。守住包厢、打败 Boss，别误伤客人。建议用电脑玩。</span>
+        </p>
+        <div class="chips">
+          <span data-lang="en">Shooter</span><span data-lang="zh">射击</span>
+          <span data-lang="en">Story · Waves · Daily</span><span data-lang="zh">剧情 · 营业 · 每日挑战</span>
+          <span data-lang="en">S rank: $10 off $100</span><span data-lang="zh">S 评级：满 100 减 10</span>
+        </div>
+        <span class="play"><span data-lang="en">Start ▶</span><span data-lang="zh">开始战斗 ▶</span></span>
+      </div>
+    </a>
+
+    <a class="game" href="autochess.html">
+      <div class="cover" style="background-image:url(games/autochess.webp)"><span class="badge">NEW</span></div>
+      <div class="body">
+        <div class="title"><span class="ic">♟️</span><h2><span data-lang="en">Brothers Auto Chess</span><span data-lang="zh">兄弟自走棋</span></h2></div>
+        <p class="desc">
+          <span data-lang="en">Recruit the Space crew, place them on the dance floor and watch them fight it out. Merge three of a kind to level up, stack crew traits, and survive as many rounds as you can.</span>
+          <span data-lang="zh">招募 Space 的兄弟们，摆上舞池自动开打。三合一升星、凑齐羁绊，看你能撑到第几回合。</span>
+        </p>
+        <div class="chips">
+          <span data-lang="en">Auto battler</span><span data-lang="zh">自走棋</span>
+          <span data-lang="en">17 crew members</span><span data-lang="zh">17 位角色</span>
+          <span data-lang="en">Boss every 5 rounds</span><span data-lang="zh">每 5 回合首领战</span>
+        </div>
+        <span class="play"><span data-lang="en">Play ▶</span><span data-lang="zh">开始布阵 ▶</span></span>
+      </div>
+    </a>
+
+    <a class="game" href="bartender.html">
+      <div class="cover" style="background-image:url(whodunit/c-ch2.webp)"><span class="badge">BETA</span></div>
+      <div class="body">
+        <div class="title"><span class="ic">🍸</span><h2><span data-lang="en">Last Call at Space</span><span data-lang="zh">Space 夜调</span></h2></div>
+        <p class="desc">
+          <span data-lang="en">You're the bartender. Guests tell you their mood, you figure out the drink and mix it with real classic recipes.</span>
+          <span data-lang="zh">你是今晚的调酒师。客人说出心情和口味，你判断该调哪一杯，按经典配方调出来。</span>
+        </p>
+        <div class="chips">
+          <span data-lang="en">Bartending</span><span data-lang="zh">调酒</span>
+          <span data-lang="en">65 recipes · freestyle</span><span data-lang="zh">65 款酒谱 · 自由调酒</span>
+          <span data-lang="en">7 nights · 8 endings</span><span data-lang="zh">7 晚剧情 · 8 个结局</span>
+          <span data-lang="en">Shared save with Whodunit</span><span data-lang="zh">和谜案共用存档</span>
+        </div>
+        <span class="play"><span data-lang="en">Open the bar ▶</span><span data-lang="zh">开始营业 ▶</span></span>
+      </div>
+    </a>
+
+    <a class="game" href="ktvgame.html">
+      <div class="cover" style="background-image:url(games/ktvgame.webp)"></div>
+      <div class="body">
+        <div class="title"><span class="ic">🎤</span><h2><span data-lang="en">Space Mic Flapper</span><span data-lang="zh">麦克风飞船</span></h2></div>
+        <p class="desc">
+          <span data-lang="en">Your voice is the controller. Sing louder and higher to fly up through the neon pipes — no buttons needed.</span>
+          <span data-lang="zh">用声音操控的飞行游戏。唱得越高、越大声，飞得越高，穿过霓虹管道，看谁的嗓子最稳。</span>
+        </p>
+        <div class="chips">
+          <span data-lang="en">Voice control</span><span data-lang="zh">声控</span>
+          <span data-lang="en">Arcade</span><span data-lang="zh">街机</span>
+          <span data-lang="en">🎙️ Needs microphone</span><span data-lang="zh">🎙️ 需要麦克风</span>
+        </div>
+        <span class="play"><span data-lang="en">Play ▶</span><span data-lang="zh">开始唱 ▶</span></span>
+      </div>
+    </a>
+
+    <div class="soon">
+      <div class="ic">🎲</div>
+      <b><span data-lang="en">More games coming soon</span><span data-lang="zh">更多游戏即将上线</span></b>
+      <span style="font-size:.85rem"><span data-lang="en">Stay tuned</span><span data-lang="zh">敬请期待</span></span>
+    </div>
+  </div>
+
+  <section class="cast">
+    <h2><span data-lang="en">Meet the cast</span><span data-lang="zh">人物图鉴</span></h2>
+    <p class="tag"><span data-lang="en">The people of Space. You'll meet them in Whodunit, Last Call at Space and Brothers Auto Chess.</span><span data-lang="zh">Space 里的每一位。在《Space 谜案》《Space 夜调》和《兄弟自走棋》里都能遇到他们。</span></p>
+    <div class="castgrid" id="castGrid"></div>
+  </section>
+  <div class="cmodal" id="cModal"><div class="cbox" id="cBox"></div></div>
+
+  <footer>Space Karaoke Bar &amp; Cafe · <a href="index.html">spacektv.net</a></footer>
+</div>
+
+<script>
+function setLang(lang){
+  document.body.classList.toggle('zh',lang==='zh');
+  document.getElementById('btn-en').classList.toggle('on',lang==='en');
+  document.getElementById('btn-zh').classList.toggle('on',lang==='zh');
+  try{localStorage.setItem('lang',lang)}catch(e){}
+  if(typeof renderCast==='function')renderCast();
+}
+const CAST=[
+  ['jiuge','酒哥','Brother Jiu','#fdba74','调酒师','Bartender','老派调酒师，爱喝茶，嘴上不饶人，心比谁都软。','Old-school bartender who loves tea; sharp tongue, soft heart.'],
+  ['kc','KC','KC','#fca5a5','首席调酒师','Head bartender','隔壁吧台的粉发王牌，手快、嘴快、手艺更快。','The pink-haired ace behind the bar. Fast hands, faster mouth.'],
+  ['mojie','莫姐','Sister Mo','#67e8f9','店长','Manager','管着整间店的大事小事，只喝苦的。','Runs the whole place and only drinks bitter.'],
+  ['richard','理查德','Richard','#60a5fa','老板','Owner','西装笔挺的老板，什么都讲究经典。','The sharp-suited owner who insists on the classics.'],
+  ['xiangge','翔哥','Brother Xiang','#c4b5fd','保安队长','Head of security','门口一站，谁都得老实。爱喝烈的。','Stands at the door and nobody misbehaves. Likes it strong.'],
+  ['tiange','天哥','Brother Tian','#e2e8f0','音响师','Sound tech','调音台后面的男人，歌王之夜的幕后功臣。','The man behind the mixing desk.'],
+  ['ace','Ace','Ace','#e879f9','驻唱歌手','House singer','舞台上最亮的那一个，喜欢好看又优雅的东西。','The brightest one on stage. Loves things pretty and elegant.'],
+  ['john','John','John','#fbbf24','DJ','DJ','气氛组组长，爱气泡、爱辣。','Head of the hype crew. Likes it fizzy and spicy.'],
+  ['kevin','Kevin','Kevin','#2dd4bf','网管','IT guy','店里的监控、灯光、电脑都归他管，靠咖啡续命。','Runs the cameras, lights and computers. Lives on coffee.'],
+  ['panda','Panda','Panda','#fb7185','服务员','Server','端茶送水最快的人，喜欢奶香和茶。','The fastest server in the house. Loves milk and tea.'],
+  ['ya','芽','Ya','#a3e635','美工','Designer','店里的海报都是她画的，安静又细心。','She painted every poster in the club. Quiet and careful.'],
+  ['boluobao','菠萝包','Pineapple Bun','#fde047','甜品师','Pastry chef','甜品师，爱甜、爱水果、爱拍照。','Pastry chef. Loves sweets, fruit and taking photos.'],
+  ['liyutong','李宇童','Li Yutong','#818cf8','前台','Front desk','前台的笑脸，第一个和你打招呼的人。','The smile at the front desk, the first to greet you.'],
+  ['luoyu','洛羽','Luo Yu','#34d399','实习生','Intern','还没成年的实习生，只喝无酒精的。','The under-age intern. Alcohol-free only.'],
+  ['xiaochen','小陈','Xiao Chen','#f472b6','领班','Shift lead','靠谱的领班，左眼下有颗痣。','The dependable shift lead, with a beauty mark under one eye.'],
+  ['nova','NOVA','NOVA','#c48aff','神秘新人','Mystery newcomer','黑色平刘海，话不多。目前只在《兄弟自走棋》登场，招牌技能「超新星」。','Straight black bangs, few words. So far she only appears in Brothers Auto Chess, where her move is Supernova.'],
+  ['ella','艾辣','Ella','#ef4444','通缉犯','Wanted woman','全城通缉的红唇女贼，性感泼辣，嘴上从不饶人。招牌酒：Dirty Martini，Extra dirty。“我说的是酒，你脸红什么？”','The red-lipped thief wanted all over town, fiery and always teasing. Her drink: a Dirty Martini, extra dirty. "I meant the drink. Why are you blushing?"']];
+function zh(){return document.body.classList.contains('zh')}
+function renderCast(){const g=document.getElementById('castGrid');if(!g)return;
+  g.innerHTML=CAST.map((c,i)=>`<div class="cc" data-i="${i}" style="--pc:${c[3]}"><img src="whodunit/p-${c[0]}.webp" alt="" loading="lazy"><b>${zh()?c[1]:c[2]}</b><small>${zh()?c[4]:c[5]}</small></div>`).join('');
+  g.querySelectorAll('.cc').forEach(el=>el.onclick=()=>{const c=CAST[+el.dataset.i],b=document.getElementById('cBox');b.style.setProperty('--pc',c[3]);
+    b.innerHTML=`<img src="whodunit/p-${c[0]}.webp" alt=""><h3>${zh()?c[1]:c[2]}</h3><p style="color:var(--muted)">${zh()?c[4]:c[5]}</p><p>${zh()?c[6]:c[7]}</p><button>${zh()?'关闭':'Close'}</button>`;
+    document.getElementById('cModal').classList.add('show');b.querySelector('button').onclick=()=>document.getElementById('cModal').classList.remove('show');});}
+document.getElementById('cModal').addEventListener('click',e=>{if(e.target.id==='cModal')e.currentTarget.classList.remove('show')});
+let saved='en';try{saved=localStorage.getItem('lang')||'en'}catch(e){}
+setLang(saved);renderCast();
+
+(function(){
+  const cv=document.getElementById('fx'),cx=cv.getContext('2d');let W,H,st=[];
+  const rs=()=>{W=cv.width=innerWidth;H=cv.height=innerHeight;st=Array.from({length:Math.floor(W*H/6000)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,p:Math.random()*6}))};
+  rs();addEventListener('resize',rs);
+  (function f(t){cx.clearRect(0,0,W,H);st.forEach(s=>{cx.globalAlpha=.35+.35*Math.sin(t/900+s.p);cx.fillStyle='#fff';cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fill()});requestAnimationFrame(f)})(0);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "name": "SPACE 保卫战",
+  "short_name": "保卫战",
+  "start_url": "/fps",
+  "scope": "/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "icons": [
+    { "src": "games/fps.webp", "sizes": "945x540", "type": "image/webp" }
+  ]
+}
