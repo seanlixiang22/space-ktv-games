@@ -995,7 +995,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='ic')$
 
 window.__G={C,E,STAGES,CP,S:()=>S,setS:x=>{S=x},startBattle,tick,stopBattle,get battle(){return battle},checkCode,fnv,doPulls,star};
 nav();res();
-if(!S.invited)gate();else go('lobby');
+if(!S.invited){S.invited=true;save()}go('lobby');
 }
 </script>
 </body>
